@@ -405,6 +405,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="flow-ss-title">流入指標</h2>
         <p class="lead" id="flow-ss-lead"></p>
       </div>
+      <div id="flow-ss-forecast-banner"></div>
       <div class="kpis" id="flow-ss-kpis"></div>
       <div class="card">
         <h3>サイト全体流入数の月次推移</h3>
@@ -415,6 +416,16 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
           <span class="li"><span class="legend-dot muted"></span>オーガニック流入・AI経由流入（参考）</span>
           <span class="li"><span class="legend-dot dashed"></span>期間平均（基準線）</span>
           <span class="li"><span class="legend-dot" style="background:var(--cat-3)"></span>AI経由比率（右軸）</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3>AI経由流入数の月次推移</h3>
+        <div class="h3-sub" id="flow-ss-ai-chart-note">AI経由流入のみを抽出した月次推移ライン（積み上げ棒とは別軸で詳細を確認）</div>
+        <div class="chart-wrap"><canvas id="chart-ai-total"></canvas></div>
+        <div class="chart-legend">
+          <span class="li"><span class="legend-dot" style="background:var(--cat-2)"></span>AI経由流入数（実績）</span>
+          <span class="li"><span class="legend-dot dashed"></span>期間平均（基準線）</span>
+          <span class="li" id="flow-ss-ai-fc-legend" style="display:none"><span class="legend-dot" style="background:#7986cb;opacity:.5"></span>当月着地予測</span>
         </div>
       </div>
       <div class="card">
@@ -727,18 +738,36 @@ function renderDiag(){
     </div>
   `).join('');
 
-  /* 20-item table */
-  let html = '<tr><th>No.</th><th>カテゴリ</th><th>診断項目</th><th>評価ポイント</th><th class="num">評価点</th><th>理由</th></tr>';
-  D.forEach(r=>{
-    const sc = Number(r.score)||0;
-    html += `<tr>
-      <td class="num">${esc(r.no)}</td>
-      <td><span class="diag-cat ${r.group||'A'}">${esc(r.group||'')}</span><span class="small">${esc((r.category||'').replace(/\n/g,' / '))}</span></td>
-      <td><b>${esc(r.item)}</b></td>
-      <td class="small">${esc(r.point)}</td>
-      <td class="num"><span class="score-pill score-${sc}">${sc}</span></td>
-      <td class="small" style="white-space:pre-wrap">${esc(r.reason)}</td>
-    </tr>`;
+  /* 20-item table — grouped by category */
+  let html = '<tr>'
+    + '<th style="width:48px">No.</th>'
+    + '<th style="width:64px">群</th>'
+    + '<th style="width:16%">診断項目</th>'
+    + '<th>評価ポイント</th>'
+    + '<th class="num" style="width:70px">評価点</th>'
+    + '<th>理由</th>'
+    + '</tr>';
+  catLetters.forEach((l,i)=>{
+    const items = cats[l].items;
+    const ratio = catFull[i]?(catScore[i]/catFull[i]):0;
+    const ratioPct = (ratio*100).toFixed(0);
+    html += `<tr style="background:var(--cell-bg)"><td colspan="6" style="padding:10px 12px;border-top:2px solid var(--line)">
+      <span class="diag-cat ${l}">${l}</span>
+      <b style="font-size:13px">${esc(catLabels[i])}</b>
+      <span class="score-pill score-${Math.round(catAvg[i])}" style="margin-left:10px">${catScore[i]}/${catFull[i]}点（${ratioPct}%）</span>
+      <span class="small" style="margin-left:8px">${esc(cats[l].desc||'')}</span>
+    </td></tr>`;
+    items.forEach(r=>{
+      const sc = Number(r.score)||0;
+      html += `<tr>
+        <td class="num">${esc(r.no)}</td>
+        <td><span class="diag-cat ${r.group||l}">${esc(r.group||l)}</span></td>
+        <td><b>${esc(r.item)}</b></td>
+        <td class="small">${esc(r.point)}</td>
+        <td class="num"><span class="score-pill score-${sc}">${sc}</span></td>
+        <td class="small" style="white-space:pre-wrap">${esc(r.reason)}</td>
+      </tr>`;
+    });
   });
   $('#tbl-diag').innerHTML = html;
 }
@@ -825,7 +854,28 @@ const FLOW = (function(){
   const prevI = lastI>0 ? lastI-1 : null;
   const lastMonth = months[validIdx[lastI]] || '';
   const monthHuman = lastMonth ? lastMonth.replace('-','年').replace(/^(\d+)年(\d+)$/,(_,y,m)=>`${y}年${parseInt(m)}月`) : '';
-  return {F, months, S, validIdx, lbl, pick, siteTotal, organic, aiTotal, aiRatio, cvTotal, lastI, prevI, lastMonth, monthHuman};
+
+  /* Forecast for in-progress month (when today's YYYY-MM matches lastMonth) */
+  const today = new Date();
+  const todayYM = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}`;
+  const inProgress = (lastMonth === todayYM);
+  let daysElapsed = 0, daysInMonth = 0, forecastFactor = 1;
+  if(inProgress){
+    daysElapsed = today.getDate();
+    daysInMonth = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
+    forecastFactor = daysInMonth / Math.max(1, daysElapsed);
+  }
+  const fcst = v => (inProgress && v!=null) ? Math.round(v * forecastFactor) : null;
+  const fcstSite = fcst(siteTotal[lastI]);
+  const fcstOrg  = fcst(organic[lastI]);
+  const fcstAi   = fcst(aiTotal[lastI]);
+  const fcstCv   = fcst(cvTotal[lastI]);
+  const fcstRatio = (inProgress && fcstSite && fcstAi!=null) ? (fcstAi / fcstSite) : null;
+
+  return {F, months, S, validIdx, lbl, pick, siteTotal, organic, aiTotal, aiRatio, cvTotal,
+    lastI, prevI, lastMonth, monthHuman,
+    inProgress, daysElapsed, daysInMonth, forecastFactor,
+    fcstSite, fcstOrg, fcstAi, fcstCv, fcstRatio};
 })();
 
 /* Shared group breakdown table renderer */
@@ -844,7 +894,9 @@ function groupTableHTML(groups, lbl, pick){
 
 /* ② SS（流入）タブ */
 function renderFlowSS(){
-  const {F, lbl, pick, siteTotal, organic, aiTotal, aiRatio, lastI, prevI, monthHuman, validIdx} = FLOW;
+  const {F, lbl, pick, siteTotal, organic, aiTotal, aiRatio, lastI, prevI, monthHuman, validIdx,
+         inProgress, daysElapsed, daysInMonth, forecastFactor,
+         fcstSite, fcstOrg, fcstAi, fcstRatio} = FLOW;
   const lastSite = siteTotal[lastI];
   const prevSite = prevI!=null ? siteTotal[prevI] : null;
   const lastAi = aiTotal[lastI];
@@ -854,26 +906,61 @@ function renderFlowSS(){
   const lastRatio = aiRatio[lastI];
   const prevRatio = prevI!=null ? aiRatio[prevI] : null;
   const siteAvg = avg(siteTotal.filter(x=>x!=null));
+  const aiAvg = avg(aiTotal.filter(x=>x!=null));
+
+  /* In-progress month forecast banner */
+  if(inProgress){
+    $('#flow-ss-forecast-banner').innerHTML = `
+      <div style="background:#fff8e1;border:1px solid #ffd54f;border-left:4px solid #f57c00;border-radius:4px;padding:12px 16px;margin-bottom:14px;font-size:12.5px;color:var(--ink)">
+        <b style="color:#bf5500">⏳ ${monthHuman}は途中（${daysElapsed}/${daysInMonth}日経過）</b>
+        <div class="small" style="margin-top:4px;color:var(--ink2)">
+          実績値（${daysElapsed}日分）から日数比例（×${forecastFactor.toFixed(2)}）で <b>当月着地予測</b> を算出。前月比は予測ベースで参考表示。
+        </div>
+      </div>`;
+  } else {
+    $('#flow-ss-forecast-banner').innerHTML = '';
+  }
 
   /* Hero */
   let trend = '';
-  if(prevSite!=null && lastSite!=null){
-    const ratio = (lastSite-prevSite)/prevSite;
+  const heroSiteVal = inProgress ? fcstSite : lastSite;
+  const heroSiteLabel = inProgress ? '着地予測' : '実績';
+  if(prevSite!=null && heroSiteVal!=null){
+    const ratio = (heroSiteVal-prevSite)/prevSite;
     const sign = ratio>0?'+':'';
-    trend = `<span class="answer">前月比 ${sign}${(ratio*100).toFixed(1)}%</span>`;
+    trend = `<span class="answer">前月比 ${sign}${(ratio*100).toFixed(1)}%${inProgress?'（予測）':''}</span>`;
   }
-  $('#flow-ss-title').innerHTML = `${monthHuman}のサイト流入は ${fmt(lastSite)} 件、${trend}<span class="sub-h">— AI 経由比率 ${pct(lastRatio)}（前月差 ${prevRatio!=null?((lastRatio-prevRatio)*100>=0?'+':'')+((lastRatio-prevRatio)*100).toFixed(2)+'pt':'—'}）</span>`;
-  $('#flow-ss-lead').textContent = `期間：2025年1月〜${monthHuman}（${validIdx.length}か月分）。期間平均の月間流入は ${fmt(Math.round(siteAvg))} 件。`;
+  const heroRatio = inProgress ? fcstRatio : lastRatio;
+  const heroRatioLabel = inProgress ? '着地予測比率' : 'AI 経由比率';
+  $('#flow-ss-title').innerHTML = `${monthHuman}のサイト流入${inProgress?'(着地予測)':''}は ${fmt(heroSiteVal)} 件、${trend}<span class="sub-h">— ${heroRatioLabel} ${pct(heroRatio)}（前月差 ${prevRatio!=null&&heroRatio!=null?((heroRatio-prevRatio)*100>=0?'+':'')+((heroRatio-prevRatio)*100).toFixed(2)+'pt':'—'}）</span>`;
+  $('#flow-ss-lead').textContent = `期間：2025年1月〜${monthHuman}（${validIdx.length}か月分）。期間平均の月間流入は ${fmt(Math.round(siteAvg))} 件。${inProgress?`なお ${monthHuman}実績は ${fmt(lastSite)} 件（${daysElapsed}/${daysInMonth}日時点）。`:''}`;
 
-  $('#flow-ss-chart-note').textContent = `期間平均（${fmt(Math.round(siteAvg))}件）を基準線として表示。サイト全体流入を強調色（青）、参考値（オーガニック・AI経由）はグレー。`;
+  $('#flow-ss-chart-note').textContent = `期間平均（${fmt(Math.round(siteAvg))}件）を基準線として表示。サイト全体流入を強調色（青）、参考値（オーガニック・AI経由）はグレー。${inProgress?'【'+monthHuman+'は着地予測を点線で延伸】':''}`;
+  $('#flow-ss-ai-chart-note').textContent = `AI経由流入のみを抽出した月次推移。期間平均は ${fmt(Math.round(aiAvg))} 件/月。${inProgress?'当月（'+monthHuman+'）は実績＋着地予測（'+fmt(fcstAi)+'件）の予測点も表示。':''}`;
+  if(inProgress){ const lg=$('#flow-ss-ai-fc-legend'); if(lg) lg.style.display='inline-flex'; }
 
-  /* KPI — 4枚（CVは別タブ） */
-  $('#flow-ss-kpis').innerHTML = [
-    kpiBox('サイト全体流入', fmt(lastSite), '件', deltaHTML(lastSite, prevSite), true),
-    kpiBox('オーガニック流入', fmt(lastOrg), '件', deltaHTML(lastOrg, prevOrg)),
-    kpiBox('AI経由流入', fmt(lastAi), '件', deltaHTML(lastAi, prevAi)),
-    kpiBox('AI経由比率', lastRatio!=null?(lastRatio*100).toFixed(2):'—', '%', deltaHTML(lastRatio, prevRatio, {isPct:true})),
-  ].join('');
+  /* KPI — 4枚（CVは別タブ）— 進行中月は着地予測と前月比 */
+  const kpiSite = inProgress
+    ? kpiBox('サイト全体流入（着地予測）', fmt(fcstSite), '件',
+        `<div class="delta delta-flat">実績 ${fmt(lastSite)}件 → 予測 ${fmt(fcstSite)}件</div>${deltaHTML(fcstSite, prevSite)}`, true)
+    : kpiBox('サイト全体流入', fmt(lastSite), '件', deltaHTML(lastSite, prevSite), true);
+  const kpiOrg = inProgress
+    ? kpiBox('オーガニック流入（着地予測）', fmt(fcstOrg), '件',
+        `<div class="delta delta-flat">実績 ${fmt(lastOrg)}件</div>${deltaHTML(fcstOrg, prevOrg)}`)
+    : kpiBox('オーガニック流入', fmt(lastOrg), '件', deltaHTML(lastOrg, prevOrg));
+  const kpiAi = inProgress
+    ? kpiBox('AI経由流入（着地予測）', fmt(fcstAi), '件',
+        `<div class="delta delta-flat">実績 ${fmt(lastAi)}件</div>${deltaHTML(fcstAi, prevAi)}`)
+    : kpiBox('AI経由流入', fmt(lastAi), '件', deltaHTML(lastAi, prevAi));
+  const kpiRatio = inProgress
+    ? kpiBox('AI経由比率（着地予測）', fcstRatio!=null?(fcstRatio*100).toFixed(2):'—', '%',
+        `<div class="delta delta-flat">実績比率 ${lastRatio!=null?(lastRatio*100).toFixed(2):'—'}%</div>${deltaHTML(fcstRatio, prevRatio, {isPct:true})}`)
+    : kpiBox('AI経由比率', lastRatio!=null?(lastRatio*100).toFixed(2):'—', '%', deltaHTML(lastRatio, prevRatio, {isPct:true}));
+  $('#flow-ss-kpis').innerHTML = [kpiSite, kpiOrg, kpiAi, kpiRatio].join('');
+
+  /* Forecast overlay arrays (only last point has value, marker only) */
+  const fcstSiteArr = siteTotal.map((_,i)=> (inProgress && i===lastI) ? fcstSite : null);
+  const fcstAiArr   = aiTotal.map((_,i)=> (inProgress && i===lastI) ? fcstAi : null);
 
   /* Site total chart */
   new Chart($('#chart-site-total'),{
@@ -882,6 +969,7 @@ function renderFlowSS(){
       {label:'オーガニック流入数', data:organic, borderColor:COLORS.muted, backgroundColor:'transparent', borderWidth:1.5, tension:.25, pointRadius:0, yAxisID:'y'},
       {label:'AI経由流入数', data:aiTotal, borderColor:COLORS.mutedLight, backgroundColor:'transparent', borderWidth:1.5, tension:.25, pointRadius:0, yAxisID:'y'},
       {label:'サイト全体流入数', data:siteTotal, borderColor:COLORS.primary, backgroundColor:COLORS.primarySoft, fill:true, borderWidth:2.5, tension:.25, pointRadius:0, pointBackgroundColor:COLORS.primary, pointHoverRadius:4, yAxisID:'y'},
+      {label:'当月着地予測', data:fcstSiteArr, borderColor:COLORS.primary, backgroundColor:'transparent', borderWidth:0, pointRadius:6, pointStyle:'rectRot', pointBackgroundColor:'rgba(0,23,193,.4)', pointBorderColor:COLORS.primary, pointBorderWidth:1.5, yAxisID:'y', showLine:false, spanGaps:false},
       {label:'期間平均', data:siteTotal.map(()=>siteAvg), borderColor:COLORS.ref, backgroundColor:'transparent', borderDash:[5,4], borderWidth:1, pointRadius:0, yAxisID:'y'},
       {label:'AI経由比率', data:aiRatio.map(v=>v==null?null:v*100), borderColor:'#7986cb', backgroundColor:'transparent', borderWidth:1.5, tension:.25, pointRadius:0, borderDash:[2,2], yAxisID:'y2', spanGaps:true},
     ]},
@@ -891,6 +979,24 @@ function renderFlowSS(){
         x:{grid:{color:'#ededed'}, ticks:{color:'#595959'}},
         y:{beginAtZero:true, position:'left', grid:{color:'#ededed'}, ticks:{color:'#595959'}, title:{display:true, text:'流入数（件）', color:'#595959', font:{size:10}}},
         y2:{beginAtZero:true, position:'right', grid:{drawOnChartArea:false}, ticks:{color:'#595959', callback:v=>v+'%'}, title:{display:true, text:'AI経由比率 (%)', color:'#595959', font:{size:10}}}
+      },
+      plugins:{legend:{display:false}, tooltip:{backgroundColor:'#212121', titleFont:{size:11}, bodyFont:{size:11}}}
+    }
+  });
+
+  /* AI-only line chart (NEW) */
+  new Chart($('#chart-ai-total'),{
+    type:'line',
+    data:{labels:lbl, datasets:[
+      {label:'AI経由流入数', data:aiTotal, borderColor:COLORS.cat[1]||'#3949ab', backgroundColor:'rgba(57,73,171,.10)', fill:true, borderWidth:2.5, tension:.25, pointRadius:3, pointBackgroundColor:COLORS.cat[1]||'#3949ab', pointHoverRadius:5},
+      {label:'当月着地予測', data:fcstAiArr, borderColor:'#7986cb', backgroundColor:'transparent', borderWidth:0, pointRadius:7, pointStyle:'rectRot', pointBackgroundColor:'rgba(121,134,203,.5)', pointBorderColor:'#3949ab', pointBorderWidth:1.5, showLine:false},
+      {label:'期間平均', data:aiTotal.map(()=>aiAvg), borderColor:COLORS.ref, backgroundColor:'transparent', borderDash:[5,4], borderWidth:1, pointRadius:0},
+    ]},
+    options:{responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index', intersect:false},
+      scales:{
+        x:{grid:{color:'#ededed'}, ticks:{color:'#595959'}},
+        y:{beginAtZero:true, grid:{color:'#ededed'}, ticks:{color:'#595959'}, title:{display:true, text:'AI経由流入数（件）', color:'#595959', font:{size:10}}}
       },
       plugins:{legend:{display:false}, tooltip:{backgroundColor:'#212121', titleFont:{size:11}, bodyFont:{size:11}}}
     }
