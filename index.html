@@ -989,10 +989,11 @@ const FLOW = (function(){
     fcstCvSite, fcstCvOrg, fcstCvAi};
 })();
 
-/* Year-start indicator: returns array of booleans, true at indices where the year changes vs prev */
+/* Year-start indicator: true at index 0 (so the first month column gets a divider
+   between the label column and the data) and at every year boundary thereafter */
 function yearStarts(lbl){
   const yr = l => { const m = String(l).match(/^(\d{2,4})/); return m ? m[1] : ''; };
-  return lbl.map((l,i) => i>0 && yr(l) !== yr(lbl[i-1]));
+  return lbl.map((l,i) => i===0 || yr(l) !== yr(lbl[i-1]));
 }
 
 /* Shared group breakdown table renderer */
@@ -1303,14 +1304,10 @@ function renderFlowCV(){
   const cvYrs = yearStarts(lbl);
   const cvYc = i => cvYrs[i] ? ' year-start' : '';
   let ct = `<tr><th>項目</th>${lbl.map((l,i)=>`<th class="num${cvYc(i)}">${esc(l)}</th>`).join('')}<th class="num">合計</th></tr>`;
-  ct += `<tr><td><b>サイト全体CV (HubSpot)</b></td>${cvSite.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(siteSum)}</b></td></tr>`;
-  ct += `<tr><td><b>オーガニックCV (HubSpot)</b></td>${cvOrg.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(orgSum)}</b></td></tr>`;
-  ct += `<tr><td><b>AI経由CV (HubSpot)</b></td>${cvAi.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(aiCvSum)}</b></td></tr>`;
+  ct += `<tr><td><b>サイト全体CV</b></td>${cvSite.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(siteSum)}</b></td></tr>`;
+  ct += `<tr><td><b>オーガニックCV</b></td>${cvOrg.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(orgSum)}</b></td></tr>`;
+  ct += `<tr><td><b>AI経由CV</b></td>${cvAi.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(aiCvSum)}</b></td></tr>`;
   ct += `<tr><td><b>AI経由CV比率</b></td>${ratioArr.map((v,i)=>`<td class="num${cvYc(i)}">${v!=null?v.toFixed(2)+'%':'—'}</td>`).join('')}<td class="num"><b>${siteSum>0?(aiCvSum/siteSum*100).toFixed(2)+'%':'—'}</b></td></tr>`;
-  ct += `<tr><td colspan="${lbl.length+2}" style="background:#fafafa;font-size:11px;color:#666;padding:6px 10px"><b>参考</b>：GA4×LLM分類のAI経由CV（旧定義）</td></tr>`;
-  ct += `<tr><td>AI経由CV (LLM分類)</td>${cvTotal.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num">${fmt(cvSum)}</td></tr>`;
-  ct += `<tr><td>累計</td>${cumArr.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num">${fmt(cvSum)}</td></tr>`;
-  ct += `<tr><td>AI経由流入数</td>${aiTotal.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num">${fmt(aiSum)}</td></tr>`;
   $('#tbl-series-cv').innerHTML = ct;
 
   /* CV groups breakdown */
