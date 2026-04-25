@@ -74,6 +74,11 @@ main{flex:1;min-width:0;padding:0;background:var(--bg)}
 .sec-hero h2 .answer{color:var(--blue)}
 .sec-hero h2 .sub-h{display:block;font-weight:500;font-size:14px;color:var(--ink2);margin-top:4px}
 .sec-hero .lead{font-size:12.5px;color:var(--ink2);margin:8px 0 0;border-left:3px solid var(--blue-soft);padding:2px 0 2px 10px;line-height:1.6}
+/* Tab-level summary (2-3 sentences) shown right under sec-hero */
+.tab-summary{background:#fff;border:1px solid var(--line);border-left:4px solid var(--cat-3);border-radius:4px;padding:12px 16px;margin:-6px 0 18px;font-size:12.5px;line-height:1.75;color:var(--ink)}
+.tab-summary .ts-label{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;background:var(--cat-3);padding:2px 8px;border-radius:3px;margin-right:8px;letter-spacing:.04em;vertical-align:1px}
+.tab-summary b{color:var(--ink);font-weight:700}
+.tab-summary .hl-num{color:var(--blue);font-weight:700;font-variant-numeric:tabular-nums}
 
 /* ===== Card ===== */
 .card{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:18px 20px;margin-bottom:14px}
@@ -236,6 +241,10 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 .llm-tag.perplexity{background:var(--perplex)}
 .dl-footnote{font-size:11px;color:var(--ink2);margin-top:10px;padding-top:10px;border-top:1px dashed var(--line-soft)}
 .dl-footnote div{margin-top:2px}
+/* Brand mention highlights inside response detail-body */
+.detail-body mark.hl-brand{background:#fff59d;color:#5d4e00;padding:1px 4px;border-radius:3px;font-weight:700;box-shadow:inset 0 -1px 0 #f9a825}
+.detail-body mark.hl-competitor{background:#e1bee7;color:#4a148c;padding:1px 4px;border-radius:3px;font-weight:600}
+.mention-badge{display:inline-block;margin-left:8px;padding:1px 8px;border-radius:10px;background:#fff59d;color:#7a5c00;font-size:10.5px;font-weight:700;letter-spacing:.02em}
 
 /* ===== Matrix view ===== */
 .matrix-wrap{max-height:none;border:1px solid var(--line);border-radius:4px;overflow:auto}
@@ -431,6 +440,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="diag-title">基礎診断スコア</h2>
         <p class="lead" id="diag-lead"></p>
       </div>
+      <div class="tab-summary"><span class="ts-label">概況</span>IDEATECH公式サイトの「LLM最適化度合い」を A〜D の4カテゴリ・全20項目で診断した結果です。<b>5点 / 3点 / 1点</b> の3段階評価で、レーダーと項目別表から改善優先度を確認できます。低スコア（1〜2点）の項目から対応すると、LLM 推奨の獲得効率が高まります。</div>
       <div class="kpis" id="diag-kpis"></div>
       <div class="card">
         <h3>カテゴリ別 平均スコア</h3>
@@ -473,6 +483,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="flow-ss-title">流入指標</h2>
         <p class="lead" id="flow-ss-lead"></p>
       </div>
+      <div class="tab-summary"><span class="ts-label">概況</span>GA4 から取得した <b>サイト全体／オーガニック／AI経由</b> 流入の月次推移を表示します。AI経由は LLM カテゴリ別（大手汎用LLM／LLM検索エンジン／その他）で内訳化され、当月分は <b>当月着地予測</b> マーカーで併記。AI経由比率の推移と LLM 別貢献度をご確認ください。</div>
       <div id="flow-ss-forecast-banner"></div>
       <div class="kpis" id="flow-ss-kpis"></div>
       <div class="card">
@@ -519,6 +530,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="flow-cv-title">コンバージョン (CV)</h2>
         <p class="lead" id="flow-cv-lead"></p>
       </div>
+      <div class="tab-summary"><span class="ts-label">概況</span>HubSpot から取得した <b>サイト全体／オーガニック／AI経由</b> CV（新規リード）件数の月次推移を表示します。AI経由CVは GA4 のソース判定と HubSpot リードを紐付け、LLMカテゴリ別の貢献度まで分解。当月分は予測着地値を併記しています。</div>
       <div id="flow-cv-forecast-banner"></div>
       <div class="kpis" id="flow-cv-kpis"></div>
       <div class="card">
@@ -566,6 +578,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="matrix-title">推奨状況 一覧</h2>
         <p class="lead" id="matrix-lead"></p>
       </div>
+      <div class="tab-summary"><span class="ts-label">概況</span>PR関連の <b>40プロンプト</b> に対し、4LLM（ChatGPT／Gemini／Copilot／Perplexity）が <b>IDEATECH／リサピー</b> もしくは競合 <b>PRIZMA</b> を言及するかを ⚫︎／▲ でマトリクス表示しています。プロンプトをクリックすると応答全文タブの該当プロンプトに直接ジャンプし、自動展開されます。</div>
       <div class="kpis" id="matrix-kpis"></div>
       <div class="card">
         <h3>40プロンプト × 4LLM ⚫︎/▲ マトリクス</h3>
@@ -592,6 +605,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="prompts-title">プロンプト推奨状況</h2>
         <p class="lead" id="prompts-lead"></p>
       </div>
+      <div class="tab-summary"><span class="ts-label">概況</span>推奨状況一覧の各プロンプトに対する <b>4LLM の応答全文</b> を確認できます。応答内の「<mark class="hl-brand">IDEATECH</mark> ／ <mark class="hl-brand">リサピー</mark>」言及は黄色、競合の「<mark class="hl-competitor">PRIZMA</mark>」言及は紫色でハイライトされます。検索／分類で絞り込み、▶ でプロンプトを展開してご確認ください。</div>
       <div class="kpis" id="prompts-kpis"></div>
       <div class="card">
         <h3>40プロンプト × 4LLM 応答全文</h3>
@@ -613,6 +627,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="cit-ideatech-title">サイテーション総数</h2>
         <p class="lead" id="cit-ideatech-lead"></p>
       </div>
+      <div class="tab-summary"><span class="ts-label">概況</span><b>IDEATECH</b> に関するメディア言及の一覧を ahrefs データから表示します。<b>DR（Domain Rating）</b> でフィルタリングでき、「被リンクあり／高DR70+／最上位90+」等で素早く絞り込み可能。<b>DR≥90 行は黄色、DR≥70 行は青色</b> でハイライトされ、権威性の高い言及がひと目でわかります。</div>
       <div class="kpis" id="cit-ideatech-kpis"></div>
       <div class="card">
         <h3>サイテーション一覧</h3>
@@ -634,6 +649,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="cit-risapy-title">サイテーション総数</h2>
         <p class="lead" id="cit-risapy-lead"></p>
       </div>
+      <div class="tab-summary"><span class="ts-label">概況</span><b>リサピー</b> に関するメディア言及の一覧を ahrefs データから表示します。フィルタや色分けは IDEATECH タブと同じ仕様で、<b>DR≥90 を黄色、DR≥70 を青色</b> でハイライト表示。被リンクの権威度の高い言及を素早く特定できます。</div>
       <div class="kpis" id="cit-risapy-kpis"></div>
       <div class="card">
         <h3>サイテーション一覧</h3>
@@ -1392,6 +1408,21 @@ function renderMD(text){
   return s;
 }
 
+/* Highlight brand mentions ("IDEATECH" / "リサピー" / "アイデアテック" / "PRIZMA")
+   in already-rendered HTML. Splits by tags so we never wrap inside attributes. */
+function highlightBrands(html){
+  if(!html) return html;
+  const parts = String(html).split(/(<[^>]*>)/);
+  const reBrand = /(IDEATECH|アイデアテック|リサピー)/gi;
+  const reCompetitor = /(PRIZMA|プリズマ)/gi;
+  return parts.map((p,i)=>{
+    if(i % 2 === 1) return p; /* tag — leave untouched */
+    return p
+      .replace(reBrand, '<mark class="hl-brand">$1</mark>')
+      .replace(reCompetitor, '<mark class="hl-competitor">$1</mark>');
+  }).join('');
+}
+
 /* =========================================================== */
 /* ③-A 推奨状況 一覧表 (matrix)                                */
 /* =========================================================== */
@@ -1583,7 +1614,9 @@ function renderPrompts(){
     const responses = llms.map((l,i)=>{
       const body = r.responses[i];
       const cls = llmKeys[i];
-      return `<details><summary><span><span class="llm-tag ${cls}">${esc(l)}</span>応答全文（${body?body.length.toLocaleString('ja-JP')+' 文字':'なし'}）</span></summary><div class="detail-body">${renderMD(body)}</div></details>`;
+      const mentionCount = body ? ((String(body).match(/IDEATECH|アイデアテック|リサピー/gi)||[]).length) : 0;
+      const badge = mentionCount>0 ? `<span class="mention-badge">言及 ${mentionCount}</span>` : '';
+      return `<details><summary><span><span class="llm-tag ${cls}">${esc(l)}</span>応答全文（${body?body.length.toLocaleString('ja-JP')+' 文字':'なし'}）${badge}</span></summary><div class="detail-body">${highlightBrands(renderMD(body))}</div></details>`;
     }).join('');
     const volStr = r.volume!=null ? r.volume.toLocaleString('ja-JP') : '—';
     return `
@@ -1634,22 +1667,50 @@ function renderPrompts(){
 }
 renderPrompts();
 
-/* Hash navigation: when arriving at #prompt-N (e.g. from the matrix table),
-   auto-open all <details> inside that prompt card and scroll into view. */
-function openPromptByHash(){
-  const hash = window.location.hash;
-  if(!/^#prompt-/.test(hash)) return;
-  const card = document.querySelector(hash);
+/* Hash / direct navigation: when arriving at #prompt-N (e.g. from the matrix table),
+   switch to the prompts section first, then auto-open all <details> inside the
+   target card, scroll into view, and briefly highlight. */
+function jumpToPrompt(no){
+  if(!no) return;
+  /* 1) Activate prompts section */
+  $$('.section').forEach(s=>s.classList.remove('active'));
+  const target = $('#sec-prompts');
+  if(target) target.classList.add('active');
+  navBtns.forEach(b=>b.classList.toggle('active', b.dataset.section==='prompts'));
+  closeSidebar();
+  /* 2) Update hash to #prompt-N (without firing hashchange recursion) */
+  if(location.hash !== '#prompt-'+no){
+    history.replaceState(null,'','#prompt-'+no);
+  }
+  /* 3) Find card, open details, scroll, highlight */
+  const card = document.getElementById('prompt-'+no);
   if(!card) return;
+  /* Make sure search/filter doesn't hide it */
+  card.style.display = '';
   card.querySelectorAll('details').forEach(d => d.open = true);
-  /* Highlight briefly */
   card.style.transition = 'box-shadow .25s';
   card.style.boxShadow = '0 0 0 3px var(--blue-soft)';
-  setTimeout(()=>{ card.style.boxShadow = ''; }, 1400);
-  setTimeout(()=>card.scrollIntoView({behavior:'smooth', block:'start'}), 60);
+  setTimeout(()=>{ card.style.boxShadow = ''; }, 1600);
+  /* Wait a tick so the section becomes visible before scrolling */
+  setTimeout(()=>card.scrollIntoView({behavior:'smooth', block:'start'}), 80);
 }
+function openPromptByHash(){
+  const m = (window.location.hash||'').match(/^#prompt-(\d+)/);
+  if(!m) return;
+  jumpToPrompt(m[1]);
+}
+/* Intercept clicks on matrix prompt links to bypass hashchange races */
+document.addEventListener('click', (e)=>{
+  const a = e.target.closest && e.target.closest('a.prompt-link');
+  if(!a) return;
+  const href = a.getAttribute('href')||'';
+  const m = href.match(/^#prompt-(\d+)/);
+  if(!m) return;
+  e.preventDefault();
+  jumpToPrompt(m[1]);
+});
 window.addEventListener('hashchange', openPromptByHash);
-if(/^#prompt-/.test(window.location.hash)) setTimeout(openPromptByHash, 200);
+if(/^#prompt-/.test(window.location.hash)) setTimeout(openPromptByHash, 250);
 
 /* =========================================================== */
 /* ④ サイテーション                                            */
