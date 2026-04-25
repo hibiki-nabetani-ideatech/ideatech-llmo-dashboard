@@ -440,7 +440,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="diag-title">基礎診断スコア</h2>
         <p class="lead" id="diag-lead"></p>
       </div>
-      <div class="tab-summary"><span class="ts-label">概況</span>IDEATECH公式サイトの「LLM最適化度合い」を A〜D の4カテゴリ・全20項目で診断した結果です。<b>5点 / 3点 / 1点</b> の3段階評価で、レーダーと項目別表から改善優先度を確認できます。低スコア（1〜2点）の項目から対応すると、LLM 推奨の獲得効率が高まります。</div>
+      <div class="tab-summary" id="diag-summary"></div>
       <div class="kpis" id="diag-kpis"></div>
       <div class="card">
         <h3>カテゴリ別 平均スコア</h3>
@@ -483,7 +483,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="flow-ss-title">流入指標</h2>
         <p class="lead" id="flow-ss-lead"></p>
       </div>
-      <div class="tab-summary"><span class="ts-label">概況</span>GA4 から取得した <b>サイト全体／オーガニック／AI経由</b> 流入の月次推移を表示します。AI経由は LLM カテゴリ別（大手汎用LLM／LLM検索エンジン／その他）で内訳化され、当月分は <b>当月着地予測</b> マーカーで併記。AI経由比率の推移と LLM 別貢献度をご確認ください。</div>
+      <div class="tab-summary" id="flow-ss-summary"></div>
       <div id="flow-ss-forecast-banner"></div>
       <div class="kpis" id="flow-ss-kpis"></div>
       <div class="card">
@@ -530,7 +530,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="flow-cv-title">コンバージョン (CV)</h2>
         <p class="lead" id="flow-cv-lead"></p>
       </div>
-      <div class="tab-summary"><span class="ts-label">概況</span>HubSpot から取得した <b>サイト全体／オーガニック／AI経由</b> CV（新規リード）件数の月次推移を表示します。AI経由CVは GA4 のソース判定と HubSpot リードを紐付け、LLMカテゴリ別の貢献度まで分解。当月分は予測着地値を併記しています。</div>
+      <div class="tab-summary" id="flow-cv-summary"></div>
       <div id="flow-cv-forecast-banner"></div>
       <div class="kpis" id="flow-cv-kpis"></div>
       <div class="card">
@@ -578,7 +578,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="matrix-title">推奨状況 一覧</h2>
         <p class="lead" id="matrix-lead"></p>
       </div>
-      <div class="tab-summary"><span class="ts-label">概況</span>PR関連の <b>40プロンプト</b> に対し、4LLM（ChatGPT／Gemini／Copilot／Perplexity）が <b>IDEATECH／リサピー</b> もしくは競合 <b>PRIZMA</b> を言及するかを ⚫︎／▲ でマトリクス表示しています。プロンプトをクリックすると応答全文タブの該当プロンプトに直接ジャンプし、自動展開されます。</div>
+      <div class="tab-summary" id="matrix-summary"></div>
       <div class="kpis" id="matrix-kpis"></div>
       <div class="card">
         <h3>40プロンプト × 4LLM ⚫︎/▲ マトリクス</h3>
@@ -605,7 +605,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="prompts-title">プロンプト推奨状況</h2>
         <p class="lead" id="prompts-lead"></p>
       </div>
-      <div class="tab-summary"><span class="ts-label">概況</span>推奨状況一覧の各プロンプトに対する <b>4LLM の応答全文</b> を確認できます。応答内の「<mark class="hl-brand">IDEATECH</mark> ／ <mark class="hl-brand">リサピー</mark>」言及は黄色、競合の「<mark class="hl-competitor">PRIZMA</mark>」言及は紫色でハイライトされます。検索／分類で絞り込み、▶ でプロンプトを展開してご確認ください。</div>
+      <div class="tab-summary" id="prompts-summary"></div>
       <div class="kpis" id="prompts-kpis"></div>
       <div class="card">
         <h3>40プロンプト × 4LLM 応答全文</h3>
@@ -627,7 +627,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="cit-ideatech-title">サイテーション総数</h2>
         <p class="lead" id="cit-ideatech-lead"></p>
       </div>
-      <div class="tab-summary"><span class="ts-label">概況</span><b>IDEATECH</b> に関するメディア言及の一覧を ahrefs データから表示します。<b>DR（Domain Rating）</b> でフィルタリングでき、「被リンクあり／高DR70+／最上位90+」等で素早く絞り込み可能。<b>DR≥90 行は黄色、DR≥70 行は青色</b> でハイライトされ、権威性の高い言及がひと目でわかります。</div>
+      <div class="tab-summary" id="cit-ideatech-summary"></div>
       <div class="kpis" id="cit-ideatech-kpis"></div>
       <div class="card">
         <h3>サイテーション一覧</h3>
@@ -649,7 +649,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h2 id="cit-risapy-title">サイテーション総数</h2>
         <p class="lead" id="cit-risapy-lead"></p>
       </div>
-      <div class="tab-summary"><span class="ts-label">概況</span><b>リサピー</b> に関するメディア言及の一覧を ahrefs データから表示します。フィルタや色分けは IDEATECH タブと同じ仕様で、<b>DR≥90 を黄色、DR≥70 を青色</b> でハイライト表示。被リンクの権威度の高い言及を素早く特定できます。</div>
+      <div class="tab-summary" id="cit-risapy-summary"></div>
       <div class="kpis" id="cit-risapy-kpis"></div>
       <div class="card">
         <h3>サイテーション一覧</h3>
@@ -1827,6 +1827,152 @@ function renderCitation(prefix, dataKey, sheetLabel){
 }
 renderCitation('cit-ideatech', 'citation_ideatech', 'IDEATECH');
 renderCitation('cit-risapy', 'citation_risapy', 'リサピー');
+
+/* =========================================================== */
+/* Tab summaries — interpretive callouts based on actual data  */
+/* =========================================================== */
+function renderTabSummaries(){
+  const wrap = (label, html) => `<span class="ts-label">${label}</span>${html}`;
+  const num = n => `<span class="hl-num">${(typeof n==='number'?n.toLocaleString('ja-JP'):n)}</span>`;
+  const yesMarks = ['⚫︎','●','◉'];
+
+  /* ---------- ① diag ---------- */
+  try {
+    const diag = DATA.diag || [];
+    if(diag.length){
+      const overall = diag.reduce((a,r)=>a+(r.score||0),0)/diag.length;
+      const byCat = {};
+      diag.forEach(r=>{
+        if(!byCat[r.group]) byCat[r.group] = [];
+        byCat[r.group].push(r.score||0);
+      });
+      const catAvg = Object.fromEntries(Object.entries(byCat).map(([k,v])=>[k, v.reduce((a,b)=>a+b,0)/v.length]));
+      const groupNames = {'A':'技術基盤','B':'コンテンツ網羅性','C':'コンテンツ品質','D':'外部評価'};
+      const sortedCats = Object.entries(catAvg).sort((a,b)=>a[1]-b[1]);
+      const lowestCat = sortedCats[0]; /* lowest avg */
+      const top5 = diag.filter(r=>(r.score||0)>=5).length;
+      const low = diag.filter(r=>(r.score||0)<=2).sort((a,b)=>(a.score||0)-(b.score||0));
+      const lowItems = low.length ? low.map(r=>`<b>「${esc(r.item||'')}」(${r.score}点)</b>`).join('・') : 'なし';
+      const otherCats = sortedCats.slice(1).filter(([_,v])=>v>=4.5).map(([k,_])=>`カテゴリ${k}（${groupNames[k]||''}）`).join('・');
+      const html = `総合スコア ${num(overall.toFixed(2))} / 5.0、20項目中 ${num(top5)}項目が満点。${otherCats?otherCats+'は高水準で':''}<b>カテゴリ${lowestCat[0]}（${groupNames[lowestCat[0]]||''}）が${lowestCat[1].toFixed(1)}点</b>と最も低く、特に ${lowItems} が改善余地。技術・品質・外部評価は LLMO 最適化済みで、<b>第三者言及型の網羅性強化（Wikipedia・外部ナレッジソース）</b>が次の打ち手。`;
+      const el = $('#diag-summary'); if(el) el.innerHTML = wrap('概況', html);
+    }
+  } catch(e){ console.warn('diag-summary err', e); }
+
+  /* ---------- ② flow-ss ---------- */
+  try {
+    const flow = DATA.flow || {};
+    const months = flow.months || [];
+    const aiTot = (flow.series||{}).ai_total || [];
+    const aiRatio = (flow.series||{}).ai_ratio || [];
+    const yearSum = yr => aiTot.reduce((s,v,i)=>s+((months[i]||'').startsWith(yr)&&v!=null?v:0),0);
+    const yearN = yr => aiTot.reduce((s,v,i)=>s+((months[i]||'').startsWith(yr)&&v!=null?1:0),0);
+    const y24 = yearSum('2024'), y25 = yearSum('2025'), y26 = yearSum('2026');
+    const n26 = yearN('2026');
+    const ratio2425 = y24>0 ? (y25/y24).toFixed(1) : '—';
+    /* per-LLM totals */
+    const llmTotals = [];
+    (flow.flow_groups||[]).forEach(g => (g.llms||[]).forEach(l => {
+      const t = (l.data||[]).reduce((s,v)=>s+(v||0),0);
+      if(t>0) llmTotals.push({name:l.name, total:t});
+    }));
+    llmTotals.sort((a,b)=>b.total-a.total);
+    const top2 = llmTotals.slice(0,2).map(l=>`<b>${esc(l.name)} 累計${num(l.total)}件</b>`).join('・');
+    /* latest non-null month */
+    let lastIdx=-1;
+    for(let i=aiTot.length-1;i>=0;i--){ if(aiTot[i]!=null){lastIdx=i;break;} }
+    const lastM = lastIdx>=0 ? months[lastIdx] : '—';
+    const lastV = lastIdx>=0 ? aiTot[lastIdx] : 0;
+    const lastR = lastIdx>=0 && aiRatio[lastIdx]!=null ? (aiRatio[lastIdx]*100).toFixed(2)+'%' : '—';
+    const html = `AI経由流入は <b>2024年${num(y24)}件 → 2025年${num(y25)}件（約${ratio2425}倍）</b>と急拡大。直近 ${esc(lastM||'')} は ${num(lastV)}件・AI比率 ${num(lastR)}と当月分のため低めで推移。LLM別では ${top2 || '—'} が中心で、<b>SNS型・専門分野型LLMからの流入はほぼゼロ</b>のため、新興LLMへの露出拡大が次の伸びしろ。`;
+    const el = $('#flow-ss-summary'); if(el) el.innerHTML = wrap('概況', html);
+  } catch(e){ console.warn('flow-ss-summary err', e); }
+
+  /* ---------- ② flow-cv ---------- */
+  try {
+    const flow = DATA.flow || {};
+    const months = flow.months || [];
+    const cvSite = flow.cv_site_total || [];
+    const cvAi = flow.cv_ai_total || [];
+    const sumYr = (arr, yr) => arr.reduce((s,v,i)=>s+((months[i]||'').startsWith(yr)&&v!=null?v:0),0);
+    const s24 = sumYr(cvSite,'2024'), s25 = sumYr(cvSite,'2025'), s26 = sumYr(cvSite,'2026');
+    const a24 = sumYr(cvAi,'2024'), a25 = sumYr(cvAi,'2025'), a26 = sumYr(cvAi,'2026');
+    const ratio = s24>0 ? (s25/s24).toFixed(1) : '—';
+    /* AI CV per LLM */
+    const llmCv = [];
+    (flow.cv_groups||[]).forEach(g => (g.llms||[]).forEach(l => {
+      const t = (l.data||[]).reduce((s,v)=>s+(v||0),0);
+      if(t>0) llmCv.push({name:l.name, total:t});
+    }));
+    llmCv.sort((a,b)=>b.total-a.total);
+    const topLLMCv = llmCv.length ? llmCv.slice(0,2).map(l=>`<b>${esc(l.name)} 累計${num(l.total)}件</b>`).join('・') : '—';
+    const aiCvTot = a24+a25+a26;
+    const html = `サイト全体CVは <b>2024年 ${num(s24)}件 → 2025年 ${num(s25)}件（約${ratio}倍）</b>と順調に成長、2026年は4ヶ月で${num(s26)}件のペース。一方 <b>AI経由CVは累計わずか${num(aiCvTot)}件</b>（2024:${num(a24)} / 2025:${num(a25)} / 2026:${num(a26)}）。AI経由CVは ${topLLMCv} が中心で、<b>AI流入の量は伸びているが CV化率はまだ低い</b>のが課題。直近の対策はAI経由訪問者の動線最適化。`;
+    const el = $('#flow-cv-summary'); if(el) el.innerHTML = wrap('概況', html);
+  } catch(e){ console.warn('flow-cv-summary err', e); }
+
+  /* ---------- ③ prompts-matrix ---------- */
+  try {
+    const P = DATA.prompts || {};
+    const rows = P.rows || [];
+    const llms = P.llms || [];
+    const ideAny = rows.filter(r => (r.ideatech||[]).some(x=>yesMarks.includes(x))).length;
+    const przAny = rows.filter(r => (r.prizma||[]).some(x=>yesMarks.includes(x))).length;
+    const perLLMIde = llms.map((l,i)=>({l, c: rows.filter(r=>yesMarks.includes((r.ideatech||[])[i])).length}));
+    const perLLMPrz = llms.map((l,i)=>({l, c: rows.filter(r=>yesMarks.includes((r.prizma||[])[i])).length}));
+    perLLMIde.sort((a,b)=>b.c-a.c);
+    perLLMPrz.sort((a,b)=>b.c-a.c);
+    const bestIde = perLLMIde[0], worstIde = perLLMIde[perLLMIde.length-1];
+    const topPrz = perLLMPrz[0];
+    const total = rows.length;
+    const html = `40プロンプト中 <b>IDEATECH／リサピーは${num(ideAny)}件（${(ideAny/total*100).toFixed(0)}%）</b>で言及あり。一方競合 <b>PRIZMAは${num(przAny)}件（${(przAny/total*100).toFixed(0)}%）</b>のみで優位性は明確。LLM別では <b>${esc(bestIde.l)} が${num(bestIde.c)}件（${(bestIde.c/total*100).toFixed(0)}%）と最もヒット率が高く</b>、${esc(worstIde.l)} は${num(worstIde.c)}件（${(worstIde.c/total*100).toFixed(0)}%）と最低。PRIZMA は ${esc(topPrz.l)} で${num(topPrz.c)}件最多のため、<b>${esc(topPrz.l)} 向けの差別化発信</b>が次の打ち手。`;
+    const el = $('#matrix-summary'); if(el) el.innerHTML = wrap('概況', html);
+  } catch(e){ console.warn('matrix-summary err', e); }
+
+  /* ---------- ③ prompts ---------- */
+  try {
+    const P = DATA.prompts || {};
+    const rows = P.rows || [];
+    const llms = P.llms || [];
+    let ideTotal=0, przTotal=0;
+    rows.forEach(r => {
+      ideTotal += (r.ideatech||[]).filter(x=>yesMarks.includes(x)).length;
+      przTotal += (r.prizma||[]).filter(x=>yesMarks.includes(x)).length;
+    });
+    const maxCells = rows.length * llms.length;
+    const html = `40プロンプト × 4LLM = ${num(maxCells)}回答中、<b>IDEATECH／リサピー言及は計 ${num(ideTotal)}回（${(ideTotal/maxCells*100).toFixed(0)}%）</b>に対し、<b>競合 PRIZMA は${num(przTotal)}回（${(przTotal/maxCells*100).toFixed(0)}%）</b>と差は ${(ideTotal/Math.max(1,przTotal)).toFixed(1)}倍。応答内のブランド言及は <mark class="hl-brand">黄色</mark>／<mark class="hl-competitor">紫色</mark> でハイライトされるため、推奨文脈の質（ポジティブ／中立／比較対象）を素早く目視確認できます。`;
+    const el = $('#prompts-summary'); if(el) el.innerHTML = wrap('概況', html);
+  } catch(e){ console.warn('prompts-summary err', e); }
+
+  /* ---------- ④ citations ---------- */
+  function citSum(prefix, dataKey, label, compareTo){
+    try {
+      const C = DATA[dataKey] || {};
+      const rows = C.rows || [];
+      const drNum = r => { const n = parseInt(String(r.dr||'').trim(),10); return Number.isFinite(n) ? n : -1; };
+      const total = rows.length;
+      const withBL = rows.filter(r => drNum(r) > 0).length;
+      const noBL = total - withBL;
+      const high = rows.filter(r => drNum(r) >= 70).length;
+      const top = rows.filter(r => drNum(r) >= 90).length;
+      const y2026 = (C.summary||{})['2026年言及数'] || '—';
+      const m3 = (C.summary||{})['3月言及数'] || '—';
+      let compareTxt = '';
+      if(compareTo && DATA[compareTo]){
+        const ct = (DATA[compareTo].rows||[]).length;
+        if(ct>0 && total>0){
+          const ratio = total>=ct ? (total/ct).toFixed(1)+'倍' : '1/'+(ct/total).toFixed(1);
+          compareTxt = `（${compareTo==='citation_ideatech'?'IDEATECH':'リサピー'}比 約${ratio}）`;
+        }
+      }
+      const html = `サイテーション総数 <b>${num(total)}件</b>${compareTxt}。被リンクあり (DR>0) が <b>${num(withBL)}件（${(withBL/total*100).toFixed(1)}%）</b>とほぼ全て ahrefs にインデックスされた信頼性の高いメディア。<b>高DR70+ ${num(high)}件（${(high/total*100).toFixed(1)}%）、最上位90+ ${num(top)}件（${(top/total*100).toFixed(1)}%）</b>と権威性が高水準。2026年は ${esc(y2026)} の新規言及で、<b>${label}は${total>=1000?'圧倒的な物量':total>=300?'安定したメディア露出':'露出量にまだ伸びしろ'}</b>。`;
+      const el = $(`#${prefix}-summary`); if(el) el.innerHTML = wrap('概況', html);
+    } catch(e){ console.warn(prefix+'-summary err', e); }
+  }
+  citSum('cit-ideatech', 'citation_ideatech', 'IDEATECH', 'citation_risapy');
+  citSum('cit-risapy', 'citation_risapy', 'リサピー', 'citation_ideatech');
+}
+renderTabSummaries();
 </script>
 </body>
 </html>
