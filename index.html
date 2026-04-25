@@ -182,6 +182,22 @@ input[type="text"].search:focus,select.search:focus{outline:none;border-color:va
 .pager button:hover:not(:disabled){background:var(--blue-soft);border-color:var(--blue);color:var(--blue)}
 .pager button:disabled{opacity:.4;cursor:not-allowed}
 
+/* ===== Citation DR pills / row highlight / filter tabs ===== */
+.dr-pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;min-width:30px;text-align:center;line-height:1.6}
+.dr-pill.dr-top{background:#ffe082;color:#7a4f00;box-shadow:inset 0 0 0 1px #f1b100}
+.dr-pill.dr-high{background:#bbdefb;color:#0d47a1;box-shadow:inset 0 0 0 1px #64b5f6}
+.dr-pill.dr-mid{background:#e3f2fd;color:#1565c0}
+.dr-pill.dr-low{background:#f5f5f5;color:#757575}
+.dr-pill.dr-zero{background:#fff;color:#bdbdbd;box-shadow:inset 0 0 0 1px #e0e0e0}
+tr.dr-row-top td{background:#fffbe6 !important}
+tr.dr-row-top td:first-child{border-left:3px solid #f1b100}
+tr.dr-row-high td{background:#f5faff !important}
+tr.dr-row-high td:first-child{border-left:3px solid #64b5f6}
+.dr-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.dr-tab{border:1px solid var(--line);background:#fff;padding:5px 12px;border-radius:14px;cursor:pointer;font:inherit;font-size:11.5px;color:var(--ink2);white-space:nowrap}
+.dr-tab:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-soft)}
+.dr-tab.is-active{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600}
+
 /* ===== Details (response viewer) ===== */
 details{border:1px solid var(--line);border-radius:4px;padding:0;margin:6px 0;background:#fff}
 details>summary{cursor:pointer;padding:9px 14px;font-weight:600;font-size:12px;color:var(--ink);list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -238,6 +254,21 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 .matrix-wrap td.col-prompt{cursor:default}
 .matrix-wrap td.col-prompt .p-text{display:block;line-height:1.45;max-height:3em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .matrix-wrap td.col-prompt:hover .p-text{max-height:none;-webkit-line-clamp:unset}
+.matrix-wrap td.col-cat .p-text{display:block;line-height:1.35;max-height:2.7em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.matrix-wrap td.col-cat:hover .p-text{max-height:none;-webkit-line-clamp:unset}
+/* Unified row height + middle alignment for matrix rows */
+.matrix-wrap tbody td{height:54px;vertical-align:middle}
+.matrix-wrap td.col-no{vertical-align:middle}
+.matrix-wrap td.col-cat,.matrix-wrap td.col-prompt{vertical-align:middle}
+/* Category block divider (top border on first row of each new category) */
+.matrix-wrap tbody tr.cat-block-start td{border-top:2px solid #b9c0d4}
+.matrix-wrap tbody tr.cat-block-start td.col-no,
+.matrix-wrap tbody tr.cat-block-start td.col-cat,
+.matrix-wrap tbody tr.cat-block-start td.col-prompt{border-top:2px solid #b9c0d4}
+/* Prompt link → response card */
+.matrix-wrap a.prompt-link{color:inherit;text-decoration:none;display:block}
+.matrix-wrap a.prompt-link:hover{color:var(--blue);text-decoration:underline}
+.matrix-wrap a.prompt-link::after{content:' ▶';font-size:9px;color:var(--blue);opacity:.55;margin-left:4px;vertical-align:middle}
 .matrix-wrap td.cell-mark{text-align:center;font-size:14px;line-height:1;width:64px;font-weight:700}
 .matrix-wrap td.cell-mark.r2{color:var(--up);background:#f3faf6}
 .matrix-wrap td.cell-mark.r1{color:var(--warn);background:#fff8ef}
@@ -585,7 +616,8 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
       <div class="kpis" id="cit-ideatech-kpis"></div>
       <div class="card">
         <h3>サイテーション一覧</h3>
-        <div class="h3-sub">タイトル／URL／公開日／DR を 100件ずつページ送り</div>
+        <div class="h3-sub">DR（ahrefs Domain Rating）でフィルタ／タイトル／URL／公開日 を 100件ずつページ送り</div>
+        <div id="cit-ideatech-filter" class="dr-tabs"></div>
         <div class="toolbar">
           <input type="text" class="search" id="cit-ideatech-search" placeholder="タイトル／URLで検索">
           <span class="small" id="cit-ideatech-count"></span>
@@ -605,7 +637,8 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
       <div class="kpis" id="cit-risapy-kpis"></div>
       <div class="card">
         <h3>サイテーション一覧</h3>
-        <div class="h3-sub">タイトル／URL／公開日／DR を 100件ずつページ送り</div>
+        <div class="h3-sub">DR（ahrefs Domain Rating）でフィルタ／タイトル／URL／公開日 を 100件ずつページ送り</div>
+        <div id="cit-risapy-filter" class="dr-tabs"></div>
         <div class="toolbar">
           <input type="text" class="search" id="cit-risapy-search" placeholder="タイトル／URLで検索">
           <span class="small" id="cit-risapy-count"></span>
@@ -1321,7 +1354,9 @@ renderFlowCV();
 /* =========================================================== */
 function renderMD(text){
   if(!text) return '';
-  let html = esc(text);
+  /* Pre-clean: collapse 3+ blank lines to 2 (paragraph break) */
+  let raw = String(text).replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+  let html = esc(raw);
   html = html.replace(/^\*\s*\*\s*\*/gm, '<hr>');
   html = html.replace(/^---+$/gm, '<hr>');
   html = html.replace(/^#{4}\s+(.+)$/gm, '<h4>$1</h4>');
@@ -1344,7 +1379,17 @@ function renderMD(text){
     }
   }
   if(inUL) out.push('</ul>');
-  return out.join('\n').replace(/\n{2,}/g, '<br><br>').replace(/\n/g, '<br>');
+  let s = out.join('\n');
+  /* Strip newlines hugging block-level tags (no extra blank lines around <h*> / <ul> / <hr>) */
+  s = s.replace(/\n*(<\/?(?:h[1-6]|ul|ol|li|hr|blockquote)[^>]*>)\n*/g, '$1');
+  /* Collapse paragraph breaks to a single <br><br>, then single newlines to <br> */
+  s = s.replace(/\n{2,}/g, '<br><br>');
+  s = s.replace(/\n/g, '<br>');
+  /* Defensive: never more than two <br> in a row */
+  s = s.replace(/(<br\s*\/?>\s*){3,}/g, '<br><br>');
+  /* Trim stray <br> at start/end */
+  s = s.replace(/^(\s*<br\s*\/?>\s*)+/i, '').replace(/(\s*<br\s*\/?>\s*)+$/i, '');
+  return s;
 }
 
 /* =========================================================== */
@@ -1392,7 +1437,7 @@ function renderPromptsMatrix(){
   /* Categories filter */
   const cats = [...new Set(P.rows.map(r=>r.category))].filter(Boolean);
   const sel = $('#matrix-cat');
-  sel.innerHTML = '<option value="">全分類</option>' + cats.map(c=>`<option value="${esc(c)}">${esc(c.replace(/\n/g,' / '))}</option>`).join('');
+  sel.innerHTML = '<option value="">全分類</option>' + cats.map(c=>`<option value="${esc(c)}">${esc(c.replace(/\s*\/?\s*\n\s*\/?\s*/g,' / ').trim())}</option>`).join('');
 
   const tbl = $('#tbl-matrix');
   const searchEl = $('#matrix-search');
@@ -1425,13 +1470,18 @@ function renderPromptsMatrix(){
     '</tr>';
     html += '</thead><tbody>';
 
-    filtered.forEach(r=>{
-      const cat = (r.category||'').replace(/\n/g,' / ');
+    filtered.forEach((r, idx)=>{
+      /* Normalize category: split on \n optionally surrounded by / */
+      const catFlat = (r.category||'').replace(/\s*\/?\s*\n\s*\/?\s*/g, ' / ').trim();
+      const catHtml = esc(r.category||'').replace(/\s*\/?\s*\n\s*\/?\s*/g, '<br>');
       const promptText = r.prompt || '';
-      html += `<tr>
+      const prevCat = idx>0 ? (filtered[idx-1].category||'') : null;
+      const isCatStart = idx>0 && (r.category||'') !== prevCat;
+      const trCls = isCatStart ? ' class="cat-block-start"' : '';
+      html += `<tr${trCls}>
         <td class="col-no">${r.no}</td>
-        <td class="col-cat">${esc(cat)}</td>
-        <td class="col-prompt" title="${esc(promptText)}"><span class="p-text">${esc(promptText)}</span></td>
+        <td class="col-cat" title="${esc(catFlat)}"><span class="p-text">${catHtml}</span></td>
+        <td class="col-prompt" title="${esc(promptText)}"><a class="prompt-link" href="#prompt-${r.no}"><span class="p-text">${esc(promptText)}</span></a></td>
         ${llms.map((_,i)=>{const c=classify(r.ideatech[i]);return `<td class="cell-mark ${c}${i===0?' col-divider':''}">${symChar(c)}</td>`}).join('')}
         ${llms.map((_,i)=>{const c=classify(r.prizma[i]);return `<td class="cell-mark ${c}${i===0?' col-divider':''}">${symChar(c)}</td>`}).join('')}
       </tr>`;
@@ -1515,7 +1565,7 @@ function renderPrompts(){
 
   const cats = [...new Set(P.rows.map(r=>r.category))].filter(Boolean);
   const sel = $('#prompts-cat');
-  sel.innerHTML = '<option value="">全分類</option>' + cats.map(c=>`<option value="${esc(c)}">${esc(c.replace(/\n/g,' / '))}</option>`).join('');
+  sel.innerHTML = '<option value="">全分類</option>' + cats.map(c=>`<option value="${esc(c)}">${esc(c.replace(/\s*\/?\s*\n\s*\/?\s*/g,' / ').trim())}</option>`).join('');
 
   const searchEl = $('#prompts-search');
   const listEl = $('#prompts-list');
@@ -1527,7 +1577,7 @@ function renderPrompts(){
     return '<span class="mark-reco r0">‐</span>';
   }
   function buildRow(r){
-    const catStr = (r.category||'').replace(/\n/g,' / ');
+    const catStr = (r.category||'').replace(/\s*\/?\s*\n\s*\/?\s*/g, ' / ').trim();
     const ideaCells = llms.map((l,i)=>`<div class="mention-cell"><span class="brand-name">${esc(l)}</span>${symbol(r.ideatech[i])}</div>`).join('');
     const prizmaCells = llms.map((l,i)=>`<div class="mention-cell"><span class="brand-name">${esc(l)}</span>${symbol(r.prizma[i])}</div>`).join('');
     const responses = llms.map((l,i)=>{
@@ -1537,7 +1587,7 @@ function renderPrompts(){
     }).join('');
     const volStr = r.volume!=null ? r.volume.toLocaleString('ja-JP') : '—';
     return `
-      <div class="card prompt-card" data-cat="${esc(r.category||'')}" data-text="${esc((r.prompt||'')+' '+(r.category||''))}">
+      <div class="card prompt-card" id="prompt-${r.no}" data-cat="${esc(r.category||'')}" data-text="${esc((r.prompt||'')+' '+(r.category||''))}">
         <div class="prompt-header">
           <div class="no-badge">${r.no}</div>
           <div>
@@ -1584,6 +1634,23 @@ function renderPrompts(){
 }
 renderPrompts();
 
+/* Hash navigation: when arriving at #prompt-N (e.g. from the matrix table),
+   auto-open all <details> inside that prompt card and scroll into view. */
+function openPromptByHash(){
+  const hash = window.location.hash;
+  if(!/^#prompt-/.test(hash)) return;
+  const card = document.querySelector(hash);
+  if(!card) return;
+  card.querySelectorAll('details').forEach(d => d.open = true);
+  /* Highlight briefly */
+  card.style.transition = 'box-shadow .25s';
+  card.style.boxShadow = '0 0 0 3px var(--blue-soft)';
+  setTimeout(()=>{ card.style.boxShadow = ''; }, 1400);
+  setTimeout(()=>card.scrollIntoView({behavior:'smooth', block:'start'}), 60);
+}
+window.addEventListener('hashchange', openPromptByHash);
+if(/^#prompt-/.test(window.location.hash)) setTimeout(openPromptByHash, 200);
+
 /* =========================================================== */
 /* ④ サイテーション                                            */
 /* =========================================================== */
@@ -1592,47 +1659,67 @@ function renderCitation(prefix, dataKey, sheetLabel){
   const rows = C.rows;
   const summary = C.summary || {};
 
+  /* DR helpers */
+  const drNum = r => { const n = parseInt(String(r.dr||'').trim(),10); return Number.isFinite(n) ? n : -1; };
+  const drTier = n => n>=90 ? 'top' : n>=70 ? 'high' : n>=50 ? 'mid' : n>0 ? 'low' : 'zero';
+  const drPill = r => {
+    const n = drNum(r);
+    const t = drTier(n);
+    const lbl = n<0 ? '—' : String(n);
+    return `<span class="dr-pill dr-${t}">${lbl}</span>`;
+  };
+
+  /* Counts */
+  const cntBacklink = rows.filter(r => drNum(r) > 0).length;
+  const cntNoBacklink = rows.length - cntBacklink;
+  const cntHigh = rows.filter(r => drNum(r) >= 70).length;
+  const cntTop = rows.filter(r => drNum(r) >= 90).length;
+
   const totalMentions = summary['総言及数'] || (rows.length+'件');
   const y2026 = summary['2026年言及数'] || '—';
   const m3 = summary['3月言及数'] || '—';
 
   /* Hero */
-  $(`#${prefix}-title`).innerHTML = `${esc(sheetLabel)} 総言及数 <span class="answer">${esc(totalMentions)}</span><span class="sub-h">— 2026年 ${esc(y2026)}（直近3月：${esc(m3)}）</span>`;
-  $(`#${prefix}-lead`).textContent = `テーブルから個別記事のタイトル／URL／公開日／DR（Domain Rating）を確認できます。`;
+  $(`#${prefix}-title`).innerHTML = `${esc(sheetLabel)} 総言及数 <span class="answer">${esc(totalMentions)}</span><span class="sub-h">— 高DR(70+) ${fmt(cntHigh)}件・最上位(90+) ${fmt(cntTop)}件・被リンクなし(DR=0) ${fmt(cntNoBacklink)}件</span>`;
+  $(`#${prefix}-lead`).textContent = `DR（Domain Rating）はahrefsの掲載ドメインの権威スコア(0〜100)。70以上は高権威メディア、90以上は最上位（NHK・日経・Yahoo!ニュース 等）。`;
 
   $(`#${prefix}-kpis`).innerHTML = [
     kpiBox('総言及数', totalMentions, '', '<div class="delta delta-flat">Excel サマリ</div>', true),
-    kpiBox('2026年 言及数', y2026, '', '<div class="delta delta-flat">年累計</div>'),
-    kpiBox('3月 言及数', m3, '', '<div class="delta delta-flat">直近月</div>'),
-    kpiBox('抽出件数', fmt(rows.length), '件', '<div class="delta delta-flat">テーブル全件</div>'),
+    kpiBox('被リンクあり (DR>0)', fmt(cntBacklink), '件', `<div class="delta delta-flat">${(cntBacklink/Math.max(1,rows.length)*100).toFixed(1)}%</div>`),
+    kpiBox('高DR ⭐︎ (70+)', fmt(cntHigh), '件', `<div class="delta delta-flat">${(cntHigh/Math.max(1,rows.length)*100).toFixed(1)}% / うち90+ ${fmt(cntTop)}件</div>`),
+    kpiBox('被リンクなし (DR=0)', fmt(cntNoBacklink), '件', `<div class="delta delta-flat">${(cntNoBacklink/Math.max(1,rows.length)*100).toFixed(1)}%</div>`),
   ].join('');
 
   const tbl = $(`#tbl-${prefix}`);
   const pager = $(`#pager-${prefix}`);
   const searchEl = $(`#${prefix}-search`);
   const countEl = $(`#${prefix}-count`);
+  const filterEl = $(`#${prefix}-filter`);
 
   let filtered = rows.slice();
   let page = 0;
+  let drFilter = 'with'; /* default: 被リンクあり */
   const perPage = 100;
 
   function paint(){
     const start = page*perPage;
     const end = Math.min(start+perPage, filtered.length);
     const slice = filtered.slice(start, end);
-    let html = '<tr><th>No.</th><th>Date</th><th>Title</th><th>URL</th><th class="num">DR</th></tr>';
+    let html = '<tr><th style="width:40px">No.</th><th style="width:100px">Date</th><th>Title</th><th>URL</th><th class="num" style="width:60px">DR</th></tr>';
     slice.forEach(r=>{
       const dom = (r.url.match(/^https?:\/\/([^/]+)/)||[])[1] || '';
-      html += `<tr>
+      const n = drNum(r);
+      const rowCls = n>=90 ? ' class="dr-row-top"' : (n>=70 ? ' class="dr-row-high"' : '');
+      html += `<tr${rowCls}>
         <td class="num small">${esc(r.no)}</td>
         <td class="small" style="white-space:nowrap">${esc(r.date)}</td>
         <td>${esc(r.title)}</td>
         <td class="small">${r.url?`<a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(dom||r.url.slice(0,50))}</a>`:''}</td>
-        <td class="num">${esc(r.dr)}</td>
+        <td class="num">${drPill(r)}</td>
       </tr>`;
     });
     tbl.innerHTML = html;
-    countEl.textContent = `表示 ${start+1}〜${end} / ${filtered.length}件（全${rows.length}件中）`;
+    countEl.textContent = `表示 ${start+1}〜${Math.min(end,filtered.length)} / ${filtered.length}件（全${rows.length}件中）`;
     const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
     pager.innerHTML = `
       <button ${page<=0?'disabled':''} data-act="prev">◀ 前へ</button>
@@ -1646,12 +1733,36 @@ function renderCitation(prefix, dataKey, sheetLabel){
   }
   function applyFilter(){
     const q = (searchEl.value||'').trim().toLowerCase();
-    filtered = !q ? rows.slice() : rows.filter(r => (r.title+' '+r.url).toLowerCase().includes(q));
+    let base = rows.slice();
+    if(drFilter==='with')   base = base.filter(r => drNum(r) > 0);
+    else if(drFilter==='no') base = base.filter(r => drNum(r) <= 0);
+    else if(drFilter==='high') base = base.filter(r => drNum(r) >= 70);
+    else if(drFilter==='top')  base = base.filter(r => drNum(r) >= 90);
+    filtered = !q ? base : base.filter(r => (r.title+' '+r.url).toLowerCase().includes(q));
     page = 0;
     paint();
   }
+  function setupFilter(){
+    if(!filterEl) return;
+    filterEl.innerHTML = `
+      <button class="dr-tab is-active" data-f="with">被リンクあり (${fmt(cntBacklink)})</button>
+      <button class="dr-tab" data-f="high">高DR 70+ (${fmt(cntHigh)})</button>
+      <button class="dr-tab" data-f="top">最上位 90+ (${fmt(cntTop)})</button>
+      <button class="dr-tab" data-f="no">被リンクなし (${fmt(cntNoBacklink)})</button>
+      <button class="dr-tab" data-f="all">全件 (${fmt(rows.length)})</button>
+    `;
+    filterEl.querySelectorAll('.dr-tab').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        filterEl.querySelectorAll('.dr-tab').forEach(x=>x.classList.remove('is-active'));
+        b.classList.add('is-active');
+        drFilter = b.dataset.f;
+        applyFilter();
+      });
+    });
+  }
+  setupFilter();
   searchEl.addEventListener('input', applyFilter);
-  paint();
+  applyFilter();
 }
 renderCitation('cit-ideatech', 'citation_ideatech', 'IDEATECH');
 renderCitation('cit-risapy', 'citation_risapy', 'リサピー');
