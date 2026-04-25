@@ -131,6 +131,16 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 /* Group breakdown: indent (empty first td of LLM rows) */
 #tbl-flow-groups tbody td:first-child:empty,
 #tbl-cv-groups tbody td:first-child:empty{min-width:120px;padding:0}
+/* Year boundary divider (column where year changes) */
+#tbl-series-ss .year-start, #tbl-series-cv .year-start,
+#tbl-flow-groups .year-start, #tbl-cv-groups .year-start{
+  border-left:2px solid #b9c0d4;
+}
+#tbl-series-ss thead th.year-start, #tbl-series-cv thead th.year-start,
+#tbl-flow-groups thead th.year-start, #tbl-cv-groups thead th.year-start{
+  border-left:2px solid #8a93b0;
+  background:#eef0f6;
+}
 
 /* ===== Charts ===== */
 .chart-wrap{height:280px;position:relative}
@@ -623,6 +633,51 @@ Chart.defaults.font.size = 11;
 Chart.defaults.color = '#595959';
 Chart.defaults.borderColor = '#ededed';
 
+/* Year divider plugin — draws a vertical dashed line + year label at year boundaries.
+   Detects boundary by year prefix change in label (e.g. "24/12" → "25/1"). */
+const yearDividerPlugin = {
+  id: 'yearDivider',
+  afterDraw(chart){
+    const {ctx, chartArea, scales, data} = chart;
+    const xScale = scales.x;
+    if(!xScale || !chartArea) return;
+    const labels = data.labels;
+    if(!labels || labels.length < 2) return;
+    const getYr = l => {
+      const s = String(l);
+      // Format is "YY/M" (e.g. "24/12") — first 2 chars = 2-digit year
+      const m = s.match(/^(\d{2,4})/);
+      return m ? m[1] : s;
+    };
+    ctx.save();
+    for(let i=1; i<labels.length; i++){
+      if(getYr(labels[i]) !== getYr(labels[i-1])){
+        const xCur = xScale.getPixelForValue(i);
+        const xPrev = xScale.getPixelForValue(i-1);
+        const x = (xCur + xPrev) / 2;
+        ctx.strokeStyle = 'rgba(120,120,120,0.45)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4,3]);
+        ctx.beginPath();
+        ctx.moveTo(x, chartArea.top);
+        ctx.lineTo(x, chartArea.bottom);
+        ctx.stroke();
+        // Year label at top-left of new year region
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(80,80,80,0.78)';
+        ctx.font = 'bold 10px -apple-system,"Hiragino Kaku Gothic ProN",sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        const yr = getYr(labels[i]);
+        const yrLabel = (yr.length===2 ? '20'+yr : yr) + '年';
+        ctx.fillText(yrLabel, x + 3, chartArea.top + 2);
+      }
+    }
+    ctx.restore();
+  }
+};
+Chart.register(yearDividerPlugin);
+
 const COLORS = {
   primary: '#0017c1',
   primarySoft: 'rgba(0,23,193,.08)',
@@ -934,17 +989,25 @@ const FLOW = (function(){
     fcstCvSite, fcstCvOrg, fcstCvAi};
 })();
 
+/* Year-start indicator: returns array of booleans, true at indices where the year changes vs prev */
+function yearStarts(lbl){
+  const yr = l => { const m = String(l).match(/^(\d{2,4})/); return m ? m[1] : ''; };
+  return lbl.map((l,i) => i>0 && yr(l) !== yr(lbl[i-1]));
+}
+
 /* Shared group breakdown table renderer */
 function groupTableHTML(groups, lbl, pick){
-  let h = `<tr><th>カテゴリ</th><th>LLM</th>${lbl.map(l=>`<th class="num">${esc(l)}</th>`).join('')}<th class="num">合計</th></tr>`;
+  const yrs = yearStarts(lbl);
+  const yc = i => yrs[i] ? ' year-start' : '';
+  let h = `<tr><th>カテゴリ</th><th>LLM</th>${lbl.map((l,i)=>`<th class="num${yc(i)}">${esc(l)}</th>`).join('')}<th class="num">合計</th></tr>`;
   groups.forEach((g)=>{
     const total = pick(g.total);
     /* Insert line break before （ so e.g. 大手汎用LLM<br>（対話型LLM） */
     const lblHtml = esc(g.label).replace(/\n/g,'<br>').replace(/（/g,'<br>（');
-    h += `<tr style="background:var(--cell-bg)"><td colspan="2" class="cat-cell"><b>${lblHtml}</b></td>${total.map(v=>`<td class="num"><b>${fmt(v)}</b></td>`).join('')}<td class="num"><b>${fmt(sum(total))}</b></td></tr>`;
+    h += `<tr style="background:var(--cell-bg)"><td colspan="2" class="cat-cell"><b>${lblHtml}</b></td>${total.map((v,i)=>`<td class="num${yc(i)}"><b>${fmt(v)}</b></td>`).join('')}<td class="num"><b>${fmt(sum(total))}</b></td></tr>`;
     g.llms.forEach(l=>{
       const data = pick(l.data);
-      h += `<tr><td></td><td class="llm-name">${esc(l.name)}</td>${data.map(v=>`<td class="num">${fmt(v)}</td>`).join('')}<td class="num">${fmt(sum(data))}</td></tr>`;
+      h += `<tr><td></td><td class="llm-name">${esc(l.name)}</td>${data.map((v,i)=>`<td class="num${yc(i)}">${fmt(v)}</td>`).join('')}<td class="num">${fmt(sum(data))}</td></tr>`;
     });
   });
   return h;
@@ -1077,7 +1140,9 @@ function renderFlowSS(){
   });
 
   /* SS summary table（CVを除く） */
-  let st = `<tr><th>項目</th>${lbl.map(l=>`<th class="num">${esc(l)}</th>`).join('')}<th class="num">合計</th></tr>`;
+  const ssYrs = yearStarts(lbl);
+  const ssYc = i => ssYrs[i] ? ' year-start' : '';
+  let st = `<tr><th>項目</th>${lbl.map((l,i)=>`<th class="num${ssYc(i)}">${esc(l)}</th>`).join('')}<th class="num">合計</th></tr>`;
   const seriesRows = [
     ['サイト全体流入数', siteTotal, fmt],
     ['オーガニック流入数', organic, fmt],
@@ -1086,7 +1151,7 @@ function renderFlowSS(){
   ];
   seriesRows.forEach(([name, arr, fn])=>{
     const total = name==='AI経由比率' ? '' : fmt(sum(arr));
-    st += `<tr><td><b>${esc(name)}</b></td>${arr.map(v=>`<td class="num">${fn(v)}</td>`).join('')}<td class="num"><b>${total}</b></td></tr>`;
+    st += `<tr><td><b>${esc(name)}</b></td>${arr.map((v,i)=>`<td class="num${ssYc(i)}">${fn(v)}</td>`).join('')}<td class="num"><b>${total}</b></td></tr>`;
   });
   $('#tbl-series-ss').innerHTML = st;
 
@@ -1235,15 +1300,17 @@ function renderFlowCV(){
     const a = cvAi[i];
     return (s && a!=null) ? (a/s*100) : null;
   });
-  let ct = `<tr><th>項目</th>${lbl.map(l=>`<th class="num">${esc(l)}</th>`).join('')}<th class="num">合計</th></tr>`;
-  ct += `<tr><td><b>サイト全体CV (HubSpot)</b></td>${cvSite.map(v=>`<td class="num">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(siteSum)}</b></td></tr>`;
-  ct += `<tr><td><b>オーガニックCV (HubSpot)</b></td>${cvOrg.map(v=>`<td class="num">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(orgSum)}</b></td></tr>`;
-  ct += `<tr><td><b>AI経由CV (HubSpot)</b></td>${cvAi.map(v=>`<td class="num">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(aiCvSum)}</b></td></tr>`;
-  ct += `<tr><td><b>AI経由CV比率</b></td>${ratioArr.map(v=>`<td class="num">${v!=null?v.toFixed(2)+'%':'—'}</td>`).join('')}<td class="num"><b>${siteSum>0?(aiCvSum/siteSum*100).toFixed(2)+'%':'—'}</b></td></tr>`;
+  const cvYrs = yearStarts(lbl);
+  const cvYc = i => cvYrs[i] ? ' year-start' : '';
+  let ct = `<tr><th>項目</th>${lbl.map((l,i)=>`<th class="num${cvYc(i)}">${esc(l)}</th>`).join('')}<th class="num">合計</th></tr>`;
+  ct += `<tr><td><b>サイト全体CV (HubSpot)</b></td>${cvSite.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(siteSum)}</b></td></tr>`;
+  ct += `<tr><td><b>オーガニックCV (HubSpot)</b></td>${cvOrg.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(orgSum)}</b></td></tr>`;
+  ct += `<tr><td><b>AI経由CV (HubSpot)</b></td>${cvAi.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(aiCvSum)}</b></td></tr>`;
+  ct += `<tr><td><b>AI経由CV比率</b></td>${ratioArr.map((v,i)=>`<td class="num${cvYc(i)}">${v!=null?v.toFixed(2)+'%':'—'}</td>`).join('')}<td class="num"><b>${siteSum>0?(aiCvSum/siteSum*100).toFixed(2)+'%':'—'}</b></td></tr>`;
   ct += `<tr><td colspan="${lbl.length+2}" style="background:#fafafa;font-size:11px;color:#666;padding:6px 10px"><b>参考</b>：GA4×LLM分類のAI経由CV（旧定義）</td></tr>`;
-  ct += `<tr><td>AI経由CV (LLM分類)</td>${cvTotal.map(v=>`<td class="num">${fmt(v)}</td>`).join('')}<td class="num">${fmt(cvSum)}</td></tr>`;
-  ct += `<tr><td>累計</td>${cumArr.map(v=>`<td class="num">${fmt(v)}</td>`).join('')}<td class="num">${fmt(cvSum)}</td></tr>`;
-  ct += `<tr><td>AI経由流入数</td>${aiTotal.map(v=>`<td class="num">${fmt(v)}</td>`).join('')}<td class="num">${fmt(aiSum)}</td></tr>`;
+  ct += `<tr><td>AI経由CV (LLM分類)</td>${cvTotal.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num">${fmt(cvSum)}</td></tr>`;
+  ct += `<tr><td>累計</td>${cumArr.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num">${fmt(cvSum)}</td></tr>`;
+  ct += `<tr><td>AI経由流入数</td>${aiTotal.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num">${fmt(aiSum)}</td></tr>`;
   $('#tbl-series-cv').innerHTML = ct;
 
   /* CV groups breakdown */
