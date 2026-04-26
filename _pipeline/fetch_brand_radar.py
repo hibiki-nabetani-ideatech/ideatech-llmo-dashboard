@@ -49,11 +49,15 @@ def fetch_one(token: str, data_source: str, report_id: str, country: str, limit:
     params = {
         'report_id': report_id,
         'data_source': data_source,
-        'country': country,
         'select': SELECT_FIELDS,
         'limit': str(limit),
         'output': 'json',
     }
+    # ahrefs HTTP API expects lowercase ISO codes (e.g. 'jp', not 'JP') and
+    # rejects the param entirely if empty. The MCP wrapper normalizes case
+    # internally; we have to do it ourselves here.
+    if country:
+        params['country'] = country.lower()
     qs = urllib.parse.urlencode(params)
     url = f'{API_URL}?{qs}'
     req = urllib.request.Request(url, method='GET')
