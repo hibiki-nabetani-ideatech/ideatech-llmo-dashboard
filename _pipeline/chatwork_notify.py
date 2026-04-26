@@ -27,7 +27,7 @@ import urllib.request
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(ROOT, 'data_v3.json')
-DEFAULT_URL = 'https://hibiki-nabetani-ideatech.github.io/ideatech-llmo-dashboard/'
+DEFAULT_URL = 'https://hibiki-nabetani-ideatech.github.io/ideatech-llmo-dashboard/#sec-diff'
 
 
 def fmt_num(n) -> str:
@@ -69,6 +69,7 @@ def build_message(data: dict, url: str) -> str:
     diff = data.get('diff') or {}
     if not diff.get('has_prev'):
         return (
+            f'[toall]\n'
             f'[info][title]IDEATECH LLMO ダッシュボード 週次更新[/title]'
             f'今週の差分: 初回スナップショット取得済み（前週データなし）。'
             f'来週月曜から週次の流入/CV増分・推奨ステータス変化・新規サイテーションを反映します。\n'
@@ -77,6 +78,7 @@ def build_message(data: dict, url: str) -> str:
 
     flow_latest = (diff.get('flow') or {}).get('site_total', {}).get('latest_month') or {}
     flow_ai_latest = (diff.get('flow') or {}).get('ai_total', {}).get('latest_month') or {}
+    ai_ratio_latest = (diff.get('flow') or {}).get('ai_ratio', {}).get('latest_month') or {}
     cv_latest = (diff.get('cv') or {}).get('cv_site_total', {}).get('latest_month') or {}
     cv_ai_latest = (diff.get('cv') or {}).get('cv_ai_total', {}).get('latest_month') or {}
 
@@ -139,30 +141,60 @@ def build_message(data: dict, url: str) -> str:
     else:
         lines.append('④ 新規サイテーション: なし')
 
-    # Headline
-    headline_parts = []
-    if flow_latest.get('delta') is not None and flow_latest.get('delta') != 0:
-        d = flow_latest.get('delta')
-        headline_parts.append(f'サイト流入 {fmt_signed(d)}件')
-    if flips_gain > 0:
-        headline_parts.append(f'推奨獲得 +{flips_gain}件')
-    if flips_lost > 0:
-        headline_parts.append(f'推奨喪失 -{flips_lost}件')
-    if (new_i + new_r) > 0:
-        headline_parts.append(f'新規サイテーション +{new_i + new_r}件')
-
-    if headline_parts:
-        headline = '、'.join(headline_parts) + '。'
+    # Headline — mirror the dashboard 概況 logic (build_html_v3.py renderDiff)
+    new_cit_tot = new_i + new_r
+    summary_parts = []
+    if flow_latest.get('current') is not None and flow_latest.get('previous') is not None:
+        d = flow_latest.get('delta') or 0
+        dir_t = '増加' if d > 0 else ('減少' if d < 0 else '横ばい')
+        summary_parts.append(
+            f'直近月 {flow_latest.get("month") or "—"} のサイト全体流入は '
+            f'{fmt_num(flow_latest.get("current"))}件'
+            f'（前週スナップショット比 {fmt_signed(flow_latest.get("delta"))}件 / '
+            f'{fmt_pct(flow_latest.get("pct_change"))}）で{dir_t}'
+        )
+    if flow_ai_latest.get('current') is not None or flow_ai_latest.get('previous') is not None:
+        ad = flow_ai_latest.get('delta') or 0
+        ai_dir = '増加' if ad > 0 else ('減少' if ad < 0 else '横ばい')
+        ratio_str = ''
+        if ai_ratio_latest.get('current') is not None:
+            ratio_str = f'／AI経由比率 {fmt_pct(ai_ratio_latest.get("current"))}'
+        summary_parts.append(
+            f'うちAI経由流入は {fmt_num(flow_ai_latest.get("current") or 0)}件'
+            f'（{fmt_signed(flow_ai_latest.get("delta"))}件 / '
+            f'{fmt_pct(flow_ai_latest.get("pct_change"))}）で{ai_dir}{ratio_str}'
+        )
+    if cv_latest.get('current') is not None or cv_latest.get('previous') is not None:
+        summary_parts.append(
+            f'同月CVは {fmt_num(cv_latest.get("current") or 0)}件'
+            f'（{fmt_signed(cv_latest.get("delta"))}件）'
+        )
+    if cv_ai_latest.get('current') is not None or cv_ai_latest.get('previous') is not None:
+        summary_parts.append(
+            f'うちAI経由CVは {fmt_num(cv_ai_latest.get("current") or 0)}件'
+            f'（{fmt_signed(cv_ai_latest.get("delta"))}件）'
+        )
+    if flips_total > 0:
+        summary_parts.append(f'推奨ステータスは {flips_total}件 flip（獲得 {flips_gain} / 喪失 {flips_lost}）')
     else:
-        headline = '前週から目立った変化はありませんでした。'
+        summary_parts.append('推奨ステータスの変化はなし')
+    if new_cit_tot > 0:
+        summary_parts.append(f'新規サイテーション {new_cit_tot}件（IDEATECH {new_i} / リサピー {new_r}）')
+    else:
+        summary_parts.append('新規サイテーションはなし')
+    if resp_cnt > 0:
+        summary_parts.append(f'応答内容の差分 {resp_cnt}ケースを③タブに格納')
+
+    headline = '。'.join(summary_parts) + '。' if summary_parts else '前週から目立った変化はありませんでした。'
 
     body = '\n'.join(lines)
 
     msg = (
+        f'[toall]\n'
         f'[info][title]IDEATECH LLMO ダッシュボード 週次更新[/title]'
         f'■ 今週のサマリ\n{headline}\n\n'
         f'■ タブ別の主な変化\n{body}\n\n'
-        f'■ ダッシュボード\n{url}[/info]'
+        f'■ ダッシュボード（前週比 差分タブ）\n{url}[/info]'
     )
     return msg
 

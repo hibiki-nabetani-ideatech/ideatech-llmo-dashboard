@@ -1995,8 +1995,11 @@ function renderDiff(){
   const flowLatest = D.flow && D.flow.site_total && D.flow.site_total.latest_month;
   const flowDelta = flowLatest && flowLatest.delta;
   const flowPct = flowLatest && flowLatest.pct_change;
+  const aiFlowLatest = D.flow && D.flow.ai_total && D.flow.ai_total.latest_month;
+  const aiRatioLatest = D.flow && D.flow.ai_ratio && D.flow.ai_ratio.latest_month;
   const cvLatest = D.cv && D.cv.cv_site_total && D.cv.cv_site_total.latest_month;
   const cvDelta = cvLatest && cvLatest.delta;
+  const cvAiLatest = D.cv && D.cv.cv_ai_total && D.cv.cv_ai_total.latest_month;
 
   const kpi = $('#diff-kpis');
   if(kpi){
@@ -2016,8 +2019,16 @@ function renderDiff(){
       const dirT = (flowLatest.delta||0) > 0 ? '増加' : (flowLatest.delta||0) < 0 ? '減少' : '横ばい';
       parts.push(`直近月 <b>${esc(flowLatest.month||'')}</b> のサイト全体流入は <b>${N(flowLatest.current)}件</b>（前週スナップショット比 ${flowLatest.delta==null?'—':sgn(flowLatest.delta)+N(Math.abs(flowLatest.delta))}件 / ${fmtPct(flowLatest.pct_change)}）で<b>${dirT}</b>`);
     }
+    if(aiFlowLatest && (aiFlowLatest.current!=null || aiFlowLatest.previous!=null)){
+      const aiDirT = (aiFlowLatest.delta||0) > 0 ? '増加' : (aiFlowLatest.delta||0) < 0 ? '減少' : '横ばい';
+      const ratioStr = (aiRatioLatest && aiRatioLatest.current!=null) ? `／AI経由比率 <b>${fmtPct(aiRatioLatest.current)}</b>` : '';
+      parts.push(`うちAI経由流入は <b>${N(aiFlowLatest.current||0)}件</b>（${aiFlowLatest.delta==null?'—':sgn(aiFlowLatest.delta)+N(Math.abs(aiFlowLatest.delta))}件 / ${fmtPct(aiFlowLatest.pct_change)}）で<b>${aiDirT}</b>${ratioStr}`);
+    }
     if(cvLatest && (cvLatest.current!=null || cvLatest.previous!=null)){
       parts.push(`同月CVは <b>${N(cvLatest.current||0)}件</b>（${cvLatest.delta==null?'—':sgn(cvLatest.delta)+N(Math.abs(cvLatest.delta))}件）`);
+    }
+    if(cvAiLatest && (cvAiLatest.current!=null || cvAiLatest.previous!=null)){
+      parts.push(`うちAI経由CVは <b>${N(cvAiLatest.current||0)}件</b>（${cvAiLatest.delta==null?'—':sgn(cvAiLatest.delta)+N(Math.abs(cvAiLatest.delta))}件）`);
     }
     if(flipsTot > 0){
       parts.push(`推奨ステータスは <b>${flipsTot}件 flip</b>（獲得 ${flipsGain} / 喪失 ${flipsLost}）`);
