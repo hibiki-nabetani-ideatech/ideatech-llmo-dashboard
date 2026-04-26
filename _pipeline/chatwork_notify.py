@@ -225,7 +225,12 @@ def main():
     with open(args.data, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
-    msg = build_message(data, args.url)
+    # Always link to the diff section, even if the env var was set without an anchor.
+    url = args.url or DEFAULT_URL
+    if '#' not in url:
+        url = url.rstrip('/') + '/#sec-diff'
+
+    msg = build_message(data, url)
 
     if args.dry_run:
         print('--- DRY RUN: would send the following body ---')
