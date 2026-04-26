@@ -1,0 +1,63 @@
+name: weekly-llmo-refresh
+
+on:
+  schedule:
+    # 7:00 JST every Monday  =  22:00 UTC every Sunday
+    - cron: '0 22 * * 0'
+  workflow_dispatch:        # also allow manual trigger from the Actions tab
+
+permissions:
+  contents: write           # needed to push the updated index.html / data files
+
+concurrency:
+  group: weekly-llmo-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      TZ: Asia/Tokyo
+      AHREFS_API_TOKEN: ${{ secrets.AHREFS_API_TOKEN }}
+      CHATWORK_API_TOKEN: ${{ secrets.CHATWORK_API_TOKEN }}
+      CHATWORK_ROOM_ID:  ${{ secrets.CHATWORK_ROOM_ID }}
+      BR_DATA_SOURCES: chatgpt           # extend when ahrefs add-ons are contracted
+      DASHBOARD_URL: https://hibiki-nabetani-ideatech.github.io/ideatech-llmo-dashboard/
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          # Use the default GITHUB_TOKEN to allow git push
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Configure git author
+        run: |
+          git config user.name  "ideatech-llmo-bot"
+          git config user.email "bot@ideatech.local"
+
+      - name: Fetch Brand Radar AI Responses
+        run: |
+          mkdir -p /tmp/br
+          python3 _pipeline/fetch_brand_radar.py
+
+      - name: Run weekly pipeline (snapshot → merge → diff → build → commit → push → ChatWork)
+        run: |
+          chmod +x _pipeline/weekly_pipeline.sh
+          bash _pipeline/weekly_pipeline.sh
+
+      - name: Show summary
+        if: always()
+        run: |
+          echo "Last commit:"
+          git log -1 --pretty=fuller || true
+          echo
+          echo "Dashboard URL: $DASHBOARD_URL"
