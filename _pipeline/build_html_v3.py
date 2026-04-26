@@ -2043,7 +2043,7 @@ function renderDiff(){
     if(respCnt > 0){
       parts.push(`応答内容の差分 <b>${respCnt}ケース</b>を本タブ③に格納`);
     }
-    sumEl.innerHTML = `<span class="ts-label">概況</span>${parts.join('。')}。`;
+    sumEl.innerHTML = `<span class="ts-label">概況</span>${parts.join('。<br>')}。`;
   }
 
   /* ---------- ① 流入 / CV ---------- */

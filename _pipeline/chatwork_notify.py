@@ -185,7 +185,7 @@ def build_message(data: dict, url: str) -> str:
     if resp_cnt > 0:
         summary_parts.append(f'応答内容の差分 {resp_cnt}ケースを③タブに格納')
 
-    headline = '。'.join(summary_parts) + '。' if summary_parts else '前週から目立った変化はありませんでした。'
+    headline = '。\n'.join(summary_parts) + '。' if summary_parts else '前週から目立った変化はありませんでした。'
 
     body = '\n'.join(lines)
 
