@@ -27,7 +27,7 @@ import urllib.request
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(ROOT, 'data_v3.json')
-DEFAULT_URL = 'https://hibiki-nabetani-ideatech.github.io/ideatech-llmo-dashboard/#sec-diff'
+DEFAULT_URL = 'https://hibiki-nabetani-ideatech.github.io/ideatech-llmo-dashboard/#diff'
 
 
 def fmt_num(n) -> str:
@@ -226,9 +226,14 @@ def main():
         data = json.load(f)
 
     # Always link to the diff section, even if the env var was set without an anchor.
+    # Note: the dashboard's tab router reads location.hash and looks up #sec-${hash},
+    # so the correct fragment is "#diff" (NOT "#sec-diff").
     url = args.url or DEFAULT_URL
     if '#' not in url:
-        url = url.rstrip('/') + '/#sec-diff'
+        url = url.rstrip('/') + '/#diff'
+    elif url.endswith('#sec-diff'):
+        # Auto-correct legacy/typo anchor.
+        url = url[:-len('#sec-diff')] + '#diff'
 
     msg = build_message(data, url)
 
