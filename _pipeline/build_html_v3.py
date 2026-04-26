@@ -496,7 +496,6 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
   <main>
     <div class="page-header">
       <h1>IDEATECH LLMO ダッシュボード<span class="as-of" id="asof-tag"></span></h1>
-      <div class="sub">元Excel「V3【IDEATECH】IDEA LLMO PRJ.xlsx」の各シートを可視化</div>
     </div>
 
     <!-- ★ 前週比 差分タブ -->
