@@ -804,6 +804,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
       <div class="card">
         <div class="topics-toolbar">
           <div class="topics-filters">
+            <div class="topics-filter-group" id="topics-filter-year"></div>
             <div class="topics-filter-group" id="topics-filter-ai"></div>
             <div class="topics-filter-group" id="topics-filter-tag"></div>
           </div>
@@ -2415,10 +2416,12 @@ function renderTopics(){
   /* Build filter chips */
   const aiSet = [...new Set(T.map(e=>e.ai).filter(Boolean))].sort();
   const tagSet = [...new Set(T.flatMap(e=>e.topic_tags||[]).filter(Boolean))].sort();
+  const yearSet = [...new Set(T.map(e=>(e.date||'').slice(0,4)).filter(s=>s.length===4))].sort().reverse();
 
+  const filterYearEl = $('#topics-filter-year');
   const filterAiEl = $('#topics-filter-ai');
   const filterTagEl = $('#topics-filter-tag');
-  const state = { ai: 'ALL', tag: 'ALL', q: '' };
+  const state = { year: 'ALL', ai: 'ALL', tag: 'ALL', q: '' };
 
   function chip(label, active, onClick){
     const b = document.createElement('button');
@@ -2429,6 +2432,12 @@ function renderTopics(){
   }
 
   function renderFilters(){
+    if(filterYearEl){
+      filterYearEl.innerHTML = '<span class="flbl">年</span>';
+      filterYearEl.appendChild(chip('全て', state.year==='ALL', ()=>{state.year='ALL'; renderFilters(); apply();}));
+      yearSet.forEach(y => filterYearEl.appendChild(chip(y, state.year===y, ()=>{state.year=y; renderFilters(); apply();})));
+      filterYearEl.style.display = (yearSet.length >= 2) ? '' : 'none';
+    }
     if(filterAiEl){
       filterAiEl.innerHTML = '<span class="flbl">AI</span>';
       filterAiEl.appendChild(chip('全て', state.ai==='ALL', ()=>{state.ai='ALL'; renderFilters(); apply();}));
@@ -2485,6 +2494,7 @@ function renderTopics(){
   function apply(){
     const q = (state.q||'').trim().toLowerCase();
     let rows = T.slice();
+    if(state.year !== 'ALL') rows = rows.filter(e => (e.date||'').startsWith(state.year));
     if(state.ai !== 'ALL') rows = rows.filter(e => e.ai === state.ai);
     if(state.tag !== 'ALL') rows = rows.filter(e => (e.topic_tags||[]).includes(state.tag));
     if(q){
