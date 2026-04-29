@@ -265,7 +265,42 @@ tr.dr-row-high td:first-child{border-left:3px solid #64b5f6}
 .dr-tab:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-soft)}
 .dr-tab.is-active{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600}
 
-/* ===== AI Topics (⑤) ===== */
+/* ===== AI Tools (⑤) ===== */
+.ait-toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.ait-scale-toggle{display:flex;gap:4px}
+.ait-legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11.5px}
+.ait-legend .li{display:inline-flex;align-items:center;gap:5px;cursor:pointer;user-select:none;padding:2px 8px;border-radius:4px;border:1px solid var(--line-soft);background:#fff}
+.ait-legend .li.muted{opacity:.4;background:#f5f5f5}
+.ait-legend .li .swatch{display:inline-block;width:12px;height:3px;border-radius:2px}
+.ait-table-wrap table th,.ait-table-wrap table td{font-size:12px}
+.ait-table-wrap .ai-cell{font-weight:600}
+.ait-table-wrap .num{text-align:right;font-variant-numeric:tabular-nums}
+.ait-table-wrap .delta-up{color:var(--up);font-weight:600}
+.ait-table-wrap .delta-down{color:var(--down);font-weight:600}
+
+.ait-tl-toolbar{margin-bottom:10px}
+.ait-tl-filter{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ait-tl-filter .flbl{font-size:11px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding-right:4px}
+.ait-tl-wrap{position:relative;background:#fff;border:1px solid var(--line);border-radius:5px;padding:14px 14px 6px;overflow-x:auto}
+.ait-tl-grid{position:relative;min-width:1200px}
+.ait-tl-axis{height:22px;border-bottom:1px solid var(--line-soft);position:relative;font-size:10.5px;color:var(--ink3)}
+.ait-tl-axis .tick{position:absolute;top:0;bottom:0;border-left:1px dashed #eee;padding-left:4px;line-height:22px}
+.ait-tl-axis .tick.major{border-left-color:#ccc;font-weight:600;color:var(--ink2)}
+.ait-tl-lane{position:relative;height:34px;border-bottom:1px dashed var(--line-soft);display:flex;align-items:center}
+.ait-tl-lane:last-child{border-bottom:0}
+.ait-tl-lane-label{flex:0 0 100px;font-size:12px;font-weight:600;color:var(--ink);padding-right:10px;display:flex;align-items:center;gap:6px}
+.ait-tl-lane-label .tlbadge{display:inline-block;width:8px;height:8px;border-radius:50%}
+.ait-tl-lane-track{flex:1;position:relative;height:100%;min-width:1100px}
+.ait-tl-dot{position:absolute;top:50%;width:11px;height:11px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);transform:translate(-50%,-50%);cursor:pointer;transition:transform .1s}
+.ait-tl-dot:hover{transform:translate(-50%,-50%) scale(1.4);z-index:5}
+.ait-tl-tooltip{position:absolute;z-index:10;background:#fff;border:1px solid var(--line);border-radius:5px;padding:10px 12px;box-shadow:0 4px 14px rgba(0,0,0,.12);font-size:12px;max-width:340px;line-height:1.5;pointer-events:none}
+.ait-tl-tooltip .ttd{font-size:10.5px;color:var(--ink3);margin-bottom:3px}
+.ait-tl-tooltip .ttt{font-weight:700;color:var(--ink);margin-bottom:4px}
+.ait-tl-tooltip .tts{color:var(--ink2);font-size:11.5px}
+.ait-tl-tooltip a{color:var(--blue);font-size:11px;display:inline-block;margin-top:5px}
+.ait-tl-empty{margin:14px 0}
+
+/* ===== AI Topics (⑥) ===== */
 .topics-toolbar{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
 .topics-filters{display:flex;flex-wrap:wrap;gap:14px}
 .topics-filter-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -527,8 +562,12 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
       <button class="nav-btn" data-section="cit-risapy"><span class="nav-num">4</span>リサピー</button>
     </div>
     <div class="nav-group">
-      <div class="nav-group-title">⑤ AI Topics</div>
-      <button class="nav-btn" data-section="topics"><span class="nav-num">5</span>主要AIニュース</button>
+      <div class="nav-group-title">⑤ 主要AIツール</div>
+      <button class="nav-btn" data-section="tools"><span class="nav-num">5</span>利用者推移＆機能変遷</button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">⑥ AI Topics</div>
+      <button class="nav-btn" data-section="topics"><span class="nav-num">6</span>主要AIニュース</button>
     </div>
   </aside>
 
@@ -812,10 +851,46 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
       </div>
     </section>
 
-    <!-- ⑤ AI Topics -->
+    <!-- ⑤ 主要AIツール -->
+    <section id="sec-tools" class="section">
+      <div class="sec-hero">
+        <div class="crumb">⑤ 主要AIツール｜<b>利用者推移＆機能アップデート変遷</b></div>
+        <h2>主要AIプロダクトの利用者推移と機能進化<span class="sub-h" id="tools-asof"></span></h2>
+        <p class="lead">主要AI（ChatGPT / Claude / Gemini / Copilot / Perplexity / DeepSeek / Grok）のオーガニックトラフィック月次推移（ahrefs Site Explorer）と、各社のプロダクト発表・機能リリースを横軸時系列で可視化。</p>
+      </div>
+      <div class="tab-summary" id="tools-summary"></div>
+      <div class="card">
+        <h3>① 利用者推移（ahrefs オーガニックトラフィック・月次）</h3>
+        <div class="h3-sub">主要AIプロダクトのトップドメインへの自然検索流入数（subdomains含む）。実利用者数の上位互換性が高い指標</div>
+        <div class="ait-toolbar">
+          <div class="ait-scale-toggle">
+            <button class="dr-tab is-active" data-scale="linear">線形</button>
+            <button class="dr-tab" data-scale="log">対数</button>
+          </div>
+          <div class="ait-legend" id="ait-legend"></div>
+        </div>
+        <div class="chart-wrap"><canvas id="chart-ai-tools-traffic"></canvas></div>
+        <div class="ait-table-wrap">
+          <div class="h3-sub" style="margin-top:14px">直近月の数字（参考）</div>
+          <div class="table-wrap"><table id="tbl-ai-tools-latest"></table></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>② 機能アップデート変遷（横軸時系列タイムライン）</h3>
+        <div class="h3-sub">⑥ AI Topicsで自動収集したニュースのうち「プロダクト発表」「新機能」を抽出してAI別にプロット。ドットにホバーで詳細</div>
+        <div class="ait-tl-toolbar">
+          <div class="ait-tl-filter" id="ait-tl-tag-filter"></div>
+        </div>
+        <div class="ait-tl-wrap" id="ait-tl-wrap">
+          <div class="ait-tl-empty empty-note" style="display:none">⑥ AI Topicsの自動収集が完了するとタイムラインが表示されます。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑥ AI Topics -->
     <section id="sec-topics" class="section">
       <div class="sec-hero">
-        <div class="crumb">⑤ AI Topics｜<b>主要AIニュース（自動収集）</b></div>
+        <div class="crumb">⑥ AI Topics｜<b>主要AIニュース（自動収集）</b></div>
         <h2>主要AIプロダクトの週次アップデート<span class="sub-h" id="topics-asof"></span></h2>
         <p class="lead">過去7〜10日間の主要AI（OpenAI / Anthropic / Google / Microsoft / Perplexity / 国内AI 等）のプロダクト発表・新機能・業界動向を自動収集し、世間の反応を要約しています。</p>
       </div>
@@ -2395,7 +2470,351 @@ function renderDiff(){
 renderDiff();
 
 /* =========================================================== */
-/* ⑤ AI Topics                                                 */
+/* ⑤ 主要AIツール — 利用者推移＋機能タイムライン            */
+/* =========================================================== */
+function renderTools(){
+  const T = DATA.ai_tools || {};
+  const domains = (T.domains || []).filter(d => d && (d.metrics||[]).length);
+
+  /* As-of badge */
+  const asof = $('#tools-asof');
+  if(asof && T.generated_at){
+    asof.textContent = ' — 取得 ' + String(T.generated_at).replace('T',' ').slice(0,16);
+  }
+
+  /* Summary line */
+  const sumEl = $('#tools-summary');
+  if(sumEl){
+    if(!domains.length){
+      sumEl.innerHTML = `<span class="ts-label">概況</span>本タブはahrefs Site Explorerで主要AIプロダクトの月次トラフィック推移を取得します。<br>初回パイプライン実行後に反映されます。`;
+    } else {
+      const months = domains[0].metrics.map(m=>m.date);
+      const lastMonth = months[months.length-1] || '—';
+      const ranked = [...domains]
+        .map(d => ({ai: d.label, traffic: (d.metrics[d.metrics.length-1]||{}).org_traffic||0}))
+        .sort((a,b)=>b.traffic-a.traffic);
+      const top = ranked.slice(0,3).map(r=>`${esc(r.ai)} <b>${N(r.traffic)}</b>`).join(' / ');
+      sumEl.innerHTML = `<span class="ts-label">概況</span>${esc(lastMonth)} の主要AIオーガニック流入トップ3: ${top}。<br>${domains.length}ドメインを ${esc(months[0]||'—')} 〜 ${esc(lastMonth)} の範囲で月次プロット。`;
+    }
+  }
+
+  /* ========== Traffic chart ========== */
+  const canvas = document.getElementById('chart-ai-tools-traffic');
+  if(canvas && domains.length){
+    /* Build month union */
+    const monthSet = new Set();
+    domains.forEach(d => (d.metrics||[]).forEach(m => monthSet.add(m.date)));
+    const months = [...monthSet].sort();
+    /* Skip the very last partial month if it's substantially below the prior — rare edge case */
+    const labels = months;
+    const datasets = domains.map(d => {
+      const map = {};
+      (d.metrics||[]).forEach(m => { map[m.date] = m.org_traffic; });
+      return {
+        label: d.label,
+        data: labels.map(L => map[L] ?? null),
+        borderColor: d.color,
+        backgroundColor: d.color + '22',
+        borderWidth: 2,
+        pointRadius: 1.5,
+        pointHoverRadius: 4,
+        tension: .25,
+        spanGaps: true,
+        _domain: d.domain,
+        _ai: d.ai,
+      };
+    });
+    const cfg = {
+      type:'line',
+      data:{labels,datasets},
+      options:{
+        responsive:true,
+        maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            callbacks:{
+              title:(items)=>items[0]?.label||'',
+              label:(c)=>{
+                const v = c.raw;
+                return ` ${c.dataset.label}: ${v==null?'—':v.toLocaleString('ja-JP')}`;
+              }
+            }
+          }
+        },
+        scales:{
+          x:{ticks:{maxRotation:0,autoSkipPadding:8,font:{size:10.5}},grid:{display:false}},
+          y:{type:'linear',beginAtZero:true,ticks:{callback:v=>(v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v),font:{size:10.5}},grid:{color:'#f0f0f0'}}
+        }
+      }
+    };
+    if(window._aiToolsChart) window._aiToolsChart.destroy();
+    window._aiToolsChart = new Chart(canvas, cfg);
+
+    /* Custom legend with toggle + log/linear scale toggle */
+    const legendEl = $('#ait-legend');
+    const visibleSet = new Set(datasets.map(d => d.label));
+    function refreshLegend(){
+      if(!legendEl) return;
+      legendEl.innerHTML = '';
+      datasets.forEach(ds => {
+        const btn = document.createElement('span');
+        btn.className = 'li' + (visibleSet.has(ds.label) ? '' : ' muted');
+        btn.innerHTML = `<span class="swatch" style="background:${ds.borderColor}"></span>${esc(ds.label)}`;
+        btn.addEventListener('click', () => {
+          const idx = window._aiToolsChart.data.datasets.findIndex(d=>d.label===ds.label);
+          if(idx<0) return;
+          const meta = window._aiToolsChart.getDatasetMeta(idx);
+          meta.hidden = !meta.hidden;
+          if(meta.hidden) visibleSet.delete(ds.label); else visibleSet.add(ds.label);
+          window._aiToolsChart.update();
+          refreshLegend();
+        });
+        legendEl.appendChild(btn);
+      });
+    }
+    refreshLegend();
+
+    /* Linear/log toggle */
+    $$('.ait-scale-toggle .dr-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('.ait-scale-toggle .dr-tab').forEach(b=>b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        const scale = btn.dataset.scale;
+        window._aiToolsChart.options.scales.y.type = (scale==='log'?'logarithmic':'linear');
+        window._aiToolsChart.options.scales.y.beginAtZero = (scale!=='log');
+        window._aiToolsChart.update();
+      });
+    });
+  }
+
+  /* ========== Latest-month table ========== */
+  const tbl = document.getElementById('tbl-ai-tools-latest');
+  if(tbl && domains.length){
+    /* Use month that's not the very latest if it's < 50% of prior (likely partial) */
+    let referenceMonthIdx = -1; // index from end (-1 = last, -2 = second-to-last)
+    const head = `<thead><tr><th>AI / プロダクト</th><th>ドメイン</th><th class="num">直近月</th><th class="num">前月</th><th class="num">前月比</th><th class="num">前年同月</th><th class="num">前年比</th></tr></thead>`;
+    const rows = domains.map(d => {
+      const M = d.metrics || [];
+      if(!M.length) return '';
+      const last = M[M.length-1];
+      const prev = M[M.length-2];
+      const yoy = M.length >= 13 ? M[M.length-13] : null;
+      const pctMoM = (prev && prev.org_traffic) ? (last.org_traffic-prev.org_traffic)/prev.org_traffic : null;
+      const pctYoY = (yoy && yoy.org_traffic) ? (last.org_traffic-yoy.org_traffic)/yoy.org_traffic : null;
+      const cls = v => v==null?'':(v>0?'delta-up':v<0?'delta-down':'');
+      const fmtP = v => v==null?'—':((v>0?'+':'')+(v*100).toFixed(1)+'%');
+      return `<tr>
+        <td class="ai-cell"><span class="tlbadge" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${d.color};margin-right:6px"></span>${esc(d.label)} <span style="color:var(--ink3);font-size:11px;margin-left:4px">(${esc(d.ai)})</span></td>
+        <td><a href="https://${esc(d.domain)}" target="_blank" rel="noopener">${esc(d.domain)}</a></td>
+        <td class="num">${last?N(last.org_traffic):'—'}<br><span style="font-size:10px;color:var(--ink3)">${last?esc(last.date):''}</span></td>
+        <td class="num">${prev?N(prev.org_traffic):'—'}</td>
+        <td class="num ${cls(pctMoM)}">${fmtP(pctMoM)}</td>
+        <td class="num">${yoy?N(yoy.org_traffic):'—'}</td>
+        <td class="num ${cls(pctYoY)}">${fmtP(pctYoY)}</td>
+      </tr>`;
+    }).join('');
+    tbl.innerHTML = head + '<tbody>' + rows + '</tbody>';
+  }
+
+  /* ========== Feature timeline ========== */
+  renderToolsTimeline();
+}
+
+function renderToolsTimeline(){
+  const wrap = document.getElementById('ait-tl-wrap');
+  if(!wrap) return;
+  const empty = wrap.querySelector('.ait-tl-empty');
+  /* Pull entries from AI Topics, filter to product/feature releases */
+  const entries = ((DATA.ai_topics && DATA.ai_topics.entries) || [])
+    .filter(e => {
+      const tags = e.topic_tags || [];
+      return tags.some(t => t === 'プロダクト発表' || t === '新機能');
+    })
+    .filter(e => e.date && /^\d{4}-\d{2}/.test(e.date));
+
+  if(!entries.length){
+    if(empty) empty.style.display = '';
+    /* Clear any prior render */
+    [...wrap.querySelectorAll('.ait-tl-grid')].forEach(n=>n.remove());
+    return;
+  }
+  if(empty) empty.style.display = 'none';
+
+  /* Color map (must match fetch_ai_tools TARGETS) */
+  const aiColor = {
+    'OpenAI':'#10a37f','Anthropic':'#d97706','Google':'#4285f4',
+    'Microsoft':'#0078d4','Perplexity':'#20c997','Meta':'#1877f2',
+    'xAI':'#212121','Mistral':'#ff7e36','DeepSeek':'#5b6cff',
+    'Cohere':'#5e35b1','国内AI':'#c2185b','その他':'#757575',
+  };
+
+  /* Date range */
+  const dates = entries.map(e => e.date).sort();
+  const minDate = dates[0].slice(0,7);  /* YYYY-MM */
+  const maxDate = dates[dates.length-1].slice(0,7);
+  function ym2num(ym){ const [y,m] = ym.split('-').map(Number); return y*12 + (m-1); }
+  function num2ym(n){ const y = Math.floor(n/12), m = (n%12)+1; return `${y}-${String(m).padStart(2,'0')}`; }
+  const startN = ym2num(minDate);
+  const endN = ym2num(maxDate);
+  const span = Math.max(1, endN - startN);
+
+  function pctOf(date){
+    const d = date.slice(0,7);
+    const n = ym2num(d);
+    return ((n - startN) / span) * 100;
+  }
+
+  /* Group by AI vendor */
+  const byAi = {};
+  entries.forEach(e => {
+    const ai = e.ai || 'その他';
+    if(!byAi[ai]) byAi[ai] = [];
+    byAi[ai].push(e);
+  });
+
+  /* Lane order: by # of entries desc, with fixed top vendors first */
+  const fixed = ['OpenAI','Anthropic','Google','Microsoft','Perplexity','Meta','xAI'];
+  const aisAll = Object.keys(byAi);
+  const aisOrdered = [
+    ...fixed.filter(a => byAi[a]),
+    ...aisAll.filter(a => !fixed.includes(a)).sort((a,b) => byAi[b].length - byAi[a].length),
+  ];
+
+  /* Tag filter */
+  const filterEl = $('#ait-tl-tag-filter');
+  if(filterEl && !filterEl.dataset.built){
+    filterEl.dataset.built = '1';
+    filterEl.innerHTML = '<span class="flbl">フィルタ</span>';
+    const state = { tag: 'ALL' };
+    function chip(label, val){
+      const b = document.createElement('button');
+      b.className = 'dr-tab' + (state.tag===val?' is-active':'');
+      b.textContent = label;
+      b.addEventListener('click', () => {
+        state.tag = val;
+        filterEl.querySelectorAll('.dr-tab').forEach(x => x.classList.remove('is-active'));
+        b.classList.add('is-active');
+        renderTimelineGrid(state);
+      });
+      return b;
+    }
+    filterEl.appendChild(chip('全て','ALL'));
+    filterEl.appendChild(chip('プロダクト発表','プロダクト発表'));
+    filterEl.appendChild(chip('新機能','新機能'));
+    renderTimelineGrid(state);
+  } else {
+    renderTimelineGrid({tag:'ALL'});
+  }
+
+  function renderTimelineGrid(state){
+    /* Remove prior grid */
+    [...wrap.querySelectorAll('.ait-tl-grid')].forEach(n=>n.remove());
+
+    /* Re-filter entries by selected tag */
+    const filteredByAi = {};
+    aisOrdered.forEach(ai => {
+      const list = byAi[ai].filter(e => {
+        if(state.tag === 'ALL') return true;
+        return (e.topic_tags||[]).includes(state.tag);
+      });
+      if(list.length) filteredByAi[ai] = list;
+    });
+    const aisToRender = aisOrdered.filter(ai => filteredByAi[ai]);
+
+    if(!aisToRender.length){
+      if(empty){ empty.style.display = ''; empty.textContent = 'フィルタに一致するアップデートがありません。'; }
+      return;
+    }
+    if(empty){ empty.style.display = 'none'; empty.textContent = '⑥ AI Topicsの自動収集が完了するとタイムラインが表示されます。'; }
+
+    const grid = document.createElement('div');
+    grid.className = 'ait-tl-grid';
+
+    /* Axis with year/half-year ticks */
+    const axis = document.createElement('div');
+    axis.className = 'ait-tl-axis';
+    axis.style.marginLeft = '110px';
+    /* Tick every 3 months */
+    let n = startN;
+    const stepMonths = (span <= 12) ? 1 : (span <= 24) ? 3 : 6;
+    while(n <= endN){
+      const ym = num2ym(n);
+      const left = ((n - startN) / span) * 100;
+      const tick = document.createElement('span');
+      tick.className = 'tick' + ((n % 12) === 0 ? ' major' : '');
+      tick.style.left = `calc(${left}% - 1px)`;
+      tick.textContent = (n % 12 === 0) ? ym.split('-')[0] + '年' : ym.slice(2);
+      axis.appendChild(tick);
+      n += stepMonths;
+    }
+    grid.appendChild(axis);
+
+    /* Lanes */
+    aisToRender.forEach(ai => {
+      const lane = document.createElement('div');
+      lane.className = 'ait-tl-lane';
+      const label = document.createElement('div');
+      label.className = 'ait-tl-lane-label';
+      const c = aiColor[ai] || '#666';
+      label.innerHTML = `<span class="tlbadge" style="background:${c}"></span>${esc(ai)} <span style="color:var(--ink3);font-weight:400;font-size:10.5px">(${filteredByAi[ai].length})</span>`;
+      lane.appendChild(label);
+
+      const track = document.createElement('div');
+      track.className = 'ait-tl-lane-track';
+
+      filteredByAi[ai].forEach(e => {
+        const dot = document.createElement('div');
+        dot.className = 'ait-tl-dot';
+        dot.style.left = pctOf(e.date) + '%';
+        dot.style.background = c;
+        dot.dataset.entry = JSON.stringify({date:e.date,title:e.title,summary:e.summary,url:e.url,tags:e.topic_tags||[]});
+        dot.addEventListener('mouseenter', showTooltip);
+        dot.addEventListener('mouseleave', hideTooltip);
+        track.appendChild(dot);
+      });
+      lane.appendChild(track);
+      grid.appendChild(lane);
+    });
+    wrap.appendChild(grid);
+  }
+
+  function showTooltip(ev){
+    hideTooltip();
+    let e;
+    try { e = JSON.parse(ev.target.dataset.entry); } catch { return; }
+    const tt = document.createElement('div');
+    tt.className = 'ait-tl-tooltip';
+    tt.id = '_ait_tt';
+    const tags = (e.tags||[]).map(t=>`<span class="tc-tag" style="margin-left:4px">${esc(t)}</span>`).join('');
+    tt.innerHTML = `
+      <div class="ttd">${esc(e.date)} ${tags}</div>
+      <div class="ttt">${esc(e.title||'')}</div>
+      ${e.summary?`<div class="tts">${esc(e.summary)}</div>`:''}
+      ${e.url?`<a href="${esc(e.url)}" target="_blank" rel="noopener">記事を開く ↗</a>`:''}
+    `;
+    document.body.appendChild(tt);
+    const rect = ev.target.getBoundingClientRect();
+    const ttw = 320;
+    const left = Math.min(window.innerWidth - ttw - 12, Math.max(12, rect.left + window.scrollX + 14));
+    const top = rect.top + window.scrollY - 12;
+    tt.style.left = left + 'px';
+    tt.style.top = top + 'px';
+    tt.style.maxWidth = ttw + 'px';
+    /* Make tooltip clickable: re-attach on hover */
+    tt.style.pointerEvents = 'auto';
+    tt.addEventListener('mouseleave', hideTooltip);
+  }
+  function hideTooltip(){
+    const tt = document.getElementById('_ait_tt');
+    if(tt) tt.remove();
+  }
+}
+renderTools();
+
+/* =========================================================== */
+/* ⑥ AI Topics                                                 */
 /* =========================================================== */
 function renderTopics(){
   const T = (DATA.ai_topics && DATA.ai_topics.entries) || [];
