@@ -549,12 +549,10 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
       <button class="nav-btn" data-section="cit-risapy"><span class="nav-num">4</span>リサピー</button>
     </div>
     <div class="nav-group">
-      <div class="nav-group-title">⑤ 主要AIツール</div>
-      <button class="nav-btn" data-section="tools"><span class="nav-num">5</span>利用者推移＆機能変遷</button>
-    </div>
-    <div class="nav-group">
-      <div class="nav-group-title">⑥ AI Topics</div>
-      <button class="nav-btn" data-section="topics"><span class="nav-num">6</span>主要AIニュース</button>
+      <div class="nav-group-title">⑤ AI TOPICS</div>
+      <button class="nav-btn" data-section="topics"><span class="nav-num">5</span>主要AIニュース</button>
+      <button class="nav-btn" data-section="tools-usage"><span class="nav-num">5</span>主要AI利用者数推移</button>
+      <button class="nav-btn" data-section="tools-timeline"><span class="nav-num">5</span>主要AI機能アップデート変遷</button>
     </div>
   </aside>
 
@@ -838,60 +836,55 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
       </div>
     </section>
 
-    <!-- ⑤ 主要AIツール -->
-    <section id="sec-tools" class="section">
+    <!-- ⑤-A 主要AI利用者数推移 -->
+    <section id="sec-tools-usage" class="section">
       <div class="sec-hero">
-        <div class="crumb">⑤ 主要AIツール｜<b>利用者推移＆機能アップデート変遷</b></div>
-        <h2>主要AIプロダクトの利用者推移と機能進化<span class="sub-h" id="tools-asof"></span></h2>
-        <p class="lead">主要AI（ChatGPT / Claude / Gemini / Copilot / Perplexity / DeepSeek / Grok）のオーガニックトラフィック月次推移（ahrefs Site Explorer）と、各社のプロダクト発表・機能リリースを横軸時系列で可視化。</p>
+        <div class="crumb">⑤ AI TOPICS｜<b>主要AI利用者数推移</b></div>
+        <h2>主要AIプロダクトの利用者数推移<span class="sub-h" id="tools-asof"></span></h2>
+        <p class="lead">主要AI（ChatGPT / Claude / Gemini / Copilot / Perplexity / DeepSeek / Grok）のオーガニックトラフィック月次推移（ahrefs Site Explorer）。実利用者数と上位互換性が高い指標。</p>
       </div>
       <div class="tab-summary" id="tools-summary"></div>
-
-      <!-- Sub-tab switcher -->
-      <div class="ait-subtabs">
-        <button class="ait-subtab is-active" data-subtab="usage"><span class="ait-subtab-num">①</span>利用者推移</button>
-        <button class="ait-subtab" data-subtab="timeline"><span class="ait-subtab-num">②</span>機能アップデート変遷</button>
-      </div>
-
-      <!-- ① 利用者推移 -->
-      <div class="ait-subtab-content" data-subtab-content="usage">
-        <div class="card">
-          <h3>利用者推移（ahrefs オーガニックトラフィック・月次）</h3>
-          <div class="h3-sub">主要AIプロダクトのトップドメインへの自然検索流入数（subdomains含む）。実利用者数の上位互換性が高い指標</div>
-          <div class="ait-toolbar">
-            <div class="ait-scale-toggle">
-              <button class="dr-tab is-active" data-scale="linear">線形</button>
-              <button class="dr-tab" data-scale="log">対数</button>
-            </div>
-            <div class="ait-legend" id="ait-legend"></div>
+      <div class="card">
+        <h3>利用者推移（ahrefs オーガニックトラフィック・月次）</h3>
+        <div class="h3-sub">主要AIプロダクトのトップドメインへの自然検索流入数（subdomains含む）</div>
+        <div class="ait-toolbar">
+          <div class="ait-scale-toggle">
+            <button class="dr-tab is-active" data-scale="linear">線形</button>
+            <button class="dr-tab" data-scale="log">対数</button>
           </div>
-          <div class="chart-wrap" style="height:380px"><canvas id="chart-ai-tools-traffic"></canvas></div>
-          <div class="ait-table-wrap">
-            <div class="h3-sub" style="margin-top:14px">直近月の数字（参考）</div>
-            <div class="table-wrap"><table id="tbl-ai-tools-latest"></table></div>
-          </div>
+          <div class="ait-legend" id="ait-legend"></div>
         </div>
-      </div>
-
-      <!-- ② 機能アップデート変遷 -->
-      <div class="ait-subtab-content" data-subtab-content="timeline" style="display:none">
-        <div class="card">
-          <h3>機能アップデート変遷（横軸時系列タイムライン）</h3>
-          <div class="h3-sub">⑥ AI Topicsで自動収集したニュースのうち「プロダクト発表」「新機能」を抽出してAI別にプロット。ドットにホバーで詳細</div>
-          <div class="ait-tl-toolbar">
-            <div class="ait-tl-filter" id="ait-tl-tag-filter"></div>
-          </div>
-          <div class="ait-tl-wrap" id="ait-tl-wrap">
-            <div class="ait-tl-empty empty-note" style="display:none">⑥ AI Topicsの自動収集が完了するとタイムラインが表示されます。</div>
-          </div>
+        <div class="chart-wrap" style="height:380px"><canvas id="chart-ai-tools-traffic"></canvas></div>
+        <div class="ait-table-wrap">
+          <div class="h3-sub" style="margin-top:14px">直近月の数字（参考）</div>
+          <div class="table-wrap"><table id="tbl-ai-tools-latest"></table></div>
         </div>
       </div>
     </section>
 
-    <!-- ⑥ AI Topics -->
+    <!-- ⑤-B 主要AI機能アップデート変遷 -->
+    <section id="sec-tools-timeline" class="section">
+      <div class="sec-hero">
+        <div class="crumb">⑤ AI TOPICS｜<b>主要AI機能アップデート変遷</b></div>
+        <h2>主要AIプロダクトの機能進化タイムライン</h2>
+        <p class="lead">主要AIニュースで自動収集した「プロダクト発表」「新機能」をAI別に横軸時系列でプロット。ドットにホバーで詳細を表示。</p>
+      </div>
+      <div class="card">
+        <h3>機能アップデート変遷（横軸時系列タイムライン）</h3>
+        <div class="h3-sub">「主要AIニュース」タブで自動収集したエントリのうち「プロダクト発表」「新機能」を抽出してAI別にプロット</div>
+        <div class="ait-tl-toolbar">
+          <div class="ait-tl-filter" id="ait-tl-tag-filter"></div>
+        </div>
+        <div class="ait-tl-wrap" id="ait-tl-wrap">
+          <div class="ait-tl-empty empty-note" style="display:none">主要AIニュースの自動収集が完了するとタイムラインが表示されます。</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑤ 主要AIニュース -->
     <section id="sec-topics" class="section">
       <div class="sec-hero">
-        <div class="crumb">⑥ AI Topics｜<b>主要AIニュース（自動収集）</b></div>
+        <div class="crumb">⑤ AI TOPICS｜<b>主要AIニュース（自動収集）</b></div>
         <h2>主要AIプロダクトの週次アップデート<span class="sub-h" id="topics-asof"></span></h2>
         <p class="lead">過去7〜10日間の主要AI（OpenAI / Anthropic / Google / Microsoft / Perplexity / 国内AI 等）のプロダクト発表・新機能・業界動向を自動収集し、世間の反応を要約しています。</p>
       </div>
@@ -923,6 +916,8 @@ const $$ = (s,root=document)=>[...(typeof root==='string'?document.querySelector
 const sum = a => a.reduce((x,y)=>x+(Number(y)||0),0);
 const avg = a => a.length? sum(a)/a.length : 0;
 const fmt = n => (n==null || isNaN(n)) ? '' : (Number.isInteger(n) ? n.toLocaleString('ja-JP') : Number(n).toLocaleString('ja-JP',{maximumFractionDigits:2}));
+/* Global number formatter with em-dash fallback (used by render* helpers) */
+const N = n => (n==null||Number.isNaN(Number(n))) ? '—' : Number(n).toLocaleString('ja-JP');
 const pct = n => (n==null || isNaN(n)) ? '' : (n*100).toFixed(2)+'%';
 const esc = s => (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -2503,21 +2498,6 @@ function renderTools(){
     }
   } catch(e){ console.error('tools summary:', e); }
 
-  /* ---------- Sub-tab switching (set up FIRST so it always works) ---------- */
-  try {
-    const subtabs = $$('.ait-subtab');
-    const subContents = $$('.ait-subtab-content');
-    function activateSubtab(name){
-      subtabs.forEach(b => b.classList.toggle('is-active', b.dataset.subtab === name));
-      subContents.forEach(c => { c.style.display = (c.dataset.subtabContent === name) ? '' : 'none'; });
-      if(name === 'usage'){
-        /* Lazy-init or resize chart whenever the usage tab is visible */
-        ensureToolsChart(domains);
-      }
-    }
-    subtabs.forEach(b => b.addEventListener('click', () => activateSubtab(b.dataset.subtab)));
-  } catch(e){ console.error('tools subtab handlers:', e); }
-
   /* ---------- Latest-month table ---------- */
   try {
     const tbl = document.getElementById('tbl-ai-tools-latest');
@@ -2847,12 +2827,12 @@ function renderToolsTimeline(){
 }
 try { renderTools(); } catch(e){ console.error('renderTools failed:', e); }
 
-/* Lazy-init / resize chart when ⑤ section becomes visible (Chart.js can't
-   measure hidden canvases on initial render). */
+/* Lazy-init / resize chart whenever the ⑤ usage section becomes visible
+   (Chart.js can't measure hidden canvases on initial render). */
 (function(){
-  const navBtn = document.querySelector('.nav-btn[data-section="tools"]');
-  if(navBtn){
-    navBtn.addEventListener('click', () => {
+  const usageBtn = document.querySelector('.nav-btn[data-section="tools-usage"]');
+  if(usageBtn){
+    usageBtn.addEventListener('click', () => {
       const domains = ((DATA.ai_tools && DATA.ai_tools.domains) || [])
         .filter(d => d && (d.metrics||[]).length);
       requestAnimationFrame(() => requestAnimationFrame(() => ensureToolsChart(domains)));
