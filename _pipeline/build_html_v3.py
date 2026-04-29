@@ -266,6 +266,12 @@ tr.dr-row-high td:first-child{border-left:3px solid #64b5f6}
 .dr-tab.is-active{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600}
 
 /* ===== AI Tools (⑤) ===== */
+.ait-subtabs{display:flex;gap:0;margin-bottom:14px;border-bottom:2px solid var(--line);padding:0 4px}
+.ait-subtab{appearance:none;background:transparent;border:0;padding:10px 18px;font:inherit;font-size:13.5px;color:var(--ink2);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;display:inline-flex;align-items:center;gap:8px;font-weight:600}
+.ait-subtab:hover{color:var(--blue)}
+.ait-subtab.is-active{color:var(--blue);border-bottom-color:var(--blue)}
+.ait-subtab .ait-subtab-num{display:inline-flex;width:20px;height:20px;align-items:center;justify-content:center;border-radius:50%;background:var(--blue-soft);color:var(--blue);font-size:11px;font-weight:700}
+.ait-subtab.is-active .ait-subtab-num{background:var(--blue);color:#fff}
 .ait-toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px}
 .ait-scale-toggle{display:flex;gap:4px}
 .ait-legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11.5px}
@@ -859,30 +865,44 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <p class="lead">主要AI（ChatGPT / Claude / Gemini / Copilot / Perplexity / DeepSeek / Grok）のオーガニックトラフィック月次推移（ahrefs Site Explorer）と、各社のプロダクト発表・機能リリースを横軸時系列で可視化。</p>
       </div>
       <div class="tab-summary" id="tools-summary"></div>
-      <div class="card">
-        <h3>① 利用者推移（ahrefs オーガニックトラフィック・月次）</h3>
-        <div class="h3-sub">主要AIプロダクトのトップドメインへの自然検索流入数（subdomains含む）。実利用者数の上位互換性が高い指標</div>
-        <div class="ait-toolbar">
-          <div class="ait-scale-toggle">
-            <button class="dr-tab is-active" data-scale="linear">線形</button>
-            <button class="dr-tab" data-scale="log">対数</button>
+
+      <!-- Sub-tab switcher -->
+      <div class="ait-subtabs">
+        <button class="ait-subtab is-active" data-subtab="usage"><span class="ait-subtab-num">①</span>利用者推移</button>
+        <button class="ait-subtab" data-subtab="timeline"><span class="ait-subtab-num">②</span>機能アップデート変遷</button>
+      </div>
+
+      <!-- ① 利用者推移 -->
+      <div class="ait-subtab-content" data-subtab-content="usage">
+        <div class="card">
+          <h3>利用者推移（ahrefs オーガニックトラフィック・月次）</h3>
+          <div class="h3-sub">主要AIプロダクトのトップドメインへの自然検索流入数（subdomains含む）。実利用者数の上位互換性が高い指標</div>
+          <div class="ait-toolbar">
+            <div class="ait-scale-toggle">
+              <button class="dr-tab is-active" data-scale="linear">線形</button>
+              <button class="dr-tab" data-scale="log">対数</button>
+            </div>
+            <div class="ait-legend" id="ait-legend"></div>
           </div>
-          <div class="ait-legend" id="ait-legend"></div>
-        </div>
-        <div class="chart-wrap"><canvas id="chart-ai-tools-traffic"></canvas></div>
-        <div class="ait-table-wrap">
-          <div class="h3-sub" style="margin-top:14px">直近月の数字（参考）</div>
-          <div class="table-wrap"><table id="tbl-ai-tools-latest"></table></div>
+          <div class="chart-wrap" style="height:380px"><canvas id="chart-ai-tools-traffic"></canvas></div>
+          <div class="ait-table-wrap">
+            <div class="h3-sub" style="margin-top:14px">直近月の数字（参考）</div>
+            <div class="table-wrap"><table id="tbl-ai-tools-latest"></table></div>
+          </div>
         </div>
       </div>
-      <div class="card">
-        <h3>② 機能アップデート変遷（横軸時系列タイムライン）</h3>
-        <div class="h3-sub">⑥ AI Topicsで自動収集したニュースのうち「プロダクト発表」「新機能」を抽出してAI別にプロット。ドットにホバーで詳細</div>
-        <div class="ait-tl-toolbar">
-          <div class="ait-tl-filter" id="ait-tl-tag-filter"></div>
-        </div>
-        <div class="ait-tl-wrap" id="ait-tl-wrap">
-          <div class="ait-tl-empty empty-note" style="display:none">⑥ AI Topicsの自動収集が完了するとタイムラインが表示されます。</div>
+
+      <!-- ② 機能アップデート変遷 -->
+      <div class="ait-subtab-content" data-subtab-content="timeline" style="display:none">
+        <div class="card">
+          <h3>機能アップデート変遷（横軸時系列タイムライン）</h3>
+          <div class="h3-sub">⑥ AI Topicsで自動収集したニュースのうち「プロダクト発表」「新機能」を抽出してAI別にプロット。ドットにホバーで詳細</div>
+          <div class="ait-tl-toolbar">
+            <div class="ait-tl-filter" id="ait-tl-tag-filter"></div>
+          </div>
+          <div class="ait-tl-wrap" id="ait-tl-wrap">
+            <div class="ait-tl-empty empty-note" style="display:none">⑥ AI Topicsの自動収集が完了するとタイムラインが表示されます。</div>
+          </div>
         </div>
       </div>
     </section>
@@ -2618,6 +2638,19 @@ function renderTools(){
     tbl.innerHTML = head + '<tbody>' + rows + '</tbody>';
   }
 
+  /* ========== Sub-tab switching ========== */
+  const subtabs = $$('.ait-subtab');
+  const subContents = $$('.ait-subtab-content');
+  function activateSubtab(name){
+    subtabs.forEach(b => b.classList.toggle('is-active', b.dataset.subtab === name));
+    subContents.forEach(c => { c.style.display = (c.dataset.subtabContent === name) ? '' : 'none'; });
+    /* Force Chart.js resize when usage tab becomes visible */
+    if(name === 'usage' && window._aiToolsChart){
+      requestAnimationFrame(() => { try{ window._aiToolsChart.resize(); }catch(_){} });
+    }
+  }
+  subtabs.forEach(b => b.addEventListener('click', () => activateSubtab(b.dataset.subtab)));
+
   /* ========== Feature timeline ========== */
   renderToolsTimeline();
 }
@@ -2811,7 +2844,20 @@ function renderToolsTimeline(){
     if(tt) tt.remove();
   }
 }
-renderTools();
+try { renderTools(); } catch(e){ console.error('renderTools failed:', e); }
+
+/* Force chart resize when ⑤ section becomes visible (Chart.js can't measure
+   hidden canvases on initial render) */
+(function(){
+  const navBtn = document.querySelector('.nav-btn[data-section="tools"]');
+  if(navBtn){
+    navBtn.addEventListener('click', () => {
+      setTimeout(() => {
+        if(window._aiToolsChart){ try{ window._aiToolsChart.resize(); }catch(_){} }
+      }, 50);
+    });
+  }
+})();
 
 /* =========================================================== */
 /* ⑥ AI Topics                                                 */
@@ -2956,7 +3002,7 @@ function renderTopics(){
   renderFilters();
   apply();
 }
-renderTopics();
+try { renderTopics(); } catch(e){ console.error('renderTopics failed:', e); }
 
 /* =========================================================== */
 /* Tab summaries — interpretive callouts based on actual data  */
