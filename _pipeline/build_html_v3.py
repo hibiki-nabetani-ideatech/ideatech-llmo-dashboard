@@ -2496,37 +2496,119 @@ function renderTools(){
   const T = DATA.ai_tools || {};
   const domains = (T.domains || []).filter(d => d && (d.metrics||[]).length);
 
-  /* As-of badge */
-  const asof = $('#tools-asof');
-  if(asof && T.generated_at){
-    asof.textContent = ' — 取得 ' + String(T.generated_at).replace('T',' ').slice(0,16);
-  }
-
-  /* Summary line */
-  const sumEl = $('#tools-summary');
-  if(sumEl){
-    if(!domains.length){
-      sumEl.innerHTML = `<span class="ts-label">概況</span>本タブはahrefs Site Explorerで主要AIプロダクトの月次トラフィック推移を取得します。<br>初回パイプライン実行後に反映されます。`;
-    } else {
-      const months = domains[0].metrics.map(m=>m.date);
-      const lastMonth = months[months.length-1] || '—';
-      const ranked = [...domains]
-        .map(d => ({ai: d.label, traffic: (d.metrics[d.metrics.length-1]||{}).org_traffic||0}))
-        .sort((a,b)=>b.traffic-a.traffic);
-      const top = ranked.slice(0,3).map(r=>`${esc(r.ai)} <b>${N(r.traffic)}</b>`).join(' / ');
-      sumEl.innerHTML = `<span class="ts-label">概況</span>${esc(lastMonth)} の主要AIオーガニック流入トップ3: ${top}。<br>${domains.length}ドメインを ${esc(months[0]||'—')} 〜 ${esc(lastMonth)} の範囲で月次プロット。`;
+  /* ---------- As-of badge ---------- */
+  try {
+    const asof = $('#tools-asof');
+    if(asof && T.generated_at){
+      asof.textContent = ' — 取得 ' + String(T.generated_at).replace('T',' ').slice(0,16);
     }
-  }
+  } catch(e){ console.error('tools asof:', e); }
 
-  /* ========== Traffic chart ========== */
-  const canvas = document.getElementById('chart-ai-tools-traffic');
-  if(canvas && domains.length){
-    /* Build month union */
+  /* ---------- Summary line ---------- */
+  try {
+    const sumEl = $('#tools-summary');
+    if(sumEl){
+      if(!domains.length){
+        sumEl.innerHTML = `<span class="ts-label">概況</span>本タブはahrefs Site Explorerで主要AIプロダクトの月次トラフィック推移を取得します。<br>初回パイプライン実行後に反映されます。`;
+      } else {
+        const months = domains[0].metrics.map(m=>m.date);
+        const lastMonth = months[months.length-1] || '—';
+        const ranked = [...domains]
+          .map(d => ({ai: d.label, traffic: (d.metrics[d.metrics.length-1]||{}).org_traffic||0}))
+          .sort((a,b)=>b.traffic-a.traffic);
+        const top = ranked.slice(0,3).map(r=>`${esc(r.ai)} <b>${N(r.traffic)}</b>`).join(' / ');
+        sumEl.innerHTML = `<span class="ts-label">概況</span>${esc(lastMonth)} の主要AIオーガニック流入トップ3: ${top}。<br>${domains.length}ドメインを ${esc(months[0]||'—')} 〜 ${esc(lastMonth)} の範囲で月次プロット。`;
+      }
+    }
+  } catch(e){ console.error('tools summary:', e); }
+
+  /* ---------- Sub-tab switching (set up FIRST so it always works) ---------- */
+  try {
+    const subtabs = $$('.ait-subtab');
+    const subContents = $$('.ait-subtab-content');
+    function activateSubtab(name){
+      subtabs.forEach(b => b.classList.toggle('is-active', b.dataset.subtab === name));
+      subContents.forEach(c => { c.style.display = (c.dataset.subtabContent === name) ? '' : 'none'; });
+      if(name === 'usage'){
+        /* Lazy-init or resize chart whenever the usage tab is visible */
+        ensureToolsChart(domains);
+      }
+    }
+    subtabs.forEach(b => b.addEventListener('click', () => activateSubtab(b.dataset.subtab)));
+  } catch(e){ console.error('tools subtab handlers:', e); }
+
+  /* ---------- Latest-month table ---------- */
+  try {
+    const tbl = document.getElementById('tbl-ai-tools-latest');
+    if(tbl && domains.length){
+      const head = `<thead><tr><th>AI / プロダクト</th><th>ドメイン</th><th class="num">直近月</th><th class="num">前月</th><th class="num">前月比</th><th class="num">前年同月</th><th class="num">前年比</th></tr></thead>`;
+      const rows = domains.map(d => {
+        const M = d.metrics || [];
+        if(!M.length) return '';
+        const last = M[M.length-1];
+        const prev = M[M.length-2];
+        const yoy = M.length >= 13 ? M[M.length-13] : null;
+        const pctMoM = (prev && prev.org_traffic) ? (last.org_traffic-prev.org_traffic)/prev.org_traffic : null;
+        const pctYoY = (yoy && yoy.org_traffic) ? (last.org_traffic-yoy.org_traffic)/yoy.org_traffic : null;
+        const cls = v => v==null?'':(v>0?'delta-up':v<0?'delta-down':'');
+        const fmtP = v => v==null?'—':((v>0?'+':'')+(v*100).toFixed(1)+'%');
+        return `<tr>
+          <td class="ai-cell"><span class="tlbadge" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${d.color};margin-right:6px"></span>${esc(d.label)} <span style="color:var(--ink3);font-size:11px;margin-left:4px">(${esc(d.ai)})</span></td>
+          <td><a href="https://${esc(d.domain)}" target="_blank" rel="noopener">${esc(d.domain)}</a></td>
+          <td class="num">${last?N(last.org_traffic):'—'}<br><span style="font-size:10px;color:var(--ink3)">${last?esc(last.date):''}</span></td>
+          <td class="num">${prev?N(prev.org_traffic):'—'}</td>
+          <td class="num ${cls(pctMoM)}">${fmtP(pctMoM)}</td>
+          <td class="num">${yoy?N(yoy.org_traffic):'—'}</td>
+          <td class="num ${cls(pctYoY)}">${fmtP(pctYoY)}</td>
+        </tr>`;
+      }).join('');
+      tbl.innerHTML = head + '<tbody>' + rows + '</tbody>';
+    }
+  } catch(e){ console.error('tools table:', e); }
+
+  /* ---------- Feature timeline ---------- */
+  try { renderToolsTimeline(); } catch(e){ console.error('tools timeline:', e); }
+
+  /* ---------- Linear/log scale toggle (chart may not exist yet) ---------- */
+  try {
+    $$('.ait-scale-toggle .dr-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('.ait-scale-toggle .dr-tab').forEach(b=>b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        const scale = btn.dataset.scale;
+        if(window._aiToolsChart){
+          window._aiToolsChart.options.scales.y.type = (scale==='log'?'logarithmic':'linear');
+          window._aiToolsChart.options.scales.y.beginAtZero = (scale!=='log');
+          window._aiToolsChart.update();
+        }
+      });
+    });
+  } catch(e){ console.error('tools scale toggle:', e); }
+
+  /* ---------- Chart: lazy-init when ⑤ becomes visible ---------- */
+  /* Try once now (in case the page already shows ⑤), and also hook for later. */
+  ensureToolsChart(domains);
+}
+
+/* Build (or just resize) the traffic chart. Idempotent. */
+function ensureToolsChart(domains){
+  try {
+    const canvas = document.getElementById('chart-ai-tools-traffic');
+    if(!canvas || !domains || !domains.length) return;
+    /* If the canvas has no width, we're being called while still hidden — bail
+       but try again on the next animation frame. */
+    if(!canvas.offsetWidth){
+      requestAnimationFrame(() => ensureToolsChart(domains));
+      return;
+    }
+    if(window._aiToolsChart){
+      try{ window._aiToolsChart.resize(); }catch(_){}
+      return;
+    }
+
     const monthSet = new Set();
     domains.forEach(d => (d.metrics||[]).forEach(m => monthSet.add(m.date)));
-    const months = [...monthSet].sort();
-    /* Skip the very last partial month if it's substantially below the prior — rare edge case */
-    const labels = months;
+    const labels = [...monthSet].sort();
     const datasets = domains.map(d => {
       const map = {};
       (d.metrics||[]).forEach(m => { map[m.date] = m.org_traffic; });
@@ -2540,8 +2622,6 @@ function renderTools(){
         pointHoverRadius: 4,
         tension: .25,
         spanGaps: true,
-        _domain: d.domain,
-        _ai: d.ai,
       };
     });
     const cfg = {
@@ -2556,10 +2636,7 @@ function renderTools(){
           tooltip:{
             callbacks:{
               title:(items)=>items[0]?.label||'',
-              label:(c)=>{
-                const v = c.raw;
-                return ` ${c.dataset.label}: ${v==null?'—':v.toLocaleString('ja-JP')}`;
-              }
+              label:(c)=>` ${c.dataset.label}: ${c.raw==null?'—':c.raw.toLocaleString('ja-JP')}`,
             }
           }
         },
@@ -2569,90 +2646,33 @@ function renderTools(){
         }
       }
     };
-    if(window._aiToolsChart) window._aiToolsChart.destroy();
     window._aiToolsChart = new Chart(canvas, cfg);
 
-    /* Custom legend with toggle + log/linear scale toggle */
-    const legendEl = $('#ait-legend');
-    const visibleSet = new Set(datasets.map(d => d.label));
-    function refreshLegend(){
-      if(!legendEl) return;
-      legendEl.innerHTML = '';
-      datasets.forEach(ds => {
-        const btn = document.createElement('span');
-        btn.className = 'li' + (visibleSet.has(ds.label) ? '' : ' muted');
-        btn.innerHTML = `<span class="swatch" style="background:${ds.borderColor}"></span>${esc(ds.label)}`;
-        btn.addEventListener('click', () => {
-          const idx = window._aiToolsChart.data.datasets.findIndex(d=>d.label===ds.label);
-          if(idx<0) return;
-          const meta = window._aiToolsChart.getDatasetMeta(idx);
-          meta.hidden = !meta.hidden;
-          if(meta.hidden) visibleSet.delete(ds.label); else visibleSet.add(ds.label);
-          window._aiToolsChart.update();
-          refreshLegend();
+    /* Build legend now that the chart exists */
+    const legendEl = document.getElementById('ait-legend');
+    if(legendEl){
+      const visibleSet = new Set(datasets.map(d => d.label));
+      function refreshLegend(){
+        legendEl.innerHTML = '';
+        datasets.forEach(ds => {
+          const btn = document.createElement('span');
+          btn.className = 'li' + (visibleSet.has(ds.label) ? '' : ' muted');
+          btn.innerHTML = `<span class="swatch" style="background:${ds.borderColor}"></span>${esc(ds.label)}`;
+          btn.addEventListener('click', () => {
+            const idx = window._aiToolsChart.data.datasets.findIndex(d=>d.label===ds.label);
+            if(idx<0) return;
+            const meta = window._aiToolsChart.getDatasetMeta(idx);
+            meta.hidden = !meta.hidden;
+            if(meta.hidden) visibleSet.delete(ds.label); else visibleSet.add(ds.label);
+            window._aiToolsChart.update();
+            refreshLegend();
+          });
+          legendEl.appendChild(btn);
         });
-        legendEl.appendChild(btn);
-      });
+      }
+      refreshLegend();
     }
-    refreshLegend();
-
-    /* Linear/log toggle */
-    $$('.ait-scale-toggle .dr-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        $$('.ait-scale-toggle .dr-tab').forEach(b=>b.classList.remove('is-active'));
-        btn.classList.add('is-active');
-        const scale = btn.dataset.scale;
-        window._aiToolsChart.options.scales.y.type = (scale==='log'?'logarithmic':'linear');
-        window._aiToolsChart.options.scales.y.beginAtZero = (scale!=='log');
-        window._aiToolsChart.update();
-      });
-    });
-  }
-
-  /* ========== Latest-month table ========== */
-  const tbl = document.getElementById('tbl-ai-tools-latest');
-  if(tbl && domains.length){
-    /* Use month that's not the very latest if it's < 50% of prior (likely partial) */
-    let referenceMonthIdx = -1; // index from end (-1 = last, -2 = second-to-last)
-    const head = `<thead><tr><th>AI / プロダクト</th><th>ドメイン</th><th class="num">直近月</th><th class="num">前月</th><th class="num">前月比</th><th class="num">前年同月</th><th class="num">前年比</th></tr></thead>`;
-    const rows = domains.map(d => {
-      const M = d.metrics || [];
-      if(!M.length) return '';
-      const last = M[M.length-1];
-      const prev = M[M.length-2];
-      const yoy = M.length >= 13 ? M[M.length-13] : null;
-      const pctMoM = (prev && prev.org_traffic) ? (last.org_traffic-prev.org_traffic)/prev.org_traffic : null;
-      const pctYoY = (yoy && yoy.org_traffic) ? (last.org_traffic-yoy.org_traffic)/yoy.org_traffic : null;
-      const cls = v => v==null?'':(v>0?'delta-up':v<0?'delta-down':'');
-      const fmtP = v => v==null?'—':((v>0?'+':'')+(v*100).toFixed(1)+'%');
-      return `<tr>
-        <td class="ai-cell"><span class="tlbadge" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${d.color};margin-right:6px"></span>${esc(d.label)} <span style="color:var(--ink3);font-size:11px;margin-left:4px">(${esc(d.ai)})</span></td>
-        <td><a href="https://${esc(d.domain)}" target="_blank" rel="noopener">${esc(d.domain)}</a></td>
-        <td class="num">${last?N(last.org_traffic):'—'}<br><span style="font-size:10px;color:var(--ink3)">${last?esc(last.date):''}</span></td>
-        <td class="num">${prev?N(prev.org_traffic):'—'}</td>
-        <td class="num ${cls(pctMoM)}">${fmtP(pctMoM)}</td>
-        <td class="num">${yoy?N(yoy.org_traffic):'—'}</td>
-        <td class="num ${cls(pctYoY)}">${fmtP(pctYoY)}</td>
-      </tr>`;
-    }).join('');
-    tbl.innerHTML = head + '<tbody>' + rows + '</tbody>';
-  }
-
-  /* ========== Sub-tab switching ========== */
-  const subtabs = $$('.ait-subtab');
-  const subContents = $$('.ait-subtab-content');
-  function activateSubtab(name){
-    subtabs.forEach(b => b.classList.toggle('is-active', b.dataset.subtab === name));
-    subContents.forEach(c => { c.style.display = (c.dataset.subtabContent === name) ? '' : 'none'; });
-    /* Force Chart.js resize when usage tab becomes visible */
-    if(name === 'usage' && window._aiToolsChart){
-      requestAnimationFrame(() => { try{ window._aiToolsChart.resize(); }catch(_){} });
-    }
-  }
-  subtabs.forEach(b => b.addEventListener('click', () => activateSubtab(b.dataset.subtab)));
-
-  /* ========== Feature timeline ========== */
-  renderToolsTimeline();
+  } catch(e){ console.error('ensureToolsChart:', e); }
 }
 
 function renderToolsTimeline(){
@@ -2846,15 +2866,15 @@ function renderToolsTimeline(){
 }
 try { renderTools(); } catch(e){ console.error('renderTools failed:', e); }
 
-/* Force chart resize when ⑤ section becomes visible (Chart.js can't measure
-   hidden canvases on initial render) */
+/* Lazy-init / resize chart when ⑤ section becomes visible (Chart.js can't
+   measure hidden canvases on initial render). */
 (function(){
   const navBtn = document.querySelector('.nav-btn[data-section="tools"]');
   if(navBtn){
     navBtn.addEventListener('click', () => {
-      setTimeout(() => {
-        if(window._aiToolsChart){ try{ window._aiToolsChart.resize(); }catch(_){} }
-      }, 50);
+      const domains = ((DATA.ai_tools && DATA.ai_tools.domains) || [])
+        .filter(d => d && (d.metrics||[]).length);
+      requestAnimationFrame(() => requestAnimationFrame(() => ensureToolsChart(domains)));
     });
   }
 })();
