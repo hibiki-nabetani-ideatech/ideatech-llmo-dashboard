@@ -858,14 +858,14 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
     <!-- ⑤-A 主要AI利用者数推移 -->
     <section id="sec-tools-usage" class="section">
       <div class="sec-hero">
-        <div class="crumb">⑤ AI TOPICS｜<b>主要AI利用者数推移</b></div>
-        <h2>主要AIプロダクトの利用者数推移<span class="sub-h" id="tools-asof"></span></h2>
-        <p class="lead">主要AI（ChatGPT / Claude / Gemini / Copilot / Perplexity / DeepSeek / Grok）のオーガニックトラフィック月次推移（ahrefs Site Explorer）。実利用者数と上位互換性が高い指標。</p>
+        <div class="crumb">⑤ AI TOPICS｜<b>主要AI利用者数推移（日本国内）</b></div>
+        <h2>主要AIプロダクトの日本国内利用者数推移<span class="sub-h" id="tools-asof"></span></h2>
+        <p class="lead">主要AI（ChatGPT / Claude / Gemini / Copilot / Perplexity / DeepSeek / Grok）の<b>日本国内</b>オーガニックトラフィック月次推移（ahrefs Site Explorer・country=JP）。日本市場での実利用者数と上位互換性が高い指標。</p>
       </div>
       <div class="tab-summary" id="tools-summary"></div>
       <div class="card">
-        <h3>利用者推移（ahrefs オーガニックトラフィック・月次）</h3>
-        <div class="h3-sub">主要AIプロダクトのトップドメインへの自然検索流入数（subdomains含む）</div>
+        <h3>利用者推移（ahrefs オーガニックトラフィック・月次・日本国内）</h3>
+        <div class="h3-sub">主要AIプロダクトのトップドメインへの日本からの自然検索流入数（subdomains含む）。ahrefs JPデータは2024-06以降から取得可能</div>
         <div class="ait-toolbar">
           <div class="ait-scale-toggle">
             <button class="dr-tab is-active" data-scale="linear">線形</button>
