@@ -71,6 +71,8 @@ DEFAULT_BACKFILL_MAX_USES = 12
 DEFAULT_TARGET = 12
 DEFAULT_BACKFILL_TARGET = 25
 DEFAULT_BACKFILL_START = '2024-01'
+# Workflow has 15-min timeout; cap windows-per-run so a single run can't bust it.
+DEFAULT_BACKFILL_MAX_WINDOWS_PER_RUN = 3
 
 ALLOWED_AIS = [
     'OpenAI', 'Anthropic', 'Google', 'Microsoft', 'Perplexity',
@@ -394,17 +396,28 @@ def run_backfill(data: dict, api_key: str, model: str) -> int:
     start = os.environ.get('AI_TOPICS_BACKFILL_START') or DEFAULT_BACKFILL_START
 
     today = dt.date.today()
-    windows = build_backfill_windows(start, today)
+    all_windows = build_backfill_windows(start, today)
+    overall_last_we = all_windows[-1][1] if all_windows else None
     state = data.get('ai_topics') or {}
     done_through = state.get('_backfill_done_through')  # last completed window end (YYYY-MM)
 
     # Skip already-completed windows
+    windows = list(all_windows)
     if done_through:
         try:
             dy, dm = _parse_yyyy_mm(done_through)
         except ValueError:
             dy, dm = (0, 0)
         windows = [w for w in windows if _parse_yyyy_mm(w[1]) > (dy, dm)]
+
+    # Cap windows-per-run to stay safely inside the 15-min workflow timeout.
+    try:
+        max_per_run = int(os.environ.get('AI_TOPICS_BACKFILL_MAX_WINDOWS_PER_RUN') or DEFAULT_BACKFILL_MAX_WINDOWS_PER_RUN)
+    except ValueError:
+        max_per_run = DEFAULT_BACKFILL_MAX_WINDOWS_PER_RUN
+    if max_per_run > 0 and len(windows) > max_per_run:
+        print(f'fetch_ai_topics[backfill]: limiting this run to {max_per_run} of {len(windows)} pending windows (resumes next run)')
+        windows = windows[:max_per_run]
 
     print(f'fetch_ai_topics[backfill]: {len(windows)} window(s) to process: {windows}')
     if not windows:
@@ -456,18 +469,16 @@ def run_backfill(data: dict, api_key: str, model: str) -> int:
         completed_any = True
         print(f'fetch_ai_topics[backfill]:   +{len(fresh)} entries from {ws}-{we}, total {len(combined)}')
 
-    # Mark fully complete if we processed all originally-pending windows
+    # Mark fully complete only when we've reached the OVERALL last window
     if completed_any:
         ai_topics = data.get('ai_topics') or {}
-        last_we = windows[-1][1] if windows else None
-        # Check if we got to the last requested window's end
-        if ai_topics.get('_backfill_done_through') == last_we:
+        if ai_topics.get('_backfill_done_through') == overall_last_we:
             ai_topics['_backfilled'] = True
             data['ai_topics'] = ai_topics
             _save(data)
-            print('fetch_ai_topics[backfill]: ✓ backfill complete; weekly mode active from next run')
+            print(f'fetch_ai_topics[backfill]: ✓ backfill complete (through {overall_last_we}); weekly mode active from next run')
         else:
-            print(f'fetch_ai_topics[backfill]: partial completion (through {ai_topics.get("_backfill_done_through")}); next run will resume')
+            print(f'fetch_ai_topics[backfill]: partial completion (through {ai_topics.get("_backfill_done_through")}, target {overall_last_we}); next run will resume')
     return 0
 
 
