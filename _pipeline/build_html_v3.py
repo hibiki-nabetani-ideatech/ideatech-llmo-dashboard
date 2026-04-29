@@ -858,14 +858,21 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
     <!-- ⑤-A 主要AI利用者数推移 -->
     <section id="sec-tools-usage" class="section">
       <div class="sec-hero">
-        <div class="crumb">⑤ AI TOPICS｜<b>主要AI利用者数推移（日本国内）</b></div>
-        <h2>主要AIプロダクトの日本国内利用者数推移<span class="sub-h" id="tools-asof"></span></h2>
-        <p class="lead">主要AI（ChatGPT / Claude / Gemini / Copilot / Perplexity / DeepSeek / Grok）の<b>日本国内</b>オーガニックトラフィック月次推移（ahrefs Site Explorer・country=JP）。日本市場での実利用者数と上位互換性が高い指標。</p>
+        <div class="crumb">⑤ AI TOPICS｜<b>主要AI利用者数推移</b></div>
+        <h2>主要AIプロダクトの利用者数推移<span class="sub-h" id="tools-asof"></span></h2>
+        <p class="lead">主要AI（ChatGPT / Claude / Gemini / Copilot / Perplexity / DeepSeek / Grok）のオーガニックトラフィック月次推移（ahrefs Site Explorer）。実利用者数と上位互換性が高い指標。<b>日本国内</b>と<b>グローバル</b>を上部のタブで切替可能。</p>
       </div>
       <div class="tab-summary" id="tools-summary"></div>
+
+      <!-- Scope sub-tabs: 日本国内 / グローバル -->
+      <div class="ait-subtabs">
+        <button class="ait-subtab is-active" data-scope="jp"><span class="ait-subtab-num">🇯🇵</span>日本国内</button>
+        <button class="ait-subtab" data-scope="global"><span class="ait-subtab-num">🌐</span>グローバル</button>
+      </div>
+
       <div class="card">
-        <h3>利用者推移（ahrefs オーガニックトラフィック・月次・日本国内）</h3>
-        <div class="h3-sub">主要AIプロダクトのトップドメインへの日本からの自然検索流入数（subdomains含む）。ahrefs JPデータは2024-06以降から取得可能</div>
+        <h3 id="ait-card-h3">利用者推移（ahrefs オーガニックトラフィック・月次・日本国内）</h3>
+        <div class="h3-sub" id="ait-card-sub">主要AIプロダクトのトップドメインへの日本からの自然検索流入数（subdomains含む）。ahrefs JPデータは2024-06以降から取得可能</div>
         <div class="ait-toolbar">
           <div class="ait-scale-toggle">
             <button class="dr-tab is-active" data-scale="linear">線形</button>
@@ -2487,9 +2494,23 @@ renderDiff();
 /* =========================================================== */
 /* ⑤ 主要AIツール — 利用者推移＋機能タイムライン            */
 /* =========================================================== */
+/* Resolve scopes — supports both old shape (T.domains) and new shape (T.scopes.{jp,global}). */
+function _toolsScopes(){
+  const T = DATA.ai_tools || {};
+  if(T.scopes && (T.scopes.jp || T.scopes.global)) return T.scopes;
+  /* Legacy: a single global domains[] array */
+  if(T.domains) return { global: { label: 'グローバル', country: null, date_range: T.date_range, domains: T.domains } };
+  return {};
+}
+let _activeToolsScope = 'jp';
+
 function renderTools(){
   const T = DATA.ai_tools || {};
-  const domains = (T.domains || []).filter(d => d && (d.metrics||[]).length);
+  const scopes = _toolsScopes();
+  /* Default: JP if available, otherwise the first scope present */
+  if(!scopes[_activeToolsScope]){
+    _activeToolsScope = scopes.jp ? 'jp' : (scopes.global ? 'global' : Object.keys(scopes)[0] || 'jp');
+  }
 
   /* ---------- As-of badge ---------- */
   try {
@@ -2499,25 +2520,83 @@ function renderTools(){
     }
   } catch(e){ console.error('tools asof:', e); }
 
-  /* ---------- Summary line ---------- */
+  /* ---------- Linear/log scale toggle ---------- */
+  try {
+    $$('.ait-scale-toggle .dr-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        $$('.ait-scale-toggle .dr-tab').forEach(b=>b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        const scale = btn.dataset.scale;
+        if(window._aiToolsChart){
+          window._aiToolsChart.options.scales.y.type = (scale==='log'?'logarithmic':'linear');
+          window._aiToolsChart.options.scales.y.beginAtZero = (scale!=='log');
+          window._aiToolsChart.update();
+        }
+      });
+    });
+  } catch(e){ console.error('tools scale toggle:', e); }
+
+  /* ---------- Scope sub-tabs (日本国内 / グローバル) ---------- */
+  try {
+    $$('.ait-subtab').forEach(btn => {
+      const sk = btn.dataset.scope;
+      btn.classList.toggle('is-active', sk === _activeToolsScope);
+      btn.addEventListener('click', () => {
+        if(!scopes[sk]) return;
+        _activeToolsScope = sk;
+        $$('.ait-subtab').forEach(b => b.classList.toggle('is-active', b.dataset.scope === sk));
+        renderToolsForScope();
+        /* Force chart rebuild for new data */
+        if(window._aiToolsChart){ window._aiToolsChart.destroy(); window._aiToolsChart = null; }
+        ensureToolsChart();
+      });
+    });
+  } catch(e){ console.error('tools scope tabs:', e); }
+
+  /* ---------- Feature timeline (scope-independent) ---------- */
+  try { renderToolsTimeline(); } catch(e){ console.error('tools timeline:', e); }
+
+  /* ---------- First render (default scope) ---------- */
+  renderToolsForScope();
+  ensureToolsChart();
+}
+
+function renderToolsForScope(){
+  const scopes = _toolsScopes();
+  const scope = scopes[_activeToolsScope] || scopes.jp || scopes.global || {};
+  const domains = (scope.domains || []).filter(d => d && (d.metrics||[]).length);
+  const isJP = _activeToolsScope === 'jp';
+  const scopeLabel = isJP ? '日本国内' : 'グローバル';
+
+  /* Update card headings */
+  const h3 = document.getElementById('ait-card-h3');
+  if(h3) h3.textContent = `利用者推移（ahrefs オーガニックトラフィック・月次・${scopeLabel}）`;
+  const h3sub = document.getElementById('ait-card-sub');
+  if(h3sub){
+    h3sub.textContent = isJP
+      ? '主要AIプロダクトのトップドメインへの日本からの自然検索流入数（subdomains含む）。ahrefs JPデータは2024-06以降から取得可能'
+      : '主要AIプロダクトのトップドメインへの全世界からの自然検索流入数（subdomains含む）';
+  }
+
+  /* Summary line */
   try {
     const sumEl = $('#tools-summary');
     if(sumEl){
       if(!domains.length){
-        sumEl.innerHTML = `<span class="ts-label">概況</span>本タブはahrefs Site Explorerで主要AIプロダクトの月次トラフィック推移を取得します。<br>初回パイプライン実行後に反映されます。`;
+        sumEl.innerHTML = `<span class="ts-label">概況</span>${esc(scopeLabel)}スコープのデータはまだ取得されていません。`;
       } else {
-        const months = domains[0].metrics.map(m=>m.date);
+        const months = (domains[0].metrics||[]).map(m=>m.date);
         const lastMonth = months[months.length-1] || '—';
         const ranked = [...domains]
-          .map(d => ({ai: d.label, traffic: (d.metrics[d.metrics.length-1]||{}).org_traffic||0}))
+          .map(d => ({ai: d.label, traffic: ((d.metrics||[])[d.metrics.length-1]||{}).org_traffic||0}))
           .sort((a,b)=>b.traffic-a.traffic);
         const top = ranked.slice(0,3).map(r=>`${esc(r.ai)} <b>${N(r.traffic)}</b>`).join(' / ');
-        sumEl.innerHTML = `<span class="ts-label">概況</span>${esc(lastMonth)} の主要AIオーガニック流入トップ3: ${top}。<br>${domains.length}ドメインを ${esc(months[0]||'—')} 〜 ${esc(lastMonth)} の範囲で月次プロット。`;
+        sumEl.innerHTML = `<span class="ts-label">概況</span><b>${esc(scopeLabel)}</b>｜${esc(lastMonth)} のオーガニック流入トップ3: ${top}。<br>${domains.length}ドメインを ${esc(months[0]||'—')} 〜 ${esc(lastMonth)} の範囲で月次プロット。`;
       }
     }
   } catch(e){ console.error('tools summary:', e); }
 
-  /* ---------- Latest-month table ---------- */
+  /* Latest-month table */
   try {
     const tbl = document.getElementById('tbl-ai-tools-latest');
     if(tbl && domains.length){
@@ -2545,40 +2624,19 @@ function renderTools(){
       tbl.innerHTML = head + '<tbody>' + rows + '</tbody>';
     }
   } catch(e){ console.error('tools table:', e); }
-
-  /* ---------- Feature timeline ---------- */
-  try { renderToolsTimeline(); } catch(e){ console.error('tools timeline:', e); }
-
-  /* ---------- Linear/log scale toggle (chart may not exist yet) ---------- */
-  try {
-    $$('.ait-scale-toggle .dr-tab').forEach(btn => {
-      btn.addEventListener('click', () => {
-        $$('.ait-scale-toggle .dr-tab').forEach(b=>b.classList.remove('is-active'));
-        btn.classList.add('is-active');
-        const scale = btn.dataset.scale;
-        if(window._aiToolsChart){
-          window._aiToolsChart.options.scales.y.type = (scale==='log'?'logarithmic':'linear');
-          window._aiToolsChart.options.scales.y.beginAtZero = (scale!=='log');
-          window._aiToolsChart.update();
-        }
-      });
-    });
-  } catch(e){ console.error('tools scale toggle:', e); }
-
-  /* ---------- Chart: lazy-init when ⑤ becomes visible ---------- */
-  /* Try once now (in case the page already shows ⑤), and also hook for later. */
-  ensureToolsChart(domains);
 }
 
-/* Build (or just resize) the traffic chart. Idempotent. */
-function ensureToolsChart(domains){
+/* Build (or just resize) the traffic chart for the active scope. Idempotent. */
+function ensureToolsChart(){
   try {
     const canvas = document.getElementById('chart-ai-tools-traffic');
-    if(!canvas || !domains || !domains.length) return;
-    /* If the canvas has no width, we're being called while still hidden — bail
-       but try again on the next animation frame. */
+    if(!canvas) return;
+    const scopes = _toolsScopes();
+    const scope = scopes[_activeToolsScope] || scopes.jp || scopes.global || {};
+    const domains = (scope.domains || []).filter(d => d && (d.metrics||[]).length);
+    if(!domains.length) return;
     if(!canvas.offsetWidth){
-      requestAnimationFrame(() => ensureToolsChart(domains));
+      requestAnimationFrame(() => ensureToolsChart());
       return;
     }
     if(window._aiToolsChart){
@@ -2604,6 +2662,9 @@ function ensureToolsChart(domains){
         spanGaps: true,
       };
     });
+    /* Honor current scale toggle */
+    const activeScaleBtn = document.querySelector('.ait-scale-toggle .dr-tab.is-active');
+    const scaleType = activeScaleBtn && activeScaleBtn.dataset.scale === 'log' ? 'logarithmic' : 'linear';
     const cfg = {
       type:'line',
       data:{labels,datasets},
@@ -2622,13 +2683,13 @@ function ensureToolsChart(domains){
         },
         scales:{
           x:{ticks:{maxRotation:0,autoSkipPadding:8,font:{size:10.5}},grid:{display:false}},
-          y:{type:'linear',beginAtZero:true,ticks:{callback:v=>(v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v),font:{size:10.5}},grid:{color:'#f0f0f0'}}
+          y:{type:scaleType,beginAtZero:scaleType!=='logarithmic',ticks:{callback:v=>(v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(0)+'K':v),font:{size:10.5}},grid:{color:'#f0f0f0'}}
         }
       }
     };
     window._aiToolsChart = new Chart(canvas, cfg);
 
-    /* Build legend now that the chart exists */
+    /* Build legend */
     const legendEl = document.getElementById('ait-legend');
     if(legendEl){
       const visibleSet = new Set(datasets.map(d => d.label));
@@ -2852,9 +2913,7 @@ try { renderTools(); } catch(e){ console.error('renderTools failed:', e); }
   const usageBtn = document.querySelector('.nav-btn[data-section="tools-usage"]');
   if(usageBtn){
     usageBtn.addEventListener('click', () => {
-      const domains = ((DATA.ai_tools && DATA.ai_tools.domains) || [])
-        .filter(d => d && (d.metrics||[]).length);
-      requestAnimationFrame(() => requestAnimationFrame(() => ensureToolsChart(domains)));
+      requestAnimationFrame(() => requestAnimationFrame(() => ensureToolsChart()));
     });
   }
 })();

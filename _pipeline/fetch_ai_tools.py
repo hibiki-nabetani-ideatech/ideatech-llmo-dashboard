@@ -171,53 +171,63 @@ def main() -> int:
         print('fetch_ai_tools: AHREFS_API_TOKEN unset — skipping (existing ai_tools retained)')
         return 0
 
-    date_from = os.environ.get('AI_TOOLS_FROM') or DEFAULT_FROM
     date_to = os.environ.get('AI_TOOLS_TO') or dt.date.today().strftime('%Y-%m-%d')
-    country = os.environ.get('AI_TOOLS_COUNTRY', DEFAULT_COUNTRY).strip().upper()
+
+    # Two scopes: JP (since 2024-06) and global (since 2024-01)
+    SCOPES = [
+        ('jp',     '日本国内',     'JP', os.environ.get('AI_TOOLS_FROM_JP') or '2024-06-01'),
+        ('global', 'グローバル',   '',   os.environ.get('AI_TOOLS_FROM_GLOBAL') or '2024-01-01'),
+    ]
 
     # Load existing data
     with open(DATA_PATH, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    prev = (data.get('ai_tools') or {}).get('domains') or []
-    prev_by_domain = {d.get('domain'): d for d in prev if d.get('domain')}
+    existing = data.get('ai_tools') or {}
+    prev_scopes = (existing.get('scopes') or {})
 
-    country_label = f'country={country}' if country else 'global'
-    domains_out = []
-    for ai, label, domain, color in TARGETS:
-        print(f'fetch_ai_tools: {label} ({domain}) {date_from} … {date_to} [{country_label}]')
-        metrics = fetch_history(token, domain, country, date_from, date_to)
-        if metrics is None:
-            # Keep prior data for this domain if available
-            old = prev_by_domain.get(domain)
-            if old:
-                print(f'  → keeping previous {len(old.get("metrics") or [])} months')
-                domains_out.append(old)
+    out_scopes = {}
+    for scope_id, scope_label, country, date_from in SCOPES:
+        country_label = f'country={country}' if country else 'global'
+        prev = (prev_scopes.get(scope_id) or {}).get('domains') or []
+        prev_by_domain = {d.get('domain'): d for d in prev if d.get('domain')}
+
+        domains_out = []
+        for ai, label, domain, color in TARGETS:
+            print(f'fetch_ai_tools[{scope_id}]: {label} ({domain}) {date_from} … {date_to} [{country_label}]')
+            metrics = fetch_history(token, domain, country, date_from, date_to)
+            if metrics is None:
+                old = prev_by_domain.get(domain)
+                if old:
+                    print(f'  → keeping previous {len(old.get("metrics") or [])} months')
+                    domains_out.append(old)
+                else:
+                    print(f'  → no prior data; skipping')
+                continue
+            domains_out.append({
+                'ai': ai, 'label': label, 'domain': domain, 'color': color,
+                'metrics': metrics,
+            })
+            if metrics:
+                latest = metrics[-1]
+                print(f'  → {len(metrics)} months, latest {latest["date"]}: org={latest["org_traffic"]:,}')
             else:
-                print(f'  → no prior data; skipping')
-            continue
-        domains_out.append({
-            'ai': ai,
-            'label': label,
-            'domain': domain,
-            'color': color,
-            'metrics': metrics,
-        })
-        if metrics:
-            latest = metrics[-1]
-            print(f'  → {len(metrics)} months, latest {latest["date"]}: org={latest["org_traffic"]:,}')
-        else:
-            print(f'  → 0 months in range (likely no JP data for this domain yet)')
+                print(f'  → 0 months in range')
 
-    if not domains_out:
-        print('fetch_ai_tools: WARN all domains failed — keeping prior ai_tools entirely', file=sys.stderr)
+        out_scopes[scope_id] = {
+            'label': scope_label,
+            'country': country or None,
+            'date_range': {'from': date_from, 'to': date_to},
+            'domains': domains_out,
+        }
+
+    if not out_scopes:
+        print('fetch_ai_tools: WARN no scopes produced — keeping prior ai_tools entirely', file=sys.stderr)
         return 0
 
     now_jst = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).isoformat(timespec='seconds')
     data['ai_tools'] = {
         'generated_at': now_jst,
-        'country': country or None,
-        'date_range': {'from': date_from, 'to': date_to},
-        'domains': domains_out,
+        'scopes': out_scopes,
     }
     with open(DATA_PATH, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False)
