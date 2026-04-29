@@ -173,10 +173,11 @@ def main() -> int:
 
     date_to = os.environ.get('AI_TOOLS_TO') or dt.date.today().strftime('%Y-%m-%d')
 
-    # Two scopes: JP (since 2024-06) and global (since 2024-01)
+    # Two scopes — both start from 2024-06 so the time axis is identical
+    # (ahrefs JP history begins ~mid-2024 anyway).
     SCOPES = [
-        ('jp',     '日本国内',     'JP', os.environ.get('AI_TOOLS_FROM_JP') or '2024-06-01'),
-        ('global', 'グローバル',   '',   os.environ.get('AI_TOOLS_FROM_GLOBAL') or '2024-01-01'),
+        ('jp',     '日本国内',     'JP', os.environ.get('AI_TOOLS_FROM_JP')     or '2024-06-01'),
+        ('global', 'グローバル',   '',   os.environ.get('AI_TOOLS_FROM_GLOBAL') or '2024-06-01'),
     ]
 
     # Load existing data
