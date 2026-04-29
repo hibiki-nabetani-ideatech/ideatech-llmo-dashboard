@@ -265,6 +265,41 @@ tr.dr-row-high td:first-child{border-left:3px solid #64b5f6}
 .dr-tab:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-soft)}
 .dr-tab.is-active{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600}
 
+/* ===== AI Topics (⑤) ===== */
+.topics-toolbar{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.topics-filters{display:flex;flex-wrap:wrap;gap:14px}
+.topics-filter-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.topics-filter-group .flbl{font-size:11px;color:var(--ink3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding-right:4px}
+.topics-search-wrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.topics-list{display:flex;flex-direction:column;gap:12px}
+.topic-card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px 16px 12px;display:flex;flex-direction:column;gap:8px;transition:box-shadow .15s}
+.topic-card:hover{box-shadow:0 1px 6px rgba(0,0,0,.05);border-color:var(--blue-mid)}
+.topic-card .tc-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:11.5px;color:var(--ink2)}
+.topic-card .tc-date{color:var(--ink3);font-variant-numeric:tabular-nums}
+.topic-card .tc-ai{display:inline-block;padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;background:var(--blue-soft);color:var(--blue);letter-spacing:.01em}
+.topic-card .tc-tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10.5px;font-weight:600;background:#f0f1f5;color:var(--ink2);border:1px solid var(--line-soft)}
+.topic-card .tc-title{font-size:14.5px;font-weight:700;line-height:1.5;color:var(--ink)}
+.topic-card .tc-title a{color:var(--ink)}
+.topic-card .tc-title a:hover{color:var(--blue);text-decoration:underline}
+.topic-card .tc-summary{font-size:13px;color:var(--ink2);line-height:1.7}
+.topic-card .tc-source{font-size:11.5px}
+.topic-card .tc-reactions{margin-top:6px;background:var(--cell-bg);border:1px solid var(--line-soft);border-radius:5px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.topic-card .tc-reactions .tc-r-h{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.topic-card .tc-reactions .tc-r-h::before{content:"";display:inline-block;width:4px;height:14px;background:var(--blue);border-radius:2px}
+.topic-card .tc-reactions .tc-r-s{font-size:12.5px;color:var(--ink2);line-height:1.7}
+.topic-card .tc-reactions .tc-r-l{display:flex;flex-wrap:wrap;gap:8px;font-size:11.5px}
+.topic-card .tc-reactions .tc-r-l a{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;background:#fff;border:1px solid var(--line);color:var(--blue);text-decoration:none}
+.topic-card .tc-reactions .tc-r-l a:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* AI brand tints */
+.tc-ai.ai-OpenAI{background:#dff5ec;color:#0a8054}
+.tc-ai.ai-Anthropic{background:#fde9da;color:#a05a1f}
+.tc-ai.ai-Google{background:#dbe8fc;color:#1a56c0}
+.tc-ai.ai-Microsoft{background:#cfe5fa;color:#005a9e}
+.tc-ai.ai-Perplexity{background:#d8f5e8;color:#0d8060}
+.tc-ai.ai-Meta{background:#dde5fc;color:#1c3aa9}
+.tc-ai.ai-xAI{background:#e2e2e2;color:#212121}
+.topics-empty-search{padding:18px;text-align:center;color:var(--ink2);background:var(--cell-bg);border:1px dashed var(--line);border-radius:4px;font-size:12px}
+
 /* ===== Details (response viewer) ===== */
 details{border:1px solid var(--line);border-radius:4px;padding:0;margin:6px 0;background:#fff}
 details>summary{cursor:pointer;padding:9px 14px;font-weight:600;font-size:12px;color:var(--ink);list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -490,6 +525,10 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
       <div class="nav-group-title">④ 中間指標 (サイテーション)</div>
       <button class="nav-btn" data-section="cit-ideatech"><span class="nav-num">4</span>IDEATECH</button>
       <button class="nav-btn" data-section="cit-risapy"><span class="nav-num">4</span>リサピー</button>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">⑤ AI Topics</div>
+      <button class="nav-btn" data-section="topics"><span class="nav-num">5</span>主要AIニュース</button>
     </div>
   </aside>
 
@@ -770,6 +809,30 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         </div>
         <div class="table-wrap" style="max-height:560px"><table id="tbl-cit-risapy"></table></div>
         <div class="pager" id="pager-cit-risapy"></div>
+      </div>
+    </section>
+
+    <!-- ⑤ AI Topics -->
+    <section id="sec-topics" class="section">
+      <div class="sec-hero">
+        <div class="crumb">⑤ AI Topics｜<b>主要AIニュース（自動収集）</b></div>
+        <h2>主要AIプロダクトの週次アップデート<span class="sub-h" id="topics-asof"></span></h2>
+        <p class="lead">過去7〜10日間の主要AI（OpenAI / Anthropic / Google / Microsoft / Perplexity / 国内AI 等）のプロダクト発表・新機能・業界動向を自動収集し、世間の反応を要約しています。</p>
+      </div>
+      <div class="tab-summary" id="topics-summary"></div>
+      <div class="card">
+        <div class="topics-toolbar">
+          <div class="topics-filters">
+            <div class="topics-filter-group" id="topics-filter-ai"></div>
+            <div class="topics-filter-group" id="topics-filter-tag"></div>
+          </div>
+          <div class="topics-search-wrap">
+            <input type="text" class="search" id="topics-search" placeholder="タイトル／サマリ／反応で検索">
+            <span class="small" id="topics-count"></span>
+          </div>
+        </div>
+        <div id="topics-list" class="topics-list"></div>
+        <div id="topics-empty" class="empty-note" style="display:none">表示できるニュースがありません。週次パイプライン実行後に反映されます。</div>
       </div>
     </section>
   </main>
@@ -2329,6 +2392,142 @@ function renderDiff(){
   });
 }
 renderDiff();
+
+/* =========================================================== */
+/* ⑤ AI Topics                                                 */
+/* =========================================================== */
+function renderTopics(){
+  const T = (DATA.ai_topics && DATA.ai_topics.entries) || [];
+  const asofEl = $('#topics-asof');
+  if(asofEl && DATA.ai_topics && DATA.ai_topics.generated_at){
+    const ts = String(DATA.ai_topics.generated_at).replace('T',' ').slice(0,16);
+    asofEl.textContent = ' — 取得 ' + ts;
+  }
+
+  const sumEl = $('#topics-summary');
+  if(sumEl){
+    if(!T.length){
+      sumEl.innerHTML = `<span class="ts-label">概況</span>本タブはAnthropic API（Claude + web_search）で週次に主要AIニュースを自動収集します。<br>初回実行までは空欄ですが、来週月曜の自動更新後に反映されます。`;
+    } else {
+      const byAi = {};
+      T.forEach(e => { byAi[e.ai] = (byAi[e.ai]||0) + 1; });
+      const aiList = Object.entries(byAi).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${esc(k)} ${v}件`).join(' / ');
+      const dates = T.map(e=>e.date).filter(Boolean).sort();
+      const span = dates.length ? `${dates[0]} 〜 ${dates[dates.length-1]}` : '直近';
+      sumEl.innerHTML = `<span class="ts-label">概況</span>${T.length}件のAIニュースを表示中（${esc(span)}）。<br>内訳: ${aiList}。`;
+    }
+  }
+
+  const listEl = $('#topics-list');
+  const cntEl = $('#topics-count');
+  const emptyEl = $('#topics-empty');
+  if(!listEl) return;
+
+  if(!T.length){
+    listEl.innerHTML = '';
+    if(emptyEl) emptyEl.style.display = '';
+    if(cntEl) cntEl.textContent = '';
+    return;
+  }
+  if(emptyEl) emptyEl.style.display = 'none';
+
+  /* Build filter chips */
+  const aiSet = [...new Set(T.map(e=>e.ai).filter(Boolean))].sort();
+  const tagSet = [...new Set(T.flatMap(e=>e.topic_tags||[]).filter(Boolean))].sort();
+
+  const filterAiEl = $('#topics-filter-ai');
+  const filterTagEl = $('#topics-filter-tag');
+  const state = { ai: 'ALL', tag: 'ALL', q: '' };
+
+  function chip(label, active, onClick){
+    const b = document.createElement('button');
+    b.className = 'dr-tab' + (active ? ' is-active' : '');
+    b.textContent = label;
+    b.addEventListener('click', onClick);
+    return b;
+  }
+
+  function renderFilters(){
+    if(filterAiEl){
+      filterAiEl.innerHTML = '<span class="flbl">AI</span>';
+      filterAiEl.appendChild(chip('全て', state.ai==='ALL', ()=>{state.ai='ALL'; renderFilters(); apply();}));
+      aiSet.forEach(a => filterAiEl.appendChild(chip(a, state.ai===a, ()=>{state.ai=a; renderFilters(); apply();})));
+    }
+    if(filterTagEl){
+      filterTagEl.innerHTML = '<span class="flbl">トピック</span>';
+      filterTagEl.appendChild(chip('全て', state.tag==='ALL', ()=>{state.tag='ALL'; renderFilters(); apply();}));
+      tagSet.forEach(t => filterTagEl.appendChild(chip(t, state.tag===t, ()=>{state.tag=t; renderFilters(); apply();})));
+    }
+  }
+
+  function escAttr(v){ return String(v||'').replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+  function aiBadgeClass(ai){
+    const safe = String(ai||'').replace(/[^A-Za-z]/g,'');
+    return safe ? ('ai-' + safe) : '';
+  }
+
+  function hostOf(u){
+    try { return new URL(u).hostname.replace(/^www\./,''); } catch { return ''; }
+  }
+
+  function cardHtml(e){
+    const ai = esc(e.ai || 'その他');
+    const tags = (e.topic_tags||[]).map(t=>`<span class="tc-tag">${esc(t)}</span>`).join('');
+    const reactions = e.reactions || {};
+    const rSum = reactions.summary || '';
+    const rSrc = (reactions.sources||[]);
+    const rLinks = rSrc.map(s => `<a href="${escAttr(s.url)}" target="_blank" rel="noopener">${esc(s.label||hostOf(s.url)||'link')} ↗</a>`).join('');
+    const reactionsBlock = (rSum || rLinks)
+      ? `<div class="tc-reactions"><div class="tc-r-h">世間の反応</div>${rSum?`<div class="tc-r-s">${esc(rSum)}</div>`:''}${rLinks?`<div class="tc-r-l">${rLinks}</div>`:''}</div>`
+      : '';
+    const host = hostOf(e.url);
+    const dateStr = esc(e.date || '');
+    const titleHtml = e.url
+      ? `<a href="${escAttr(e.url)}" target="_blank" rel="noopener">${esc(e.title||'')}</a>`
+      : esc(e.title||'');
+    return `
+      <div class="topic-card">
+        <div class="tc-meta">
+          <span class="tc-date">${dateStr}</span>
+          <span class="tc-ai ${aiBadgeClass(e.ai)}">${ai}</span>
+          ${tags}
+        </div>
+        <div class="tc-title">${titleHtml}</div>
+        ${e.summary?`<div class="tc-summary">${esc(e.summary)}</div>`:''}
+        ${host?`<div class="tc-source"><a href="${escAttr(e.url)}" target="_blank" rel="noopener">${esc(host)} ↗</a></div>`:''}
+        ${reactionsBlock}
+      </div>
+    `;
+  }
+
+  function apply(){
+    const q = (state.q||'').trim().toLowerCase();
+    let rows = T.slice();
+    if(state.ai !== 'ALL') rows = rows.filter(e => e.ai === state.ai);
+    if(state.tag !== 'ALL') rows = rows.filter(e => (e.topic_tags||[]).includes(state.tag));
+    if(q){
+      rows = rows.filter(e => {
+        const blob = [e.title, e.summary, (e.reactions||{}).summary, e.ai, ...(e.topic_tags||[])].join(' ').toLowerCase();
+        return blob.includes(q);
+      });
+    }
+    if(cntEl) cntEl.textContent = `${rows.length} / ${T.length} 件`;
+    if(!rows.length){
+      listEl.innerHTML = '<div class="topics-empty-search">該当するニュースはありません。フィルタや検索条件を見直してください。</div>';
+      return;
+    }
+    listEl.innerHTML = rows.map(cardHtml).join('');
+  }
+
+  const searchEl = $('#topics-search');
+  if(searchEl){
+    searchEl.addEventListener('input', ()=>{ state.q = searchEl.value; apply(); });
+  }
+  renderFilters();
+  apply();
+}
+renderTopics();
 
 /* =========================================================== */
 /* Tab summaries — interpretive callouts based on actual data  */

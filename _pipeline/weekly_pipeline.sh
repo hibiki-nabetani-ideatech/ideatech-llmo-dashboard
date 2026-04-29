@@ -42,7 +42,7 @@ echo "    SITE_DIR=$SITE_DIR"
 # 1) Snapshot
 if [[ -f data_v3.json ]]; then
   cp data_v3.json data_v3_prev.json
-  echo "[1/6] snapshot: data_v3.json → data_v3_prev.json"
+  echo "[1/7] snapshot: data_v3.json → data_v3_prev.json"
 else
   echo "ERR: data_v3.json missing in $ROOT" >&2
   exit 1
@@ -50,48 +50,52 @@ fi
 
 # 2) Merge Brand Radar (skip if no input dir / no files)
 if [[ -d "$BR_DIR" ]] && ls "$BR_DIR"/*.json >/dev/null 2>&1; then
-  echo "[2/6] merging Brand Radar from $BR_DIR …"
+  echo "[2/7] merging Brand Radar from $BR_DIR …"
   python3 merge_brand_radar.py --in-dir "$BR_DIR"
 else
-  echo "[2/6] WARN: no Brand Radar files in $BR_DIR — skipping merge"
+  echo "[2/7] WARN: no Brand Radar files in $BR_DIR — skipping merge"
 fi
 
-# 3) Diff
-echo "[3/6] computing diff …"
+# 3) Fetch ⑤ AI Topics (skip silently if ANTHROPIC_API_KEY unset; keeps prior entries on any error)
+echo "[3/7] fetching AI Topics …"
+python3 fetch_ai_topics.py || echo "[3/7] WARN: fetch_ai_topics.py exited non-zero; continuing"
+
+# 4) Diff
+echo "[4/7] computing diff …"
 python3 compute_diff.py
 
-# 4) Build HTML directly into repo root
-echo "[4/6] building HTML …"
+# 5) Build HTML directly into repo root
+echo "[5/7] building HTML …"
 python3 build_html_v3.py --out "$SITE_DIR/index.html"
 
-# 5) Deploy
+# 6) Deploy
 if [[ -z "${SKIP_DEPLOY:-}" ]]; then
-  echo "[5/6] committing & pushing …"
+  echo "[6/7] committing & pushing …"
   cd "$SITE_DIR"
   git add index.html _pipeline/data_v3.json _pipeline/data_v3_prev.json
   if ! git diff --cached --quiet; then
     git -c user.name="ideatech-llmo-bot" -c user.email="bot@ideatech.local" \
         commit -m "weekly: $(date '+%Y-%m-%d') data refresh"
     git push
-    echo "[5/6] pushed"
+    echo "[6/7] pushed"
   else
-    echo "[5/6] no diff — skipping commit"
+    echo "[6/7] no diff — skipping commit"
   fi
   cd "$ROOT"
 else
-  echo "[5/6] SKIP_DEPLOY set — skipping push"
+  echo "[6/7] SKIP_DEPLOY set — skipping push"
 fi
 
-# 6) Notify
+# 7) Notify
 if [[ -z "${SKIP_NOTIFY:-}" ]]; then
   if [[ -n "${CHATWORK_API_TOKEN:-}" && -n "${CHATWORK_ROOM_ID:-}" ]]; then
-    echo "[6/6] sending ChatWork notification …"
+    echo "[7/7] sending ChatWork notification …"
     python3 chatwork_notify.py
   else
-    echo "[6/6] WARN: CHATWORK_API_TOKEN / CHATWORK_ROOM_ID unset — skipping notify"
+    echo "[7/7] WARN: CHATWORK_API_TOKEN / CHATWORK_ROOM_ID unset — skipping notify"
   fi
 else
-  echo "[6/6] SKIP_NOTIFY set — skipping ChatWork"
+  echo "[7/7] SKIP_NOTIFY set — skipping ChatWork"
 fi
 
 echo "=== done ==="
