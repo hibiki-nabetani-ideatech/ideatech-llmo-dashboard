@@ -23,6 +23,7 @@ jobs:
       AHREFS_API_TOKEN: ${{ secrets.AHREFS_API_TOKEN }}
       CHATWORK_API_TOKEN: ${{ secrets.CHATWORK_API_TOKEN }}
       CHATWORK_ROOM_ID:  ${{ secrets.CHATWORK_ROOM_ID }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       BR_DATA_SOURCES: chatgpt           # extend when ahrefs add-ons are contracted
       DASHBOARD_URL: https://hibiki-nabetani-ideatech.github.io/ideatech-llmo-dashboard/
 
