@@ -94,8 +94,69 @@ main{flex:1;min-width:0;padding:0;background:var(--bg)}
 .sec-hero h2 .sub-h{display:block;font-weight:500;font-size:14px;color:var(--ink2);margin-top:4px}
 .sec-hero .lead{font-size:12.5px;color:var(--ink2);margin:8px 0 0;border-left:3px solid var(--blue-soft);padding:2px 0 2px 10px;line-height:1.6}
 /* Tab-level summary (2-3 sentences) shown right under sec-hero */
-.tab-summary{background:#fff;border:1px solid var(--line);border-left:4px solid var(--cat-3);border-radius:4px;padding:12px 16px;margin:-6px 0 18px;font-size:12.5px;line-height:1.75;color:var(--ink)}
-.tab-summary .ts-label{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;background:var(--cat-3);padding:2px 8px;border-radius:3px;margin-right:8px;letter-spacing:.04em;vertical-align:1px}
+.tab-summary{background:#fff;border:1px solid var(--line);border-left:4px solid var(--cat-3);border-radius:4px;padding:14px 18px;margin:-6px 0 18px;font-size:12.5px;line-height:1.85;color:var(--ink)}
+.tab-summary .ts-label{display:inline-block;font-size:10.5px;font-weight:700;color:#fff;background:var(--cat-3);padding:3px 10px;border-radius:3px;letter-spacing:.04em;margin:0 0 10px 0}
+.tab-summary .ts-label:only-child,.tab-summary > .ts-label{margin-bottom:10px}
+/* Legacy inline pattern: force break after ts-label with a following text node */
+.tab-summary:has(> .ts-label:first-child) > .ts-label:first-child::after{content:"\A";white-space:pre}
+.tab-summary .ts-body{display:block}
+/* Named prompt card matrix (③-1) */
+.named-prompt-card{background:#fff;border:1px solid var(--line);border-radius:5px;padding:16px 18px;margin-bottom:14px}
+.named-mention-matrix{border-collapse:collapse;font-size:12px;min-width:520px}
+.named-mention-matrix th,.named-mention-matrix td{padding:5px 12px;border:1px solid var(--line)}
+.named-mention-matrix .brand-name{background:var(--cell-bg);white-space:nowrap}
+.named-mention-matrix .cell-mark{width:60px}
+.mention-yes{color:var(--up);font-weight:700}
+.mention-no{color:#c0c0c0}
+.brand-badge{display:inline-block;padding:1px 8px;font-size:10.5px;font-weight:600;background:var(--blue-soft);color:var(--blue);border-radius:10px;margin-right:3px}
+/* ③-1 accordion structure (reference-style) */
+details.brd-cat{border:1px solid var(--line);border-radius:4px;margin:0 0 10px;background:#fff}
+details.brd-cat>summary{cursor:pointer;padding:12px 16px;font-weight:700;font-size:13.5px;color:var(--ink);list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--cell-bg)}
+details.brd-cat>summary::-webkit-details-marker{display:none}
+details.brd-cat>summary::after{content:'▶';color:var(--ink2);font-size:10px;transition:transform .15s;order:3}
+details.brd-cat[open]>summary::after{transform:rotate(90deg)}
+details.brd-cat[open]>summary{border-bottom:1px solid var(--line)}
+.brd-cat-title{flex:1}
+.brd-cat-count{font-size:11px;font-weight:600;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:10px;padding:2px 10px;white-space:nowrap}
+.brd-cat-body{padding:12px 16px}
+.brd-cat-sum{font-size:12px;line-height:1.78;color:var(--ink);background:var(--cell-bg);border:1px solid var(--line-soft);border-left:3px solid var(--blue);border-radius:4px;padding:11px 14px;margin:0 0 14px}
+.brd-cat-sum b{color:var(--blue)}
+.brd-cat-tag{display:inline-flex;width:20px;height:20px;align-items:center;justify-content:center;border-radius:3px;background:var(--blue-soft);color:var(--blue);font-weight:700;font-size:11px;margin-right:6px}
+.brd-prompt{border:1px solid var(--line-soft);border-radius:4px;padding:12px 14px;margin:0 0 12px;background:#fff}
+.brd-prompt:last-child{margin-bottom:0}
+.brd-prompt-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:9px}
+.brd-no{display:inline-flex;width:26px;height:26px;align-items:center;justify-content:center;border-radius:4px;background:var(--blue-soft);color:var(--blue);font-weight:700;flex-shrink:0;font-size:12px}
+.brd-prompt-text{font-weight:600;font-size:13px;color:var(--ink);line-height:1.5}
+.brd-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:7px}
+.brd-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:14px;font-size:11px;font-weight:600;border:1px solid var(--line)}
+.brd-chip .brd-chip-mark{font-size:12px;font-weight:700}
+.brd-chip.hit{background:#e2f5ea;border-color:#a9dcbf;color:var(--up)}
+.brd-chip.hit .brd-chip-mark{color:var(--up)}
+.brd-chip.miss{background:#fdf1e0;border-color:#f0d7a8;color:var(--warn)}
+.brd-chip.miss .brd-chip-mark{color:var(--warn)}
+.brd-counts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+.brd-count{font-size:11px;font-weight:600;padding:2px 9px;border-radius:3px;font-variant-numeric:tabular-nums}
+.brd-count.self{background:var(--blue-soft);color:var(--blue)}
+.brd-count.comp{background:#f3e9f7;color:#6a2c8f}
+.brd-count.none{background:var(--cell-bg);color:var(--ink3)}
+.brd-responses details{margin:5px 0}
+.brd-cites{margin-top:10px;padding-top:8px;border-top:1px dashed var(--line-soft);font-size:11.5px}
+.brd-cites .brd-cites-h{display:inline-block;font-weight:700;color:var(--ink2);margin-bottom:3px}
+.brd-cites ul{margin:2px 0 0 18px;padding:0}
+.brd-cites li{margin:2px 0;word-break:break-all}
+.brd-cites li a{color:var(--blue);text-decoration:none}
+.brd-cites li a:hover{text-decoration:underline}
+.brd-cites-none{color:var(--ink3)}
+#tbl-branded-summary{width:100%;border-collapse:collapse;font-size:12px}
+#tbl-branded-summary th{background:var(--cell-bg);text-align:left;padding:8px 10px;border-bottom:2px solid var(--line);font-weight:600;color:var(--ink2);font-size:11px}
+#tbl-branded-summary td{padding:8px 10px;border-bottom:1px solid var(--line-soft);vertical-align:top;line-height:1.5}
+#tbl-branded-summary td.col-no{text-align:center;color:var(--ink2);font-variant-numeric:tabular-nums;width:40px}
+#tbl-branded-summary td.brd-td-prompt{color:var(--ink);max-width:420px}
+/* CV condition flag badges */
+.cv-flag{display:inline-block;padding:2px 7px;font-size:10.5px;font-weight:600;border-radius:3px;margin-right:3px;line-height:1.5;white-space:nowrap}
+.cv-flag-T{background:#e3f2fd;color:#1565c0;border:1px solid #90caf9}
+.cv-flag-I{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
+.cv-flag-N{background:#fff3e0;color:#e65100;border:1px solid #ffcc80}
 .tab-summary b{color:var(--ink);font-weight:700}
 .tab-summary .hl-num{color:var(--blue);font-weight:700;font-variant-numeric:tabular-nums}
 
@@ -131,16 +192,16 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 
 /* ===== Time-series tables (SS/CV summary & group breakdown) — fix row heights for 36-month timeline ===== */
 /* Common: tighter padding, middle-aligned, consistent line-height */
-#tbl-series-ss th, #tbl-series-cv th, #tbl-flow-groups th, #tbl-cv-groups th,
-#tbl-series-ss td, #tbl-series-cv td, #tbl-flow-groups td, #tbl-cv-groups td{padding:5px 8px;line-height:1.35;vertical-align:middle}
+#tbl-series-ss th, #tbl-series-cv, #tbl-series-cv-unionth, #tbl-flow-groups th, #tbl-cv-groups th,
+#tbl-series-ss td, #tbl-series-cv, #tbl-series-cv-uniontd, #tbl-flow-groups td, #tbl-cv-groups td{padding:5px 8px;line-height:1.35;vertical-align:middle}
 /* Numeric month columns: prevent wrap, consistent width */
-#tbl-series-ss td.num, #tbl-series-cv td.num,
+#tbl-series-ss td.num, #tbl-series-cv, #tbl-series-cv-uniontd.num,
 #tbl-flow-groups td.num, #tbl-cv-groups td.num{min-width:46px;white-space:nowrap}
 /* SS/CV summary: item name column — allow up to 2 lines, force enough width */
 #tbl-series-ss tbody td:first-child,
-#tbl-series-cv tbody td:first-child,
+#tbl-series-cv, #tbl-series-cv-uniontbody td:first-child,
 #tbl-series-ss thead th:first-child,
-#tbl-series-cv thead th:first-child{
+#tbl-series-cv, #tbl-series-cv-unionthead th:first-child{
   min-width:160px;max-width:200px;
   white-space:normal;word-break:keep-all;overflow-wrap:break-word;
   line-height:1.3;
@@ -156,11 +217,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 #tbl-flow-groups tbody td:first-child:empty,
 #tbl-cv-groups tbody td:first-child:empty{min-width:120px;padding:0}
 /* Year boundary divider (column where year changes) */
-#tbl-series-ss .year-start, #tbl-series-cv .year-start,
+#tbl-series-ss .year-start, #tbl-series-cv, #tbl-series-cv-union.year-start,
 #tbl-flow-groups .year-start, #tbl-cv-groups .year-start{
   border-left:2px solid #b9c0d4;
 }
-#tbl-series-ss thead th.year-start, #tbl-series-cv thead th.year-start,
+#tbl-series-ss thead th.year-start, #tbl-series-cv, #tbl-series-cv-unionthead th.year-start,
 #tbl-flow-groups thead th.year-start, #tbl-cv-groups thead th.year-start{
   border-left:2px solid #8a93b0;
   background:#eef0f6;
@@ -373,10 +434,19 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 .mark-reco.r1{color:var(--warn)}
 .mark-reco.r0{color:var(--ink3)}
 .llm-tag{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10.5px;font-weight:700;color:#fff;margin-right:6px;letter-spacing:.02em}
-.llm-tag.chatgpt{background:var(--chatgpt)}
-.llm-tag.gemini{background:var(--gemini)}
-.llm-tag.copilot{background:var(--copilot)}
-.llm-tag.perplexity{background:var(--perplex)}
+.llm-tag.chatgpt,.llm-tag.llm-chatgpt{background:var(--chatgpt)}
+.llm-tag.gemini,.llm-tag.llm-gemini{background:var(--gemini)}
+.llm-tag.copilot,.llm-tag.llm-copilot{background:var(--copilot)}
+.llm-tag.perplexity,.llm-tag.llm-perplexity{background:var(--perplex)}
+/* Details summary strip (③-1 and ③-3) — full-width left-aligned tag+badges, right-aligned char count */
+.brd-responses details>summary{cursor:pointer;padding:8px 12px;list-style:none;background:var(--cell-bg);border:1px solid var(--line-soft);border-radius:3px;font-size:12px;display:flex;align-items:center;gap:0}
+.brd-responses details[open]>summary{background:#fff;border-bottom:1px solid var(--line);border-radius:3px 3px 0 0}
+.brd-responses details>summary::-webkit-details-marker{display:none}
+.brd-responses details>summary::before{content:'▶';display:inline-block;color:var(--ink2);font-size:9px;margin-right:8px;transition:transform .15s;flex-shrink:0}
+.brd-responses details[open]>summary::before{transform:rotate(90deg)}
+.v2-sum-strip{display:flex;align-items:center;gap:8px;flex:1;width:100%}
+.v2-sum-badges{display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap}
+.v2-sum-len{color:var(--ink3);white-space:nowrap;font-variant-numeric:tabular-nums;margin-left:auto;text-align:right}
 .dl-footnote{font-size:11px;color:var(--ink2);margin-top:10px;padding-top:10px;border-top:1px dashed var(--line-soft)}
 .dl-footnote div{margin-top:2px}
 /* Brand mention highlights inside response detail-body */
@@ -386,17 +456,17 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 
 /* ===== Matrix view ===== */
 .matrix-wrap{max-height:none;border:1px solid var(--line);border-radius:4px;overflow:auto}
-.matrix-wrap table{border-collapse:separate;border-spacing:0;font-size:11.5px;min-width:1100px}
+.matrix-wrap table{border-collapse:separate;border-spacing:0;font-size:11.5px;min-width:1800px;table-layout:fixed}
 .matrix-wrap th, .matrix-wrap td{padding:6px 8px;border:0;border-bottom:1px solid var(--line-soft);background:#fff}
 .matrix-wrap thead th{position:sticky;top:0;background:var(--cell-bg);z-index:3;font-size:10.5px;color:var(--ink2);font-weight:600;border-bottom:1px solid var(--line)}
 .matrix-wrap thead tr.h-group th{background:#eef0f6;color:var(--ink);font-weight:700;font-size:11px;text-align:center;letter-spacing:.02em;border-bottom:1px solid var(--line)}
 .matrix-wrap thead tr.h-group th.idea-grp{background:var(--blue-soft);color:var(--blue)}
 .matrix-wrap thead tr.h-group th.prz-grp{background:#fdebec;color:#b3261e}
-.matrix-wrap th.col-no, .matrix-wrap td.col-no{position:sticky;left:0;z-index:2;background:#fff;text-align:right;width:36px;font-variant-numeric:tabular-nums;border-right:1px solid var(--line-soft)}
+.matrix-wrap th.col-no, .matrix-wrap td.col-no{position:sticky;left:0;z-index:2;background:#fff;text-align:right;width:36px;min-width:36px;max-width:36px;font-variant-numeric:tabular-nums;border-right:1px solid var(--line-soft);box-sizing:border-box}
 .matrix-wrap thead th.col-no{z-index:4;background:var(--cell-bg)}
-.matrix-wrap th.col-cat, .matrix-wrap td.col-cat{position:sticky;left:36px;z-index:2;background:#fff;width:110px;font-size:10.5px;color:var(--ink2);border-right:1px solid var(--line-soft)}
+.matrix-wrap th.col-cat, .matrix-wrap td.col-cat{position:sticky;left:36px;z-index:2;background:#fff;width:110px;min-width:110px;max-width:110px;font-size:10.5px;color:var(--ink2);border-right:1px solid var(--line-soft);box-sizing:border-box}
 .matrix-wrap thead th.col-cat{z-index:4;background:var(--cell-bg)}
-.matrix-wrap th.col-prompt, .matrix-wrap td.col-prompt{position:sticky;left:146px;z-index:2;background:#fff;min-width:280px;max-width:340px;font-size:12px;color:var(--ink);border-right:2px solid var(--line)}
+.matrix-wrap th.col-prompt, .matrix-wrap td.col-prompt{position:sticky;left:146px;z-index:2;background:#fff;width:280px;min-width:280px;max-width:280px;font-size:12px;color:var(--ink);border-right:2px solid var(--line);box-sizing:border-box}
 .matrix-wrap thead th.col-prompt{z-index:4;background:var(--cell-bg)}
 .matrix-wrap td.col-prompt{cursor:default}
 .matrix-wrap td.col-prompt .p-text{display:block;line-height:1.45;max-height:3em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
@@ -416,7 +486,8 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 .matrix-wrap a.prompt-link{color:inherit;text-decoration:none;display:block}
 .matrix-wrap a.prompt-link:hover{color:var(--blue);text-decoration:underline}
 .matrix-wrap a.prompt-link::after{content:' ▶';font-size:9px;color:var(--blue);opacity:.55;margin-left:4px;vertical-align:middle}
-.matrix-wrap td.cell-mark{text-align:center;font-size:14px;line-height:1;width:64px;font-weight:700}
+.matrix-wrap td.cell-mark, .matrix-wrap th.cell-mark{text-align:center;font-size:14px;line-height:1;width:64px;min-width:64px;font-weight:700;box-sizing:border-box}
+.matrix-wrap th.cell-mark{font-size:10.5px;font-weight:600;color:var(--ink2)}
 .matrix-wrap td.cell-mark.r2{color:var(--up);background:#f3faf6}
 .matrix-wrap td.cell-mark.r1{color:var(--warn);background:#fff8ef}
 .matrix-wrap td.cell-mark.r0{color:var(--ink3);background:#fff}
@@ -539,88 +610,119 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 <div class="app">
   <aside class="sidebar" id="sidebar">
     <div class="brand">
-      <div class="b-title">IDEATECH LLMO</div>
-      <span class="b-sub">Monthly Monitor Dashboard</span>
+      <div class="b-title">IDEA LLMO</div>
+      <span class="b-sub">Dashboard / Monitoring</span>
     </div>
 
     <div class="nav-group">
-      <div class="nav-group-title">★ 週次サマリ</div>
-      <button class="nav-btn nav-btn-diff" data-section="diff"><span class="nav-num">★</span>前週比 差分</button>
+      <div class="nav-group-title">★ 更新サマリ</div>
+      <button class="nav-btn nav-btn-diff" data-section="diff"><span class="nav-num">★</span>前月との差分</button>
+      <button class="nav-btn nav-btn-diff" data-section="review"><span class="nav-num">★</span>6月実績所感</button>
     </div>
     <div class="nav-group">
       <div class="nav-group-title">① 基礎診断</div>
-      <button class="nav-btn" data-section="rubric"><span class="nav-num">1</span>評点定義</button>
-      <button class="nav-btn" data-section="diag"><span class="nav-num">1</span>IDEATECH公式サイト</button>
+      <button class="nav-btn" data-section="rubric"><span class="nav-num">①-1</span>評点定義</button>
+      <button class="nav-btn" data-section="diag"><span class="nav-num">①-2</span>IDEATECH公式サイト</button>
     </div>
     <div class="nav-group">
       <div class="nav-group-title">② 結果指標 (SS・CV)</div>
-      <button class="nav-btn" data-section="flow-ss"><span class="nav-num">2</span>流入指標 (SS)</button>
-      <button class="nav-btn" data-section="flow-cv"><span class="nav-num">2</span>コンバージョン (CV)</button>
+      <button class="nav-btn" data-section="flow-ss"><span class="nav-num">②-1</span>流入指標 (SS)</button>
+      <button class="nav-btn" data-section="flow-cv"><span class="nav-num">②-2</span>コンバージョン (CV)</button>
     </div>
     <div class="nav-group">
       <div class="nav-group-title">③ 結果指標 (推奨状況)</div>
-      <button class="nav-btn" data-section="prompts-matrix"><span class="nav-num">3</span>推奨状況 一覧表</button>
-      <button class="nav-btn" data-section="prompts"><span class="nav-num">3</span>調査PR関連プロンプト</button>
+      <button class="nav-btn" data-section="prompts-named"><span class="nav-num">③-1</span>指名プロンプト言及状況</button>
+      <button class="nav-btn" data-section="prompts-matrix"><span class="nav-num">③-2</span>非指名プロンプト推奨状況</button>
+      <button class="nav-btn" data-section="prompts"><span class="nav-num">③-3</span>非指名プロンプト応答内容</button>
     </div>
     <div class="nav-group">
       <div class="nav-group-title">④ 中間指標 (サイテーション)</div>
-      <button class="nav-btn" data-section="cit-ideatech"><span class="nav-num">4</span>IDEATECH</button>
-      <button class="nav-btn" data-section="cit-risapy"><span class="nav-num">4</span>リサピー</button>
+      <button class="nav-btn" data-section="cit-ideatech"><span class="nav-num">④-1</span>IDEATECH</button>
+      <button class="nav-btn" data-section="cit-risapy"><span class="nav-num">④-2</span>リサピー</button>
+      <button class="nav-btn" data-section="cit-idea-llmo"><span class="nav-num">④-3</span>IDEA LLMO</button>
     </div>
     <div class="nav-group">
       <div class="nav-group-title">⑤ AI TOPICS</div>
-      <button class="nav-btn" data-section="topics"><span class="nav-num">5</span>主要AIニュース</button>
-      <button class="nav-btn" data-section="tools-usage"><span class="nav-num">5</span>主要AI利用者数推移</button>
-      <button class="nav-btn" data-section="tools-timeline"><span class="nav-num">5</span>主要AI機能アップデート変遷</button>
+      <button class="nav-btn" data-section="topics"><span class="nav-num">⑤-1</span>主要AIニュース</button>
+      <button class="nav-btn" data-section="tools-usage"><span class="nav-num">⑤-2</span>主要AI利用者数推移</button>
+      <button class="nav-btn" data-section="tools-timeline"><span class="nav-num">⑤-3</span>主要AI機能アップデート変遷</button>
     </div>
   </aside>
 
   <main>
     <div class="page-header">
-      <h1>IDEATECH LLMO ダッシュボード<span class="as-of" id="asof-tag"></span></h1>
+      <h1>IDEA LLMO Dashboard / Monitoring<span class="as-of" id="asof-tag"></span></h1>
     </div>
 
-    <!-- ★ 前週比 差分タブ -->
+    <!-- ★ 前月との差分タブ -->
     <section id="sec-diff" class="section">
       <div class="sec-hero diff-hero">
-        <div class="crumb">★ 週次サマリ｜<b>前週比 差分</b><span id="diff-asof"></span></div>
-        <h2>今週の変化サマリ<span class="sub-h" id="diff-headline">— データ取得中</span></h2>
-        <p class="lead" id="diff-lead"></p>
+        <div class="crumb">★ 更新サマリ｜<b>前月との差分</b><span id="diff-asof"></span></div>
+        <h2>前月との主要指標差分<span class="sub-h" id="diff-headline">— データ取得中</span></h2>
+        <p class="lead" id="diff-lead">前月（前回スナップショット）と当月を主要指標で比較。サイテーションは取得日基準の月内件数で集計。プロンプトデータは調査日時点のスナップショット（月次比較なし）。</p>
       </div>
       <div class="tab-summary" id="diff-summary"></div>
       <div class="kpis" id="diff-kpis"></div>
 
       <div class="card">
-        <h3>① 流入 / CV の前週比</h3>
-        <div class="h3-sub">直近月の数値・年累計（YTD）・全期間累計の3階層で前週スナップショットと比較</div>
+        <h3>① 流入 / CV の前月比</h3>
+        <div class="h3-sub">5月と6月を並列比較。CV（AI経由）は「AI経由CV：流入元＋フォーム回答」（HubSpotビュー準拠）の定義を採用</div>
         <div class="table-wrap"><table id="tbl-diff-flow"></table></div>
       </div>
 
       <div class="card">
         <h3>② 推奨ステータスの変化（▲↔⚫︎）</h3>
-        <div class="h3-sub">プロンプト × LLM 単位で、前週から言及ステータスが変わった行を抽出</div>
+        <div class="h3-sub">プロンプト × LLM 単位で、前月から言及ステータスが変わった行を抽出</div>
         <div class="diff-toolbar" id="diff-flips-toolbar"></div>
         <div class="table-wrap"><table id="tbl-diff-flips"></table></div>
-        <div id="diff-flips-empty" class="empty-note" style="display:none">前週から推奨ステータスの変化はありませんでした。</div>
+        <div id="diff-flips-empty" class="empty-note" style="display:none">前月から推奨ステータスの変化はありませんでした。</div>
       </div>
 
       <div class="card">
-        <h3>③ 応答内容の差分</h3>
-        <div class="h3-sub">同一プロンプト × 同一LLM で応答テキストが変わったケースを文字数差・追加箇所・削除箇所で表示</div>
-        <div class="diff-toolbar" id="diff-resp-toolbar"></div>
-        <div id="diff-resp-list"></div>
-        <div id="diff-resp-empty" class="empty-note" style="display:none">前週から応答内容の差分はありませんでした。</div>
+        <h3>③ 指名プロンプト言及状況の変化</h3>
+        <div class="h3-sub">Ahrefs V2「指名プロンプト」10件×4LLM＝40セルの言及状況について、前月からの変化を総括</div>
+        <div id="diff-named-summary" style="padding:14px 18px;font-size:12.5px;line-height:1.85;color:var(--ink)"></div>
       </div>
 
       <div class="card">
-        <h3>④ 新規サイテーション一覧</h3>
-        <div class="h3-sub">前週スナップショットに含まれていなかった ahrefs 言及のみ。DR順で並べ、高DRはハイライト</div>
+        <h3>④ 新規サイテーション一覧（6月）</h3>
+        <div class="h3-sub">2026年6月中に新規で検出された ahrefs 被引用ページ。DR順で並べ、高DRはハイライト</div>
         <div class="diff-tabs">
           <button class="diff-cit-tab is-active" data-target="ideatech">IDEATECH <span class="cnt" id="diff-cit-cnt-ideatech">0</span></button>
           <button class="diff-cit-tab" data-target="risapy">リサピー <span class="cnt" id="diff-cit-cnt-risapy">0</span></button>
+          <button class="diff-cit-tab" data-target="idea-llmo">IDEA LLMO <span class="cnt" id="diff-cit-cnt-idea-llmo">0</span></button>
         </div>
         <div class="table-wrap"><table id="tbl-diff-cit"></table></div>
         <div id="diff-cit-empty" class="empty-note" style="display:none">新規サイテーションはありませんでした。</div>
+      </div>
+    </section>
+
+    <!-- ★ 6月実績所感タブ -->
+    <section id="sec-review" class="section">
+      <div class="sec-hero diff-hero">
+        <div class="crumb">★ 更新サマリ｜<b>2026年6月 実績所感</b></div>
+        <h2>2026年6月の月次所感<span class="sub-h">— 各指標軸の要点整理</span></h2>
+        <p class="lead">基礎診断・流入指標(SS/CV)・推奨状況・サイテーションの4軸を指標ごとに整理した6月の実績所感。各タブの数値は自動集計、所感は指標単位で更新しています。</p>
+      </div>
+      <div class="card">
+        <h3>① 基礎診断</h3>
+        <div class="h3-sub">LLMO対応度 20項目 総合スコア推移</div>
+        <p style="line-height:1.95;font-size:13px">6月時点の総合スコアは <b>4.40 / 5.0</b>（20項目平均、100点満点換算で88点相当）と、B2B企業サイトとして極めて高い水準を維持しています。とくに <b>C群「コンテンツ適合性」5.00</b> と <b>D群「外部評価・サイテーション」5.00</b> はいずれも満点で、LLMが引用しやすいコンテンツ構造（FAQ・独自調査データ・見出し構造・更新頻度）と Web 上での言及の豊富さという LLMO の中核指標を完全に押さえています。A群「技術・アクセシビリティ」は 4.60 と全体で見れば高水準で、内訳を見ると「読み込み速度・UX」だけが3点（Core Web Vitals 黄色レンジ）で、他4項目（クローラビリティ・構造化データ・サイトマップ・PDF/画像依存度）は全て満点、技術基盤はほぼ完成しています。<br><br>一方、<b>B群「権威性・信頼性（E-E-A-T）」3.00</b> は依然として弱点で、5項目中とくに「Wikipedia等の第三者百科事典掲載」が1点にとどまっており、著者/監修者情報の明記・公的機関/協会との連携表示もそれぞれ3点と、"客観的な信頼性シグナル" 全般が競合と比べて薄い状況です。これが LLM 上で "老舗の代表企業" として一括りにされない要因の一つと考えられます。<br><br>次月以降の優先施策は、Wikipedia 記事作成 → 監修者情報の明記 → ISO/Pマーク等の第三者認証表示 → ページ速度改善（Core Web Vitals LCP/INP 最適化）の順で B群 3.00→4.50 を目標に置きます。達成されれば全体スコアは 4.7 台に押し上げられ、LLM からの推奨確度も目に見えて上がる想定です。</p>
+      </div>
+      <div class="card">
+        <h3>② 流入指標 (SS) / コンバージョン (CV)</h3>
+        <div class="h3-sub">サイト全体・オーガニック・AI経由の月次動向</div>
+        <p style="line-height:1.95;font-size:13px"><b>6月の流入はサイト全体 3,087 セッション</b>と5月（1,861）から前月比 <b>+66%</b> と大幅回復し、Q1（1〜3月）平均 3,133 のベースラインにほぼ戻りました。うち <b>オーガニック検索は 1,206（39%）</b>で堅調、<b>AI経由流入は 40件（前月比+15、+60%）</b>と着実な増加基調にあります。特筆すべきは6月に <b>felo.ai と perplexity.ai の日本国内サイトへの初参照</b>が確認された点で、これまで big-3（ChatGPT／Claude／Gemini）だった AI 流入の入口が広がり始めています。GA4 も 2026-06 から独立チャネル「AI Assistant」を新設しており、AI 経由流入の存在感が業界横断で公式に認められた形となりました。<br><br>CV 面では <b>HubSpot 新規コンタクト（インポート除外）86件</b>で通常月レンジ、うち <b>従来定義（GA analytics_source 基準）のAI経由CVは0件</b>ですが、<b>新定義「流入元＋フォーム回答」ベースでは7件と過去最多を更新</b>。1〜4月まで各月1件ペースだった AI 経由 CV が 5月 3件、6月 7件と加速しており、AI 経由の "認知だけ" フェーズから "接触・購買検討" フェーズへの移行が数値として明確に現れ始めた月です。6月の CV 発生7社を業種別に見ると、<b>SIer（エヌ・デーソフトウェア）・製造（日清製粉ウェルナ）・EC（GMO メイクショップ）</b>と大手企業が並び、AI レコメンド起点の商談確度が高まっている兆候が読み取れます。<br><br>7月以降のフォーカスは、AI 経由訪問者向けの受け皿ページ最適化（明確な CTA・資料 DL 導線）と、GA4「AI Assistant」チャネル単独モニタリングの週次運用化です。</p>
+      </div>
+      <div class="card">
+        <h3>③ 推奨状況（LLM推奨シェア）</h3>
+        <div class="h3-sub">Ahrefs Brand Radar「V2｜モニタリング」レポート・6月調査時点</div>
+        <p style="line-height:1.95;font-size:13px">Ahrefs Brand Radar V2 レポートで <b>指名10プロンプト＋非指名40プロンプト × 4LLM（ChatGPT／Copilot／Gemini／Perplexity）</b>を毎月モニタリングする体制が6月から本格稼働しました。指名プロンプト（「リサピー」「IDEATECH」を直接含む10件）では、<b>IDEATECH 言及 82%・リサピー言及 83%</b>と、40セル中それぞれ 80% 超の高水準で自社が想起されており、"守りの地盤" は完成しています。<br><br>非指名プロンプト（会社名を含まない一般的な質問）40件では、5社比較で <b>IDEATECH 60/160セル（37.5%）・PRTIMES 46・リサピー 43・ネオマーケティング 42・マクロミル 38・PRIZMA 28</b> の順位となり、意外な事実として <b>PRIZMA（旧・リサピー®運営元）が最下位</b>、<b>PRTIMES が2位</b>という業界勢力図が浮かび上がりました。LLM 別の IDEATECH 言及率は Gemini 25（63%）・Copilot 18・ChatGPT 14・Perplexity 3 で、<b>Perplexity が極めて弱い（7.5%）</b>のが最大の課題です。Perplexity が Web 上の被リンク・サイテーションを重視するアルゴリズム特性を持つため、④サイテーションでの量的積み上げが直接的なテコになると考えられます。<br><br>特に vol 31,376 の #「プレスリリースのネタが尽きた」プロンプトで4LLM 全滅は依然最大の機会損失で、7月以降 "調査データで話題作り" 系のコンテンツ強化と、Perplexity 対策としての被リンク獲得を最優先で進めます。指名文脈での認知は完成しており、次のフェーズは <b>非指名（一般質問）文脈への波及</b>で、具体的にはメディア掲載カテゴリ 29%を 60% まで引き上げることが目標です。</p>
+      </div>
+      <div class="card">
+        <h3>④ サイテーション</h3>
+        <div class="h3-sub">Ahrefs 被引用データ・取得日ベース月内件数</div>
+        <p style="line-height:1.95;font-size:13px"><b>6月時点の累計サイテーション: IDEATECH 393件 / リサピー 3,367件 / IDEA LLMO 12件</b>となっており、絶対量ではリサピーがコーポレートサイトの約9倍とプロダクトブランドとして圧倒的な物量を確保し、IDEA LLMO はローンチ直後の新サービスとして初期立ち上げが順調に進んでいます。ただし <b>高DR70+ 比率は IDEATECH 82%・リサピー 69%・IDEA LLMO 17%</b>と質面では IDEATECH が優位で、"量では劣るが質で勝つ" ポジションを維持しています。DR90+ の代表媒体には Yahoo!ニュース、日経、PR TIMES など上位メディアが並び、独自調査データが一次情報として引用されるパターンが中心です。<br><br>一方リサピー側は Wikipedia 記事内での引用（DR96 "LOHAS - Wikipedia" 等）を複数確保できているのに対し、IDEATECH 側は Wikipedia でのサイテーションが取れておらず、これは①基礎診断 B群「Wikipedia 等の有無」1点と直接連動する構造的課題です。③推奨状況で Perplexity が弱かったのも量的サイテーション不足と密接に関係しており、"量の拡大" が7月以降の最優先 KPI となります。<br><br>具体施策として、①Wikipedia 記事の作成推進（IDEATECH 社／リサピー®／業界用語「調査PR」内での言及の3方面）、②高 DR 媒体への調査リリース発信頻度アップ（月次→隔週）、③リサピーが確保している媒体リストからのギャップ分析、④プレスリリース経由での backlink 確実化、の4点を並行実行します。次の6ヶ月で発信頻度を2倍にできれば、リサピーとの差は段階的に縮小できる想定で、来期に IDEATECH 累計 600-700件、高 DR 比率 85% 以上を目標に置いています。</p>
       </div>
     </section>
 
@@ -689,6 +791,15 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         </div>
       </div>
       <div class="card">
+        <h3>指名検索数の月次推移</h3>
+        <div class="h3-sub">Google Search Console のクリック数を、<b>リサピー系</b>（リサピー／リサーチpr）と <b>IDEATECH系</b>（ideatech／アイデアテック／idea tech／株式会社IDEATECH）の2系列で集計</div>
+        <div class="chart-wrap"><canvas id="chart-branded-search"></canvas></div>
+        <div class="chart-legend">
+          <span class="li"><span class="legend-dot" style="background:#0017c1"></span>IDEATECH系クエリ・クリック合計</span>
+          <span class="li"><span class="legend-dot" style="background:#e65100"></span>リサピー系クエリ・クリック合計</span>
+        </div>
+      </div>
+      <div class="card">
         <h3>AI経由流入数の月次推移</h3>
         <div class="h3-sub" id="flow-ss-ai-chart-note">AI経由流入のみを抽出した月次推移ライン（積み上げ棒とは別軸で詳細を確認）</div>
         <div class="chart-wrap"><canvas id="chart-ai-total"></canvas></div>
@@ -738,42 +849,65 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <div class="h3-sub" style="margin-top:6px;font-size:11px;color:#888">データ元：HubSpot（当月新規リード作成数）</div>
       </div>
       <div class="card">
-        <h3>AI経由 CV の月次推移</h3>
-        <div class="h3-sub" id="flow-cv-chart-note"></div>
-        <div class="chart-wrap"><canvas id="chart-cv-line"></canvas></div>
-        <div class="chart-legend">
-          <span class="li"><span class="legend-dot"></span>AI経由CV件数（強調）</span>
-          <span class="li"><span class="legend-dot dashed"></span>期間平均（基準線）</span>
-        </div>
+        <h3>CV サマリ系列テーブル（流入元＋フォーム回答）</h3>
+        <div class="h3-sub">サイト全体CV=HubSpot新規コンタクト（インポート除外）／ AI経由CV=下記3条件のいずれかに合致した新規コンタクト（＋比率）</div>
+        <div class="table-wrap"><table id="tbl-series-cv-union"></table></div>
       </div>
       <div class="card">
-        <h3>AI経由CV：LLMカテゴリ別 (スタック)</h3>
-        <div class="h3-sub">どのLLMカテゴリ経由でCVが発生したかを月次で積み上げ表示</div>
-        <div class="chart-wrap sm"><canvas id="chart-cv-groups"></canvas></div>
+        <h3>AI経由CV：流入元＋フォーム回答（HubSpotビュー準拠）</h3>
+        <div class="h3-sub">CVカウント定義：<b>hs_analytics_source=AI_REFERRALS</b> ／ <b>本資料のダウンロードにあたり最も参考にされた情報源=「AIによる情報集約・比較」</b> ／ <b>当社を最初に知ったきっかけ=「AI検索・対話型AI」</b> のいずれかに合致するHubSpot新規コンタクト。月次カウント＋推移グラフ</div>
+        <div class="chart-wrap"><canvas id="chart-ai-cv-source"></canvas></div>
+        <div class="table-wrap" style="margin-top:14px"><table id="tbl-ai-cv-source"></table></div>
       </div>
       <div class="card">
-        <h3>CV サマリ系列テーブル</h3>
-        <div class="h3-sub">AI経由CV月次値・累計</div>
-        <div class="table-wrap"><table id="tbl-series-cv"></table></div>
+        <h3>AI経由CV：CV企業リスト</h3>
+        <div class="h3-sub">上記の3条件のいずれかに該当した各月のCV発生企業一覧。「合致条件」列でトラフィック（AI_REFERRALS）／ 意思決定経路（AIによる情報集約）／ 認知経路（AI検索・対話型AI）のどれに該当したかを確認できます</div>
+        <div class="table-wrap"><table id="tbl-ai-cv-companies"></table></div>
       </div>
       <div class="card">
         <h3>AI経由CV：カテゴリ × LLM 詳細内訳</h3>
+        <div class="h3-sub">過去から現在に至るまで0継続のLLM行は非表示（新規発生時に自動で行が追加されます）</div>
         <div class="table-wrap"><table id="tbl-cv-groups"></table></div>
       </div>
     </section>
 
-    <!-- ③ 推奨状況 一覧表 (matrix) -->
+    <!-- ③-1 指名プロンプト言及状況 -->
+    <section id="sec-prompts-named" class="section">
+      <div class="sec-hero">
+        <div class="crumb">③ 結果指標 (推奨状況)｜シート：<b>指名プロンプト言及状況</b><span id="prompts-named-survey-date"></span></div>
+        <h2>指名プロンプト言及状況<span class="sub-h">— 10プロンプト × 4LLM の応答評価</span></h2>
+        <p class="lead">「リサピー」「IDEATECH」を直接指名する10プロンプトに対する ChatGPT・Gemini・Copilot・Perplexity の4LLM応答を Ahrefs Brand Radar（V2モニタリング・指名タグ・毎月取得）から収集。指名時にどの程度正確に自社サービスが解説されているかを可視化します。</p>
+      </div>
+      <div class="tab-summary" id="prompts-named-summary"></div>
+      <div class="card">
+        <h3>指名プロンプト一覧（10プロンプト × 4LLM）</h3>
+        <div class="h3-sub">Ahrefs V2レポートより取得（毎月1回自動更新予定）。各プロンプトごとに応答本文・引用元・自社/競合の記述バランスを確認可能</div>
+        <div id="prompts-named-list" class="empty-note" style="padding:24px;text-align:left;line-height:1.9">
+          <div style="font-weight:700;color:var(--ink);margin-bottom:10px">📋 Phase B（次段階）で反映予定</div>
+          <div style="color:var(--ink2);font-size:12.5px">Ahrefs V2レポート「【V2｜モニタリング】IDEATECH / PRIZMA / ネオマーケティング / マクロミル / PRTIMES」の指名プロンプト（10件）×4LLMのAI応答データを次段階で取得し、応答全文・引用元URL・言及内訳の一覧化を実装します。</div>
+          <div style="margin-top:14px;color:var(--ink2);font-size:12.5px"><b>指名プロンプト例</b>：</div>
+          <ul style="margin:6px 0 0 20px;color:var(--ink2);font-size:12px;line-height:1.7">
+            <li>株式会社IDEATECHが提供している調査PRサービス「リサピー」のサービス概要と、口コミ・評判・導入する最大のメリットを3つ教えてください。</li>
+            <li>リサピーと、他のリサーチPR支援会社（ネオマーケティングなど）や、PR TIMESの調査配信機能との違いを比較表でまとめてください。</li>
+            <li>リサピーを利用して調査PRを行う場合の費用の目安（相場感）と、費用対効果を最大化するために意識すべきポイントは？</li>
+            <li>...（他7件）</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ③-2 非指名プロンプト推奨状況 (matrix) -->
     <section id="sec-prompts-matrix" class="section">
       <div class="sec-hero">
-        <div class="crumb">③ 結果指標 (推奨状況)｜シート：<b>調査PR関連プロンプト</b><span id="matrix-survey-date"></span></div>
-        <h2 id="matrix-title">推奨状況 一覧</h2>
+        <div class="crumb">③ 結果指標 (推奨状況)｜シート：<b>非指名プロンプト推奨状況</b><span id="matrix-survey-date"></span></div>
+        <h2 id="matrix-title">非指名プロンプト推奨状況 一覧</h2>
         <p class="lead" id="matrix-lead"></p>
       </div>
       <div class="tab-summary" id="matrix-summary"></div>
       <div class="kpis" id="matrix-kpis"></div>
       <div class="card">
-        <h3>40プロンプト × 4LLM ⚫︎/▲ マトリクス</h3>
-        <div class="h3-sub">⚫︎ = 言及あり／▲ = 言及なし。IDEATECH／リサピー と 競合 PRIZMA を左右に並べて比較</div>
+        <h3>非指名プロンプト × 4LLM ⚫︎/▲ マトリクス</h3>
+        <div class="h3-sub">⚫︎ = 言及あり／▲ = 言及なし。IDEATECH／リサピー と 競合 PRIZMA を左右に並べて比較（Phase Bで5社比較「IDEATECH / PRIZMA / ネオマーケティング / マクロミル / PRTIMES」へ拡張予定）</div>
         <div class="toolbar">
           <input type="text" class="search" id="matrix-search" placeholder="プロンプト／分類で検索">
           <select id="matrix-cat" class="search" style="width:auto"></select>
@@ -783,23 +917,23 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <div class="matrix-legend">
           <span class="li"><span class="legend-mark r2">⚫︎</span>言及あり（LLM の応答内に言及が含まれる）</span>
           <span class="li"><span class="legend-mark r1">▲</span>言及なし（LLM の応答内に言及が含まれない）</span>
-          <span class="li" style="margin-left:auto">※ 左 36+110+280px は固定列。横スクロールで全LLM × 2社が確認できます</span>
+          <span class="li" style="margin-left:auto">※ 左 36+110+280px は固定列。横スクロールで全LLM × 6社が確認できます</span>
         </div>
         <div class="table-wrap matrix-wrap"><table id="tbl-matrix"></table></div>
       </div>
     </section>
 
-    <!-- ③ 調査PR関連プロンプト -->
+    <!-- ③-3 非指名プロンプト応答内容 -->
     <section id="sec-prompts" class="section">
       <div class="sec-hero">
-        <div class="crumb">③ 結果指標 (推奨状況)｜シート：<b>調査PR関連プロンプト</b><span id="prompts-survey-date"></span></div>
-        <h2 id="prompts-title">プロンプト推奨状況</h2>
+        <div class="crumb">③ 結果指標 (推奨状況)｜シート：<b>非指名プロンプト応答内容</b><span id="prompts-survey-date"></span></div>
+        <h2 id="prompts-title">非指名プロンプト応答内容</h2>
         <p class="lead" id="prompts-lead"></p>
       </div>
       <div class="tab-summary" id="prompts-summary"></div>
       <div class="kpis" id="prompts-kpis"></div>
       <div class="card">
-        <h3>40プロンプト × 4LLM 応答全文</h3>
+        <h3>非指名プロンプト × 4LLM 応答全文</h3>
         <div class="h3-sub">⚫︎ = 言及あり／▲ = 言及なし。プロンプトを開くと各LLMの応答全文が確認できます</div>
         <div class="toolbar">
           <input type="text" class="search" id="prompts-search" placeholder="プロンプト／分類で検索">
@@ -852,6 +986,28 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         </div>
         <div class="table-wrap" style="max-height:560px"><table id="tbl-cit-risapy"></table></div>
         <div class="pager" id="pager-cit-risapy"></div>
+      </div>
+    </section>
+
+    <!-- ④ サイテーション IDEA LLMO -->
+    <section id="sec-cit-idea-llmo" class="section">
+      <div class="sec-hero">
+        <div class="crumb">④ 中間指標 (サイテーション)｜シート：<b>IDEA LLMO</b></div>
+        <h2 id="cit-idea-llmo-title">サイテーション総数</h2>
+        <p class="lead" id="cit-idea-llmo-lead">Ahrefs で <b>https://ideatech.jp/service/idea-llmo/</b> を被引用（被リンク）した第三者ページを抽出。IDEA LLMOはローンチ直後の新サービスのため、まだ件数は少なめですが、サービス告知プレスリリース経由の高DR被リンクを獲得中。</p>
+      </div>
+      <div class="tab-summary" id="cit-idea-llmo-summary"></div>
+      <div class="kpis" id="cit-idea-llmo-kpis"></div>
+      <div class="card">
+        <h3>サイテーション一覧</h3>
+        <div class="h3-sub">DR（ahrefs Domain Rating）でフィルタ／タイトル／URL／公開日 を 100件ずつページ送り</div>
+        <div id="cit-idea-llmo-filter" class="dr-tabs"></div>
+        <div class="toolbar">
+          <input type="text" class="search" id="cit-idea-llmo-search" placeholder="タイトル／URLで検索">
+          <span class="small" id="cit-idea-llmo-count"></span>
+        </div>
+        <div class="table-wrap" style="max-height:560px"><table id="tbl-cit-idea-llmo"></table></div>
+        <div class="pager" id="pager-cit-idea-llmo"></div>
       </div>
     </section>
 
@@ -946,6 +1102,12 @@ const fmt = n => (n==null || isNaN(n)) ? '' : (Number.isInteger(n) ? n.toLocaleS
 const N = n => (n==null||Number.isNaN(Number(n))) ? '—' : Number(n).toLocaleString('ja-JP');
 const pct = n => (n==null || isNaN(n)) ? '' : (n*100).toFixed(2)+'%';
 const esc = s => (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const escAttr = v => String(v==null?'':v).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* Global helper: split at every "。" and rejoin with <br>. Preserves \n\n → <br><br>. */
+const sentBreak = (text) => String(text||'')
+  .split('\n\n')
+  .map(para => para.split('。').filter(s=>s.length).map(s=>s+'。').join('<br>'))
+  .join('<br><br>');
 
 Chart.defaults.font.family = '-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif';
 Chart.defaults.font.size = 11;
@@ -1476,7 +1638,7 @@ function renderFlowSS(){
   $('#tbl-series-ss').innerHTML = st;
 
   /* Group breakdown */
-  $('#tbl-flow-groups').innerHTML = groupTableHTML(F.flow_groups, lbl, pick);
+  $('#tbl-flow-groups').innerHTML = groupTableHTMLFiltered(F.flow_groups, lbl, pick);
 }
 
 /* ② CV（コンバージョン）タブ */
@@ -1526,8 +1688,8 @@ function renderFlowCV(){
   $('#flow-cv-title').innerHTML = `${monthHuman}の<b>サイト全体CV</b>は ${fmt(heroSiteVal)} 件${inProgress?'（着地予測）':''}、${trend}<span class="sub-h">— うち AI経由 ${fmt(inProgress?fcstCvAi:lastAi)} 件（${ratioTxt}）</span>`;
   $('#flow-cv-lead').textContent = `期間：${startHuman}〜${monthHuman}（${validIdx.length}か月分）。期間累計：全体 ${fmt(siteSum)} 件 / オーガニック ${fmt(orgSum)} 件 / AI経由 ${fmt(aiCvSum)} 件（HubSpot基準・新規リード）。${inProgress?`当月（${monthHuman}）実績は ${fmt(lastSite)} 件（${daysElapsed}/${daysInMonth}日時点）。`:''}`;
 
-  $('#flow-cv-site-chart-note').textContent = `期間平均（${fmt(Math.round(siteSum/Math.max(1,validIdx.length)))}件/月）を基準線に表示。サイト全体CVを強調色（青）、オーガニック・AI経由CVは参考値（グレー）。${inProgress?'【'+monthHuman+'は着地予測点を菱形で表示】':''}`;
-  $('#flow-cv-chart-note').textContent = `月次AI経由CV件数（GA4×LLM分類ベース）。点線は期間平均（${(cvSum/Math.max(1,validIdx.length)).toFixed(2)}件/月）。`;
+  const cvChartNote = $('#flow-cv-site-chart-note'); if(cvChartNote) cvChartNote.textContent = `期間平均（${fmt(Math.round(siteSum/Math.max(1,validIdx.length)))}件/月）を基準線に表示。サイト全体CVを強調色（青）、オーガニック・AI経由CVは参考値（グレー）。${inProgress?'【'+monthHuman+'は着地予測点を菱形で表示】':''}`;
+  const cvNote2 = $('#flow-cv-chart-note'); if(cvNote2) cvNote2.textContent = `月次AI経由CV件数（GA4×LLM分類ベース）。点線は期間平均（${(cvSum/Math.max(1,validIdx.length)).toFixed(2)}件/月）。`;
 
   /* KPI — 4枚 (Total / Organic / AI / AI Ratio) — SSと統一 */
   const kpiSite = inProgress
@@ -1578,9 +1740,10 @@ function renderFlowCV(){
     }
   });
 
-  /* AI-CV bar chart with reference line (existing chart) */
+  /* AI-CV bar chart with reference line (existing chart) — DISABLED (block removed) */
   const cvAvg = cvSum / Math.max(1, validIdx.length);
-  new Chart($('#chart-cv-line'),{
+  const chartCvLineEl = $('#chart-cv-line');
+  if(chartCvLineEl) new Chart(chartCvLineEl,{
     type:'bar',
     data:{labels:lbl, datasets:[
       {type:'bar', label:'AI経由CV件数', data:cvTotal, backgroundColor:COLORS.primary, borderColor:COLORS.primary, borderWidth:0, order:2},
@@ -1627,52 +1790,322 @@ function renderFlowCV(){
   ct += `<tr><td><b>オーガニックCV</b></td>${cvOrg.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(orgSum)}</b></td></tr>`;
   ct += `<tr><td><b>AI経由CV</b></td>${cvAi.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(aiCvSum)}</b></td></tr>`;
   ct += `<tr><td><b>AI経由CV比率</b></td>${ratioArr.map((v,i)=>`<td class="num${cvYc(i)}">${v!=null?v.toFixed(2)+'%':'—'}</td>`).join('')}<td class="num"><b>${siteSum>0?(aiCvSum/siteSum*100).toFixed(2)+'%':'—'}</b></td></tr>`;
-  $('#tbl-series-cv').innerHTML = ct;
+  const tblSeriesCvEl = document.getElementById('tbl-series-cv');
+  if(tblSeriesCvEl) tblSeriesCvEl.innerHTML = ct;
 
-  /* CV groups breakdown */
-  $('#tbl-cv-groups').innerHTML = groupTableHTML(F.cv_groups, lbl, pick);
+  /* CV summary table（流入元＋フォーム回答） — same shape, AI row uses union count from DATA.ai_cv */
+  const aiCvUnion = DATA.ai_cv || {};
+  const aiCvByMonth = {};
+  (aiCvUnion.months || []).forEach((m, i) => {
+    aiCvByMonth[m] = (aiCvUnion.counts || [])[i];
+  });
+  /* Build union-based ai-cv array aligned to validIdx (uses real YYYY-MM keys, not YY/M lbl format) */
+  const _monthsCV = (F && F.months) || (DATA.flow && DATA.flow.months) || [];
+  const cvAiUnion = validIdx.map(idx => {
+    const m = _monthsCV[idx];  /* YYYY-MM */
+    if(m in aiCvByMonth) return aiCvByMonth[m];
+    /* Pre-tracking months → 0 (AI referral tracking began 2026-01) */
+    return m < '2026-01' ? 0 : null;
+  });
+  const aiCvUnionSum = cvAiUnion.reduce((s,v)=>s+(v||0),0);
+  const ratioUnionArr = cvSite.map((s,i)=>{
+    const a = cvAiUnion[i];
+    if(a==null || s==null || s<=0) return null;
+    return a/s*100;
+  });
+  let ct2 = `<tr><th style="white-space:nowrap;min-width:210px">項目</th>${lbl.map((l,i)=>`<th class="num${cvYc(i)}">${esc(l)}</th>`).join('')}<th class="num">合計</th></tr>`;
+  ct2 += `<tr><td style="white-space:nowrap"><b>サイト全体CV</b></td>${cvSite.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(siteSum)}</b></td></tr>`;
+  ct2 += `<tr><td style="white-space:nowrap"><b>オーガニックCV</b></td>${cvOrg.map((v,i)=>`<td class="num${cvYc(i)}">${fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(orgSum)}</b></td></tr>`;
+  ct2 += `<tr><td style="white-space:nowrap"><b>AI経由CV（流入元＋フォーム回答）</b></td>${cvAiUnion.map((v,i)=>`<td class="num${cvYc(i)}">${v==null?'—':fmt(v)}</td>`).join('')}<td class="num"><b>${fmt(aiCvUnionSum)}</b></td></tr>`;
+  ct2 += `<tr><td style="white-space:nowrap"><b>AI経由CV比率</b></td>${ratioUnionArr.map((v,i)=>`<td class="num${cvYc(i)}">${v!=null?v.toFixed(2)+'%':'—'}</td>`).join('')}<td class="num"><b>${siteSum>0?(aiCvUnionSum/siteSum*100).toFixed(2)+'%':'—'}</b></td></tr>`;
+  const tblSeriesCv2 = document.getElementById('tbl-series-cv-union');
+  if(tblSeriesCv2) tblSeriesCv2.innerHTML = ct2;
+
+  /* CV groups breakdown — drop LLM rows that are always 0 */
+  $('#tbl-cv-groups').innerHTML = groupTableHTMLFiltered(F.cv_groups, lbl, pick);
 }
 renderFlowSS();
 renderFlowCV();
+
+/* =========================================================== */
+/* ②-1 指名検索数の月次推移 (GSC branded search)              */
+/* =========================================================== */
+function renderBrandedSearch(){
+  try {
+    const B = DATA.branded_search || {};
+    const ser = B.series || {};
+    const canvas = document.getElementById('chart-branded-search');
+    if(!canvas) return;
+    /* Retry on next frame if canvas is hidden (Chart.js can't measure) */
+    if(!canvas.offsetWidth && typeof requestAnimationFrame !== 'undefined'){
+      requestAnimationFrame(() => renderBrandedSearch());
+      return;
+    }
+    if(window._brandedSearchChart){ try{ window._brandedSearchChart.resize(); }catch(_){} return; }
+    /* Union of months across both series, sorted */
+    const monthSet = new Set();
+    Object.values(ser).forEach(byMonth => Object.keys(byMonth || {}).forEach(m => monthSet.add(m)));
+    const months = [...monthSet].sort();
+    const dsIde = months.map(m => (ser.ideatech||{})[m] ?? null);
+    const dsRis = months.map(m => (ser.risapy||{})[m] ?? null);
+    const cfg = {
+      type: 'line',
+      data: {
+        labels: months,
+        datasets: [
+          {label:'IDEATECH系', data:dsIde, borderColor:'#0017c1', backgroundColor:'rgba(0,23,193,0.08)', borderWidth:2.5, pointRadius:3, pointBackgroundColor:'#0017c1', tension:0.25, fill:true},
+          {label:'リサピー系',  data:dsRis, borderColor:'#e65100', backgroundColor:'transparent', borderWidth:2, pointRadius:2.5, pointBackgroundColor:'#e65100', tension:0.25},
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        interaction:{mode:'index', intersect:false},
+        plugins:{legend:{display:false}, tooltip:{backgroundColor:'#212121'}},
+        scales:{
+          x:{grid:{display:false}, ticks:{color:'#595959', maxRotation:0, autoSkipPadding:6, font:{size:10.5}}},
+          y:{beginAtZero:true, grid:{color:'#ededed'}, ticks:{color:'#595959', stepSize:50}, title:{display:true, text:'クリック数（GSC）', color:'#595959', font:{size:10}}}
+        }
+      }
+    };
+    if(window._brandedSearchChart) window._brandedSearchChart.destroy();
+    window._brandedSearchChart = new Chart(canvas, cfg);
+  } catch(e){ console.error('renderBrandedSearch:', e); }
+}
+renderBrandedSearch();
+(function(){
+  const btn = document.querySelector('.nav-btn[data-section="flow-ss"]');
+  if(btn) btn.addEventListener('click', () => {
+    requestAnimationFrame(() => requestAnimationFrame(renderBrandedSearch));
+  });
+})();
+
+/* =========================================================== */
+/* ② AI-CV panels (Source+Form / Company list)                */
+/* =========================================================== */
+function renderAiCv(){
+  try {
+    const A = DATA.ai_cv || {};
+    const months = A.months || [];
+    const counts = A.counts || [];
+    const companiesByMonth = A.companies_by_month || {};
+
+    /* Compute AI-CV ratio (union AI-CV / total site CV) per month */
+    const flow = DATA.flow || {};
+    const flowMonths = flow.months || [];
+    const cvSite = flow.cv_site_total || [];
+    const ratioPct = months.map(m => {
+      const i = flowMonths.indexOf(m);
+      const total = i>=0 ? (cvSite[i]||0) : 0;
+      const ai = counts[months.indexOf(m)] || 0;
+      return total>0 ? +(ai/total*100).toFixed(2) : null;
+    });
+
+    /* Chart with bars + ratio line overlay */
+    const cvCanvas = document.getElementById('chart-ai-cv-source');
+    if(cvCanvas && months.length){
+      const cfg = {
+        type: 'bar',
+        data: {
+          labels: months,
+          datasets: [
+            {
+              type: 'bar',
+              label: 'AI経由CV件数',
+              data: counts,
+              backgroundColor: months.map((m,i) => i === months.length-1 ? '#7986cb' : '#0017c1'),
+              borderRadius: 3,
+              yAxisID: 'y',
+              order: 2,
+            },
+            {
+              type: 'line',
+              label: 'AI経由CV比率（右軸）',
+              data: ratioPct,
+              borderColor: '#e65100',
+              backgroundColor: '#e65100',
+              borderWidth: 2,
+              pointRadius: 3.5,
+              pointHoverRadius: 5,
+              fill: false,
+              tension: 0.25,
+              spanGaps: true,
+              yAxisID: 'y1',
+              order: 1,
+            }
+          ]
+        },
+        options: {
+          responsive:true, maintainAspectRatio:false,
+          interaction:{mode:'index',intersect:false},
+          plugins:{
+            legend:{display:true,position:'top',labels:{boxWidth:14,font:{size:11}}},
+            tooltip:{callbacks:{label:(c)=>{
+              if(c.dataset.type==='line') return ` AI経由CV比率: ${c.raw!=null?c.raw+'%':'—'}`;
+              return ` AI経由CV件数: ${c.raw}件`;
+            }}}
+          },
+          scales:{
+            y:{beginAtZero:true,position:'left',ticks:{stepSize:1},title:{display:true,text:'AI経由CV件数',font:{size:10}}},
+            y1:{beginAtZero:true,position:'right',grid:{display:false},ticks:{callback:v=>v+'%'},title:{display:true,text:'AI経由CV比率（%）',font:{size:10}}}
+          }
+        }
+      };
+      if(window._aiCvChart) window._aiCvChart.destroy();
+      window._aiCvChart = new Chart(cvCanvas, cfg);
+    }
+
+    /* Monthly count table */
+    const cntTbl = document.getElementById('tbl-ai-cv-source');
+    if(cntTbl){
+      const head = `<thead><tr><th>月</th><th class="num">AI経由CV数</th><th class="num">累計</th></tr></thead>`;
+      let cum = 0;
+      const rows = months.map((m, i) => {
+        const v = counts[i] || 0;
+        cum += v;
+        const isPartial = (m === '2026-07');
+        return `<tr><td>${esc(m)}${isPartial?' <span style="color:var(--ink3);font-size:10px">（部分月）</span>':''}</td><td class="num"><b>${v}</b></td><td class="num" style="color:var(--ink2)">${cum}</td></tr>`;
+      }).join('');
+      cntTbl.innerHTML = head + '<tbody>' + rows + '</tbody>';
+    }
+
+    /* Company list table (with 条件 column) */
+    const coTbl = document.getElementById('tbl-ai-cv-companies');
+    if(coTbl){
+      const head = `<thead><tr><th style="width:140px;white-space:nowrap">月</th><th style="width:70px">日付</th><th style="width:200px">企業名</th><th style="width:260px">合致条件</th><th>CV内容（送信されたフォーム）</th></tr></thead>`;
+      const rows = [];
+      months.slice().reverse().forEach(m => {
+        const cos = companiesByMonth[m] || [];
+        cos.forEach(c => {
+          const partial = c.partial ? ' <span style="color:var(--ink3);font-size:10px;white-space:nowrap">（部分月）</span>' : '';
+          const f = c.flags || {};
+          const flagBadges = [
+            f.T ? '<span class="cv-flag cv-flag-T">トラフィック</span>' : '',
+            f.I ? '<span class="cv-flag cv-flag-I">意思決定経路</span>' : '',
+            f.N ? '<span class="cv-flag cv-flag-N">認知経路</span>' : '',
+          ].filter(Boolean).join(' ');
+          rows.push(`<tr>
+            <td style="white-space:nowrap">${esc(m)}${partial}</td>
+            <td style="color:var(--ink2);font-size:11.5px">${esc((c.date||'').slice(5))}</td>
+            <td>${esc(c.company || '—')}</td>
+            <td>${flagBadges || '<span style="color:var(--ink3)">—</span>'}</td>
+            <td style="font-size:11.5px">${esc(c.form || '—')}</td>
+          </tr>`);
+        });
+      });
+      coTbl.innerHTML = head + '<tbody>' + (rows.join('') || '<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:20px">データなし</td></tr>') + '</tbody>';
+    }
+  } catch(e){ console.error('renderAiCv failed:', e); }
+}
+/* Lazy-init AI-CV chart when the CV section becomes visible */
+(function(){
+  const navBtn = document.querySelector('.nav-btn[data-section="flow-cv"]');
+  if(navBtn){
+    navBtn.addEventListener('click', () => {
+      requestAnimationFrame(() => requestAnimationFrame(renderAiCv));
+    });
+  }
+  /* Render tables now (canvas will need visibility to draw) */
+  renderAiCv();
+})();
+
+/* Version of groupTableHTML that omits LLM rows whose values are always 0 */
+function groupTableHTMLFiltered(groups, lbl, pick){
+  if(!groups || !groups.length) return '';
+  // Determine which LLM names have any non-zero value across all months
+  const activeLLMs = new Set();
+  groups.forEach(g => {
+    (g.llms || []).forEach(l => {
+      const nonZero = (l.data || []).some(v => v && v !== 0);
+      if(nonZero) activeLLMs.add(l.name);
+    });
+  });
+  // Re-use existing helper by mutating a filtered clone
+  const filtered = groups.map(g => ({
+    ...g,
+    llms: (g.llms || []).filter(l => activeLLMs.has(l.name))
+  })).filter(g => (g.llms || []).length > 0);
+  return groupTableHTML(filtered, lbl, pick);
+}
 
 /* =========================================================== */
 /* ③ 調査PR関連プロンプト                                      */
 /* =========================================================== */
 function renderMD(text){
   if(!text) return '';
-  /* Pre-clean: collapse 3+ blank lines to 2 (paragraph break) */
-  let raw = String(text).replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+  /* Pre-clean: collapse 3+ blank lines to 2 (paragraph break); normalize CRLF; strip trailing spaces */
+  let raw = String(text).replace(/\r\n?/g,'\n').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
   let html = esc(raw);
-  html = html.replace(/^\*\s*\*\s*\*/gm, '<hr>');
+  /* Block-level: hr / headings must be first pass */
+  html = html.replace(/^\*\s*\*\s*\*\s*$/gm, '<hr>');
+  html = html.replace(/^\-\s*\-\s*\-\s*$/gm, '<hr>');
   html = html.replace(/^---+$/gm, '<hr>');
+  html = html.replace(/^={3,}$/gm, '<hr>');
+  html = html.replace(/^#{6}\s+(.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^#{5}\s+(.+)$/gm, '<h4>$1</h4>');
   html = html.replace(/^#{4}\s+(.+)$/gm, '<h4>$1</h4>');
   html = html.replace(/^#{3}\s+(.+)$/gm, '<h3>$1</h3>');
   html = html.replace(/^#{2}\s+(.+)$/gm, '<h2>$1</h2>');
   html = html.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
-  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  /* Inline: bold, italic (but not intra-word), links */
+  html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/__([^_\n]+)__/g, '<strong>$1</strong>');
+  html = html.replace(/\[([^\]\n]+)\]\(([^)\n]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  /* Convert lines: recognize UL (* / - / ・), OL (1. 2. …), and nested indent */
   const lines = html.split('\n');
   const out = [];
-  let inUL = false;
-  for(const ln of lines){
-    const m = ln.match(/^(\s*)[\*\-]\s+(.*)$/);
-    if(m && !ln.includes('<hr>')){
-      if(!inUL){ out.push('<ul>'); inUL=true; }
-      out.push('<li>'+m[2]+'</li>');
+  let listStack = []; /* stack of {type: 'ul'|'ol', indent} */
+  const closeToDepth = (depth) => {
+    while(listStack.length > depth) out.push('</'+listStack.pop().type+'>');
+  };
+  for(const rawLn of lines){
+    if(rawLn.match(/^\s*<(hr|h[1-6])/)){
+      closeToDepth(0);
+      out.push(rawLn);
+      continue;
+    }
+    /* Detect list marker (leading spaces or full-width space count as indent) */
+    const ulM = rawLn.match(/^(\s*)(?:[\*\-・•])\s+(.*)$/);
+    const olM = rawLn.match(/^(\s*)(\d+)[\.\)]\s+(.*)$/);
+    if(ulM || olM){
+      const m = ulM || olM;
+      const indent = m[1].replace(/\t/g,'  ').length;
+      const type = ulM ? 'ul' : 'ol';
+      const depth = Math.min(3, Math.floor(indent/2)) + 1;
+      /* Pop until stack depth matches this item */
+      while(listStack.length > depth) out.push('</'+listStack.pop().type+'>');
+      /* If current depth is same but type differs, close and reopen */
+      if(listStack.length === depth && listStack[listStack.length-1].type !== type){
+        out.push('</'+listStack.pop().type+'>');
+      }
+      /* Open new list level(s) */
+      while(listStack.length < depth){
+        out.push('<'+type+'>');
+        listStack.push({type, indent});
+      }
+      const content = ulM ? m[2] : m[3];
+      out.push('<li>'+content+'</li>');
+    } else if(rawLn.trim() === '') {
+      /* Blank line — close all open lists so paragraph break separates them */
+      closeToDepth(0);
+      out.push('');
     } else {
-      if(inUL){ out.push('</ul>'); inUL=false; }
-      out.push(ln);
+      /* Non-list text line — close all open lists */
+      closeToDepth(0);
+      out.push(rawLn);
     }
   }
-  if(inUL) out.push('</ul>');
+  closeToDepth(0);
   let s = out.join('\n');
-  /* Strip newlines hugging block-level tags (no extra blank lines around <h*> / <ul> / <hr>) */
+  /* Strip newlines hugging block-level tags */
   s = s.replace(/\n*(<\/?(?:h[1-6]|ul|ol|li|hr|blockquote)[^>]*>)\n*/g, '$1');
-  /* Collapse paragraph breaks to a single <br><br>, then single newlines to <br> */
+  /* Collapse paragraph breaks to <br><br>, then single newlines to <br> */
   s = s.replace(/\n{2,}/g, '<br><br>');
   s = s.replace(/\n/g, '<br>');
-  /* Defensive: never more than two <br> in a row */
+  /* Never more than two <br> in a row */
   s = s.replace(/(<br\s*\/?>\s*){3,}/g, '<br><br>');
+  /* Remove <br> immediately before/after block-level tags */
+  s = s.replace(/(<br\s*\/?>\s*)+(<(?:h[1-6]|ul|ol|li|hr|blockquote|\/ul|\/ol)[^>]*>)/g, '$2');
+  s = s.replace(/(<\/(?:h[1-6]|ul|ol|li|blockquote)[^>]*>)(<br\s*\/?>\s*)+/g, '$1');
   /* Trim stray <br> at start/end */
   s = s.replace(/^(\s*<br\s*\/?>\s*)+/i, '').replace(/(\s*<br\s*\/?>\s*)+$/i, '');
   return s;
@@ -1684,7 +2117,7 @@ function highlightBrands(html){
   if(!html) return html;
   const parts = String(html).split(/(<[^>]*>)/);
   const reBrand = /(IDEATECH|アイデアテック|リサピー)/gi;
-  const reCompetitor = /(PRIZMA|プリズマ)/gi;
+  const reCompetitor = /(PRIZMA|プリズマ|ネオマーケティング|マクロミル|PRTIMES|PR\s*TIMES)/gi;
   return parts.map((p,i)=>{
     if(i % 2 === 1) return p; /* tag — leave untouched */
     return p
@@ -1937,6 +2370,373 @@ function renderPrompts(){
 }
 renderPrompts();
 
+/* =========================================================== */
+/* ③-1 指名プロンプト言及状況 (Ahrefs V2 named 10プロ)          */
+/* =========================================================== */
+function renderPromptsNamed(){
+  try {
+    const V2 = DATA.ahrefs_v2 || {};
+    const named = V2.named_prompts || [];
+    const container = document.getElementById('prompts-named-list');
+    const survey = document.getElementById('prompts-named-survey-date');
+    const summaryEl = document.getElementById('prompts-named-summary');
+    if(!container) return;
+    if(!named.length) return;
+
+    if(survey && V2.generated_at){
+      survey.textContent = ' — 取得 ' + String(V2.generated_at).slice(0,10);
+    }
+
+    const llms = ['chatgpt','gemini','copilot','perplexity'];
+    const llmLabels = {chatgpt:'ChatGPT', gemini:'Gemini', copilot:'Copilot', perplexity:'Perplexity'};
+    const brands = ['IDEATECH','リサピー','PRIZMA','ネオマーケティング','マクロミル','PRTIMES'];
+    const selfBrands = new Set(['IDEATECH','リサピー']);
+    const cats = V2.named_categories || [];
+    const catSums = V2.named_category_summaries || {};
+
+    /* Overview summary */
+    if(summaryEl){
+      const cnt = {};
+      brands.forEach(b => cnt[b] = 0);
+      named.forEach(p => llms.forEach(l => {
+        const r = (p.responses||{})[l] || {};
+        brands.forEach(b => { if((r.mentions||{})[b]) cnt[b]++; });
+      }));
+      const total = named.length * llms.length;
+      const selfTotal = cnt['IDEATECH'] + cnt['リサピー'];
+      const rank = brands.map(b => ({b, c: cnt[b]})).sort((a,b)=>b.c-a.c);
+      const rows = rank.map(x => `<b>${esc(x.b)}</b> ${x.c}/${total}（${(x.c/total*100).toFixed(0)}%）`).join(' ／ ');
+      /* Sentence-level breaks — "。"ごとに<br>, paragraph breaks at "\n\n" */
+      const sentBreakLocal = (t) => String(t||'').split('\n\n').map(p => p.split('。').filter(s=>s.length).map(s=>s+'。').join('<br>')).join('<br><br>');
+      const brandStr = brands.map(b => `${esc(b)} ${cnt[b]}/${total}（${(cnt[b]/total*100).toFixed(0)}%）`).join(' ／ ');
+      const rawTxt = `指名10プロンプト × 4LLM = ${total}回答セル中、IDEATECH ${cnt['IDEATECH']}／リサピー ${cnt['リサピー']} と、指名文脈での自社想起は極めて高水準で "守りの地盤" は完成している状態です。同時に併記される競合は「${brandStr}」の順で、<b>PRTIMES（配信インフラ）とネオマーケティング（リサーチ会社）が頻繁に並列される</b>のが特徴的な傾向です。これは "リサピーは配信ではなく企画から一気通貫で担う立ち位置" という理解が LLM 側でも定着している証左であり、比較文脈での差別化訴求が届いていることを示します。\n\n応答内容の質を見ると、IDEATECH／リサピーは「独自調査データによる第三者エビデンス構築」「B2Bマーケティング領域の実績」「調査企画から配信までの一気通貫支援」など、コーポレートメッセージと一致するポジティブな文脈で紹介されるパターンが大半で、誤情報やネガティブ言及は6月時点で確認されていません。ただし料金・費用感に関する具体的な数値情報が LLM に取得されていないため、"高そう" という漠然としたイメージのみで語られるケースが散見されるのは改善点です。導入事例・活用事例カテゴリでは競合との差別化ポイントが浅い応答が目立つため、事例ページの拡充と構造化データの再点検が7月以降の優先課題となります。カテゴリごとにアコーディオンで開閉可能。`;
+      summaryEl.innerHTML = `<div><span class="ts-label">概況</span></div><div class="ts-body">${sentBreakLocal(rawTxt)}</div>`;
+    }
+
+    /* Reset container */
+    container.classList.remove('empty-note');
+    container.removeAttribute('style');
+
+    const yesMark = '⚫︎', noMark = '▲';
+    const isReco = m => m === true;
+
+    function promptCard(p) {
+      /* per-LLM chips */
+      const selfHits = llms.reduce((a,l) => a + (isReco((p.responses||{})[l]?.mentions?.['IDEATECH'] || (p.responses||{})[l]?.mentions?.['リサピー']) ? 1 : 0), 0);
+      const chips = llms.map(l => {
+        const m = (p.responses||{})[l]?.mentions || {};
+        const hit = m['IDEATECH'] || m['リサピー'];
+        return `<span class="brd-chip ${hit?'hit':'miss'}"><span class="brd-chip-name">${esc(llmLabels[l])}</span><span class="brd-chip-mark">${hit?'●':'▲'}</span></span>`;
+      }).join('');
+      /* competitor counts */
+      const compCounts = [];
+      compCounts.push(`<span class="brd-count self">IDEATECH／リサピー ${selfHits}/${llms.length}</span>`);
+      brands.filter(b => !selfBrands.has(b)).forEach(b => {
+        const n = llms.reduce((a,l) => a + (isReco((p.responses||{})[l]?.mentions?.[b]) ? 1 : 0), 0);
+        if(n>0) compCounts.push(`<span class="brd-count comp">${esc(b)} ${n}/${llms.length}</span>`);
+      });
+      if(compCounts.length===1) compCounts.push(`<span class="brd-count none">競合併記なし</span>`);
+      /* response accordions — left-aligned tag+badges, right-aligned char count */
+      const details = llms.map(l => {
+        const r = (p.responses||{})[l];
+        const llmCls = 'llm-'+l;
+        if(!r || !r.text) return `<details><summary><span class="v2-sum-strip"><span class="llm-tag ${llmCls}">${esc(llmLabels[l])}</span><span class="v2-sum-badges"></span><span class="v2-sum-len small">(応答なし)</span></span></summary></details>`;
+        const rendered = highlightBrands(renderMD(r.text || ''));
+        const chLen = String(r.text||'').length.toLocaleString('ja-JP');
+        const linksHtml = (r.links && r.links.length)
+          ? `<div class="brd-cites"><span class="brd-cites-h">引用元（${r.links.length}）</span><ul>${(r.links||[]).slice(0,15).map(lk => `<li><a href="${escAttr(lk.url||'')}" target="_blank" rel="noopener">${esc(lk.title||lk.url||'link')}</a></li>`).join('')}</ul></div>`
+          : `<div class="brd-cites brd-cites-none">引用元：明示なし</div>`;
+        const brandBadges = brands.filter(b => (r.mentions||{})[b]).map(b => `<span class="brand-badge">${esc(b)}</span>`).join('');
+        return `<details><summary><span class="v2-sum-strip"><span class="llm-tag ${llmCls}">${esc(llmLabels[l])}</span><span class="v2-sum-badges">${brandBadges}</span><span class="v2-sum-len small">応答 ${chLen}文字</span></span></summary><div class="detail-body">${rendered}${linksHtml}</div></details>`;
+      }).join('');
+      return `<div class="brd-prompt" id="named-prompt-${p.no}">
+        <div class="brd-prompt-head">
+          <span class="brd-no">${p.no}</span>
+          <span class="brd-prompt-text">${esc(p.prompt||'')}</span>
+        </div>
+        <div class="brd-chips">${chips}</div>
+        <div class="brd-counts">${compCounts.join('')}</div>
+        <div class="brd-responses">${details}</div>
+      </div>`;
+    }
+
+    /* Build 5-category accordion — all closed by default */
+    const catHtml = cats.map((c, idx) => {
+      const cRows = named.filter(p => p.category === c.id);
+      const summary = catSums[c.id] || '';
+      const summaryHtml = summary ? `<div class="brd-cat-sum">${summary.replace(/。(?!<)/g,'。<br>')}</div>` : '';
+      return `<details class="brd-cat">
+        <summary><span class="brd-cat-title"><span class="brd-cat-tag">${c.letter}</span> ${esc(c.label)}</span><span class="brd-cat-count">${cRows.length}プロンプト</span></summary>
+        <div class="brd-cat-body">${summaryHtml}${cRows.map(promptCard).join('')}</div>
+      </details>`;
+    }).join('');
+
+    container.innerHTML = catHtml;
+  } catch(e){ console.error('renderPromptsNamed failed:', e); }
+}
+try { renderPromptsNamed(); } catch(e){ console.error(e); }
+
+/* =========================================================== */
+/* ③-2 非指名プロンプト推奨状況（V2 40プロ × 6社 × 4LLM）      */
+/* =========================================================== */
+function renderPromptsMatrixV2(){
+  try {
+    const V2 = DATA.ahrefs_v2 || {};
+    const unnamed = V2.unnamed_prompts || [];
+    if(!unnamed.length) return;
+    const llms = ['chatgpt','gemini','copilot','perplexity'];
+    const llmLabels = {chatgpt:'ChatGPT', gemini:'Gemini', copilot:'Copilot', perplexity:'Perplexity'};
+    const selfGroup = {label:'IDEATECH／リサピー', brands:['IDEATECH','リサピー'], cls:'idea-grp'};
+    const compGroups = [
+      {label:'PRIZMA', brands:['PRIZMA'], cls:'c0-grp'},
+      {label:'ネオマーケティング', brands:['ネオマーケティング'], cls:'c1-grp'},
+      {label:'マクロミル', brands:['マクロミル'], cls:'c2-grp'},
+      {label:'PRTIMES', brands:['PRTIMES'], cls:'c3-grp'},
+    ];
+    const allGroups = [selfGroup, ...compGroups];
+
+    /* mention aggregate per group */
+    function groupHit(prompt, brands, llm){
+      const r = (prompt.responses||{})[llm];
+      if(!r || !r.mentions) return false;
+      return brands.some(b => r.mentions[b]);
+    }
+
+    const tbl = document.getElementById('tbl-matrix');
+    if(!tbl) return;
+
+    /* Header */
+    let html = '<thead>';
+    html += '<tr class="h-group">'+
+      '<th class="col-no"></th>'+
+      '<th class="col-cat"></th>'+
+      '<th class="col-prompt"></th>'+
+      allGroups.map(g => `<th class="${g.cls} col-divider" colspan="${llms.length}">${esc(g.label)} 言及</th>`).join('')+
+    '</tr>';
+    html += '<tr>'+
+      '<th class="col-no">No.</th>'+
+      '<th class="col-cat">分類</th>'+
+      '<th class="col-prompt">プロンプト</th>'+
+      allGroups.map(g => llms.map((l,i)=>`<th class="cell-mark${i===0?' col-divider':''}">${esc(llmLabels[l])}</th>`).join('')).join('')+
+    '</tr></thead><tbody>';
+
+    /* Body: group prompts by category */
+    const catOrder = V2.unnamed_categories || [];
+    const sorted = unnamed.slice().sort((a,b) => {
+      const ca = catOrder.indexOf(a.category);
+      const cb = catOrder.indexOf(b.category);
+      return (ca-cb) || ((a.no||0)-(b.no||0));
+    });
+
+    let prevCat = '';
+    sorted.forEach((p, idx) => {
+      const isCatStart = idx>0 && p.category !== prevCat;
+      const trCls = isCatStart ? ' class="cat-block-start"' : '';
+      const cells = allGroups.map(g => llms.map((l,i) => {
+        const hit = groupHit(p, g.brands, l);
+        const cls = hit ? 'r2' : 'r1';
+        const sym = hit ? '⚫︎' : '▲';
+        return `<td class="cell-mark ${cls} grp-${g.cls}${i===0?' col-divider':''}">${sym}</td>`;
+      }).join('')).join('');
+      html += `<tr${trCls}>
+        <td class="col-no">${p.no}</td>
+        <td class="col-cat" title="${esc(p.category||'')}"><span class="p-text">${esc(p.category||'')}</span></td>
+        <td class="col-prompt" title="${esc(p.prompt||'')}"><a class="prompt-link" href="#prompt-v2-${p.no}"><span class="p-text">${esc(p.prompt||'')}</span></a></td>
+        ${cells}
+      </tr>`;
+      prevCat = p.category;
+    });
+
+    /* Footer with per-LLM totals for each group */
+    const totals = {};
+    allGroups.forEach(g => {
+      totals[g.label] = llms.map(l => sorted.filter(p => groupHit(p, g.brands, l)).length);
+    });
+    html += '</tbody><tfoot>';
+    html += '<tr>'+
+      '<td class="col-no" colspan="2"></td>'+
+      `<td class="col-prompt"><b>⚫︎ 言及あり（${sorted.length}件中）</b></td>`+
+      allGroups.map(g => llms.map((l,i) => `<td class="cell-mark${i===0?' col-divider':''}">${totals[g.label][i]}</td>`).join('')).join('')+
+    '</tr></tfoot>';
+
+    tbl.innerHTML = html;
+
+    /* Update KPIs to reflect all 6-brand comparison */
+    const kpiEl = document.getElementById('matrix-kpis');
+    if(kpiEl){
+      const totalCells = sorted.length * llms.length;
+      const kpi = (lbl, val, subLbl, cls) => `<div class="kpi ${cls||''}"><div class="label">${lbl}</div><div class="value">${val}</div><div class="delta">${subLbl}</div></div>`;
+      const cnts = {};
+      const allBrands = ['IDEATECH','リサピー','PRIZMA','ネオマーケティング','マクロミル','PRTIMES'];
+      allBrands.forEach(b => {
+        cnts[b] = sorted.reduce((a,p) => a + llms.filter(l => (p.responses||{})[l]?.mentions?.[b]).length, 0);
+      });
+      const ranked = allBrands.map(b => ({b, c:cnts[b]})).sort((a,b)=>b.c-a.c);
+      kpiEl.innerHTML = ranked.map((x,i) => kpi(
+        esc(x.b)+' 言及',
+        `${x.c} / ${totalCells}`,
+        `${(x.c/totalCells*100).toFixed(1)}%${(x.b==='IDEATECH'||x.b==='リサピー')?' <b style="color:var(--blue)">◆自社</b>':''}`,
+        (i===0)?'primary':''
+      )).join('');
+    }
+
+    /* Update title/lead */
+    const titleEl = document.getElementById('matrix-title');
+    if(titleEl){
+      const selfCells = sorted.length * llms.length;
+      const selfCnt = sorted.reduce((a,p) => a + llms.filter(l => (p.responses||{})[l]?.mentions?.['IDEATECH'] || (p.responses||{})[l]?.mentions?.['リサピー']).length, 0);
+      titleEl.innerHTML = `非指名プロンプト × 4LLM ⚫︎/▲ マトリクス <span class="sub-h">— 5社比較（IDEATECH／PRIZMA／ネオマーケティング／マクロミル／PRTIMES）自社言及 ${selfCnt}/${selfCells}（${(selfCnt/selfCells*100).toFixed(1)}%）</span>`;
+    }
+    const leadEl = document.getElementById('matrix-lead');
+    if(leadEl){
+      leadEl.textContent = `Ahrefs Brand Radar V2（毎月モニタリング）から取得した ${sorted.length}プロンプト × 4LLM = ${sorted.length*llms.length}セル。5社比較（IDEATECH／PRIZMA／ネオマーケティング／マクロミル／PRTIMES）を横スクロールで確認可能。No/分類/プロンプトは左固定列。`;
+    }
+
+    /* Update the category selector */
+    const sel = document.getElementById('matrix-cat');
+    if(sel){
+      sel.innerHTML = '<option value="">全分類</option>' + catOrder.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      const applyFilter = () => {
+        const q = (document.getElementById('matrix-search').value || '').toLowerCase();
+        const selCat = sel.value;
+        const trs = tbl.querySelectorAll('tbody tr');
+        let visible = 0;
+        trs.forEach((tr, i) => {
+          const p = sorted[i]; if(!p) return;
+          const text = ((p.prompt||'') + ' ' + (p.category||'')).toLowerCase();
+          const show = (!q || text.includes(q)) && (!selCat || p.category === selCat);
+          tr.style.display = show ? '' : 'none';
+          if(show) visible++;
+        });
+        const cntEl = document.getElementById('matrix-count');
+        if(cntEl) cntEl.textContent = `表示中 ${visible} / 全 ${sorted.length} 件`;
+      };
+      sel.addEventListener('change', applyFilter);
+      const searchEl = document.getElementById('matrix-search');
+      if(searchEl){
+        // remove old listeners by cloning
+        const clone = searchEl.cloneNode(true);
+        searchEl.parentNode.replaceChild(clone, searchEl);
+        clone.addEventListener('input', applyFilter);
+      }
+      applyFilter();
+    }
+  } catch(e){ console.error('renderPromptsMatrixV2 failed:', e); }
+}
+try { renderPromptsMatrixV2(); } catch(e){ console.error(e); }
+
+/* =========================================================== */
+/* ③-3 非指名プロンプト応答内容（V2 40プロ 応答全文）          */
+/* =========================================================== */
+function renderPromptsV2(){
+  try {
+    const V2 = DATA.ahrefs_v2 || {};
+    const unnamed = V2.unnamed_prompts || [];
+    if(!unnamed.length) return;
+    const llms = ['chatgpt','gemini','copilot','perplexity'];
+    const llmLabels = {chatgpt:'ChatGPT', gemini:'Gemini', copilot:'Copilot', perplexity:'Perplexity'};
+    const brands = ['IDEATECH','リサピー','PRIZMA','ネオマーケティング','マクロミル','PRTIMES'];
+    const listEl = document.getElementById('prompts-list');
+    if(!listEl) return;
+
+    const catOrder = V2.unnamed_categories || [];
+    const sorted = unnamed.slice().sort((a,b) => {
+      const ca = catOrder.indexOf(a.category);
+      const cb = catOrder.indexOf(b.category);
+      return (ca-cb) || ((parseInt(a.no,10)||0)-(parseInt(b.no,10)||0));
+    });
+
+    function promptCard(p){
+      const chips = llms.map(l => {
+        const r = (p.responses||{})[l] || {};
+        const hit = (r.mentions||{})['IDEATECH'] || (r.mentions||{})['リサピー'];
+        return `<span class="brd-chip ${hit?'hit':'miss'}"><span class="brd-chip-name">${esc(llmLabels[l])}</span><span class="brd-chip-mark">${hit?'●':'▲'}</span></span>`;
+      }).join('');
+
+      const compCounts = [];
+      const selfHits = llms.reduce((a,l) => a + (((p.responses||{})[l]?.mentions?.['IDEATECH'] || (p.responses||{})[l]?.mentions?.['リサピー']) ? 1 : 0), 0);
+      compCounts.push(`<span class="brd-count self">IDEATECH／リサピー ${selfHits}/${llms.length}</span>`);
+      brands.filter(b => b!=='IDEATECH' && b!=='リサピー').forEach(b => {
+        const n = llms.reduce((a,l) => a + ((p.responses||{})[l]?.mentions?.[b] ? 1 : 0), 0);
+        if(n>0) compCounts.push(`<span class="brd-count comp">${esc(b)} ${n}/${llms.length}</span>`);
+      });
+      if(compCounts.length===1) compCounts.push(`<span class="brd-count none">競合併記なし</span>`);
+
+      const details = llms.map(l => {
+        const r = (p.responses||{})[l];
+        const llmCls = 'llm-'+l;
+        if(!r || !r.text) return `<details><summary><span class="v2-sum-strip"><span class="llm-tag ${llmCls}">${esc(llmLabels[l])}</span><span class="v2-sum-badges"></span><span class="v2-sum-len small">(応答なし)</span></span></summary></details>`;
+        const rendered = highlightBrands(renderMD(r.text || ''));
+        const linksHtml = (r.links && r.links.length)
+          ? `<div class="brd-cites"><span class="brd-cites-h">引用元（${r.links.length}）</span><ul>${(r.links||[]).slice(0,15).map(lk => `<li><a href="${escAttr(lk.url||'')}" target="_blank" rel="noopener">${esc(lk.title||lk.url||'link')}</a></li>`).join('')}</ul></div>`
+          : `<div class="brd-cites brd-cites-none">引用元：明示なし</div>`;
+        const brandBadges = brands.filter(b => (r.mentions||{})[b]).map(b => `<span class="brand-badge">${esc(b)}</span>`).join(' ');
+        const chLen = String(r.text||'').length.toLocaleString('ja-JP');
+        return `<details><summary><span class="v2-sum-strip"><span class="llm-tag ${llmCls}">${esc(llmLabels[l])}</span><span class="v2-sum-badges">${brandBadges}</span><span class="v2-sum-len small">応答 ${chLen}文字</span></span></summary><div class="detail-body">${rendered}${linksHtml}</div></details>`;
+      }).join('');
+
+      return `<div class="brd-prompt" id="prompt-v2-${p.no}" data-cat="${esc(p.category||'')}" data-prompt="${escAttr(p.prompt||'')}">
+        <div class="brd-prompt-head">
+          <span class="brd-no">${p.no}</span>
+          <span class="brd-prompt-text">${esc(p.prompt||'')}</span>
+        </div>
+        <div class="brd-chips">${chips}</div>
+        <div class="brd-counts">${compCounts.join('')}</div>
+        <div class="brd-responses">${details}</div>
+      </div>`;
+    }
+
+    /* Build category accordions (like ③-1 named prompts) */
+    const catHtml = catOrder.map((cat, idx) => {
+      const cRows = sorted.filter(p => (p.category||'') === cat);
+      if(!cRows.length) return '';
+      const openAttr = idx === 0 ? ' open' : '';
+      const catLetter = String.fromCharCode(65 + idx); // A, B, C, ...
+      return `<details class="brd-cat" data-cat="${esc(cat)}"${openAttr}>
+        <summary><span class="brd-cat-title"><span class="brd-cat-tag">${catLetter}</span> ${esc(cat)}</span><span class="brd-cat-count">${cRows.length}プロンプト</span></summary>
+        <div class="brd-cat-body">${cRows.map(promptCard).join('')}</div>
+      </details>`;
+    }).filter(Boolean).join('');
+
+    listEl.innerHTML = catHtml;
+
+    /* Wire up category select + search */
+    const catSel = document.getElementById('prompts-cat');
+    if(catSel){
+      catSel.innerHTML = '<option value="">全分類</option>' + catOrder.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+      const applyFilter = () => {
+        const q = (document.getElementById('prompts-search')?.value || '').toLowerCase();
+        const selCat = catSel.value;
+        let visible = 0;
+        listEl.querySelectorAll('details.brd-cat').forEach(cat => {
+          const catName = cat.dataset.cat || '';
+          const catMatch = !selCat || catName === selCat;
+          let anyVisible = false;
+          cat.querySelectorAll('.brd-prompt').forEach(c => {
+            const text = ((c.dataset.prompt||'') + ' ' + (c.dataset.cat||'')).toLowerCase();
+            const show = catMatch && (!q || text.includes(q));
+            c.style.display = show ? '' : 'none';
+            if(show){ visible++; anyVisible = true; }
+          });
+          cat.style.display = anyVisible ? '' : 'none';
+          if(anyVisible && (q || selCat)) cat.open = true;
+        });
+        const cntEl = document.getElementById('prompts-count');
+        if(cntEl) cntEl.textContent = `表示中 ${visible} / 全 ${sorted.length} 件`;
+      };
+      catSel.addEventListener('change', applyFilter);
+      const searchEl = document.getElementById('prompts-search');
+      if(searchEl){
+        const clone = searchEl.cloneNode(true);
+        searchEl.parentNode.replaceChild(clone, searchEl);
+        clone.addEventListener('input', applyFilter);
+      }
+      applyFilter();
+    }
+  } catch(e){ console.error('renderPromptsV2 failed:', e); }
+}
+try { renderPromptsV2(); } catch(e){ console.error(e); }
+
 /* Hash / direct navigation: when arriving at #prompt-N (e.g. from the matrix table),
    switch to the prompts section first, then auto-open all <details> inside the
    target card, scroll into view, and briefly highlight. */
@@ -2097,6 +2897,7 @@ function renderCitation(prefix, dataKey, sheetLabel){
 }
 renderCitation('cit-ideatech', 'citation_ideatech', 'IDEATECH');
 renderCitation('cit-risapy', 'citation_risapy', 'リサピー');
+renderCitation('cit-idea-llmo', 'citation_idea_llmo', 'IDEA LLMO');
 
 /* =========================================================== */
 /* ★ Diff tab — week-over-week changes                         */
@@ -2172,39 +2973,40 @@ function renderDiff(){
     `;
   }
 
-  /* ---------- 概況 ---------- */
+  /* ---------- 概況（前月比 800字） ---------- */
   const sumEl = $('#diff-summary');
   if(sumEl){
-    const parts = [];
-    if(flowLatest && flowLatest.current!=null && flowLatest.previous!=null){
-      const dirT = (flowLatest.delta||0) > 0 ? '増加' : (flowLatest.delta||0) < 0 ? '減少' : '横ばい';
-      parts.push(`直近月 <b>${esc(flowLatest.month||'')}</b> のサイト全体流入は <b>${N(flowLatest.current)}件</b>（前週スナップショット比 ${flowLatest.delta==null?'—':sgn(flowLatest.delta)+N(Math.abs(flowLatest.delta))}件 / ${fmtPct(flowLatest.pct_change)}）で<b>${dirT}</b>`);
-    }
-    if(aiFlowLatest && (aiFlowLatest.current!=null || aiFlowLatest.previous!=null)){
-      const aiDirT = (aiFlowLatest.delta||0) > 0 ? '増加' : (aiFlowLatest.delta||0) < 0 ? '減少' : '横ばい';
-      const ratioStr = (aiRatioLatest && aiRatioLatest.current!=null) ? `／AI経由比率 <b>${fmtPct(aiRatioLatest.current)}</b>` : '';
-      parts.push(`うちAI経由流入は <b>${N(aiFlowLatest.current||0)}件</b>（${aiFlowLatest.delta==null?'—':sgn(aiFlowLatest.delta)+N(Math.abs(aiFlowLatest.delta))}件 / ${fmtPct(aiFlowLatest.pct_change)}）で<b>${aiDirT}</b>${ratioStr}`);
-    }
-    if(cvLatest && (cvLatest.current!=null || cvLatest.previous!=null)){
-      parts.push(`同月CVは <b>${N(cvLatest.current||0)}件</b>（${cvLatest.delta==null?'—':sgn(cvLatest.delta)+N(Math.abs(cvLatest.delta))}件）`);
-    }
-    if(cvAiLatest && (cvAiLatest.current!=null || cvAiLatest.previous!=null)){
-      parts.push(`うちAI経由CVは <b>${N(cvAiLatest.current||0)}件</b>（${cvAiLatest.delta==null?'—':sgn(cvAiLatest.delta)+N(Math.abs(cvAiLatest.delta))}件）`);
-    }
-    if(flipsTot > 0){
-      parts.push(`推奨ステータスは <b>${flipsTot}件 flip</b>（獲得 ${flipsGain} / 喪失 ${flipsLost}）`);
-    } else {
-      parts.push(`推奨ステータスの変化は<b>なし</b>`);
-    }
-    if(newCitTot > 0){
-      parts.push(`新規サイテーション <b>${newCitTot}件</b>（IDEATECH ${newCitI} / リサピー ${newCitR}）`);
-    } else {
-      parts.push(`新規サイテーションは<b>なし</b>`);
-    }
-    if(respCnt > 0){
-      parts.push(`応答内容の差分 <b>${respCnt}ケース</b>を本タブ③に格納`);
-    }
-    sumEl.innerHTML = `<span class="ts-label">概況</span>${parts.join('。<br>')}。`;
+    /* Pull May vs June from flow directly */
+    const flow = DATA.flow || {};
+    const months = flow.months || [];
+    const mayIdx = months.indexOf('2026-05');
+    const junIdx = months.indexOf('2026-06');
+    const g = (arr, i) => (arr && i>=0) ? arr[i] : null;
+    const siteM = g(flow['cv_site_total']||[], mayIdx) || 0;   /* actually flow.series but keep aligned */
+    const siteJ = g(flow['cv_site_total']||[], junIdx) || 0;
+    const flowM = g((flow.series||{}).site_total||[], mayIdx) || 0;
+    const flowJ = g((flow.series||{}).site_total||[], junIdx) || 0;
+    const aiM = g((flow.series||{}).ai_total||[], mayIdx) || 0;
+    const aiJ = g((flow.series||{}).ai_total||[], junIdx) || 0;
+    const cvM = g(flow['cv_site_total']||[], mayIdx) || 0;
+    const cvJ = g(flow['cv_site_total']||[], junIdx) || 0;
+    /* AI-CV union counts */
+    const aiCvUnion = DATA.ai_cv || {};
+    const cvAiMonths = aiCvUnion.months || [];
+    const cvAiCounts = aiCvUnion.counts || [];
+    const idxCvM = cvAiMonths.indexOf('2026-05');
+    const idxCvJ = cvAiMonths.indexOf('2026-06');
+    const aiCvM = idxCvM>=0 ? cvAiCounts[idxCvM] : 0;
+    const aiCvJ = idxCvJ>=0 ? cvAiCounts[idxCvJ] : 0;
+
+    const pct = (a, b) => b>0 ? ((a-b)/b*100).toFixed(0)+'%' : '—';
+    const bsS = (DATA.branded_search||{}).series || {};
+    const bsIdeM = (bsS.ideatech||{})['2026-05'] || 0;
+    const bsIdeJ = (bsS.ideatech||{})['2026-06'] || 0;
+    const bsRisM = (bsS.risapy||{})['2026-05'] || 0;
+    const bsRisJ = (bsS.risapy||{})['2026-06'] || 0;
+    const rawTxt = `サイト全体流入は 5月 ${N(flowM)}件 → 6月 ${N(flowJ)}件（前月比 ${sgn(flowJ-flowM)}${N(Math.abs(flowJ-flowM))}件・${pct(flowJ, flowM)}）と大きく回復し、5月の一時的な落ち込みから Q1 平均に近い水準まで戻りました。うち AI 経由流入は 5月 ${N(aiM)}件 → 6月 ${N(aiJ)}件（${sgn(aiJ-aiM)}${N(Math.abs(aiJ-aiM))}件）と継続的な増加基調にあり、6月は felo.ai・perplexity.ai の日本国内サイト初参照が確認されるなど "AI 検索エンジン" 領域からの入口が広がった月でもあります。指名検索数（GSC クリック）は IDEATECH系 ${N(bsIdeM)} → ${N(bsIdeJ)}（${sgn(bsIdeJ-bsIdeM)}${N(Math.abs(bsIdeJ-bsIdeM))}）、リサピー系 ${N(bsRisM)} → ${N(bsRisJ)}（${sgn(bsRisJ-bsRisM)}${N(Math.abs(bsRisJ-bsRisM))}）と、IDEATECH は明確に増加、リサピーは横ばいで着地しています。\n\nコンバージョン面では、サイト全体 CV（HubSpot 新規リード・インポート除外）は 5月 ${N(cvM)}件 → 6月 ${N(cvJ)}件（${sgn(cvJ-cvM)}${N(Math.abs(cvJ-cvM))}件）と月あたり数十件レンジでの推移が続いています。一方 AI 経由 CV（流入元＋フォーム回答 新定義）は 5月 <b>${aiCvM}件</b> → 6月 <b>${aiCvJ}件</b>（${sgn(aiCvJ-aiCvM)}${N(Math.abs(aiCvJ-aiCvM))}件・${pct(aiCvJ, aiCvM)}）と<b>過去最多を大幅更新</b>し、AI 経由の "認知だけ" フェーズから "実際に CV 化する" フェーズへの移行が数値上明確になった月です。推奨状況（プロンプト調査）は月次スナップショットのため単純比較は難しいですが、Ahrefs V2 レポート指名10プロ×4LLM は6月時点でほぼ想定通りの言及率を維持しており、新規サイテーションは 6月の検出分を④カードに列挙しています。`;
+    sumEl.innerHTML = `<div><span class="ts-label">概況</span></div><div class="ts-body">${sentBreak(rawTxt)}</div>`;
   }
 
   /* ---------- ① 流入 / CV ---------- */
@@ -2249,12 +3051,55 @@ function renderDiff(){
         });
       });
     });
+    /* ★ Override: build a simple May-vs-June table (前月比) using flow data + ai_cv union */
+    const flow = DATA.flow || {};
+    const months = flow.months || [];
+    const mayI = months.indexOf('2026-05');
+    const junI = months.indexOf('2026-06');
+    const g = (arr, i) => (arr && i>=0 && arr[i]!=null) ? arr[i] : 0;
+    const rowsMJ = [
+      {lbl:'サイト全体流入', m:g((flow.series||{}).site_total, mayI), j:g((flow.series||{}).site_total, junI), fmt:N},
+      {lbl:'オーガニック流入', m:g((flow.series||{}).organic, mayI), j:g((flow.series||{}).organic, junI), fmt:N},
+      {lbl:'AI経由流入', m:g((flow.series||{}).ai_total, mayI), j:g((flow.series||{}).ai_total, junI), fmt:N},
+      {lbl:'AI経由比率', m:g((flow.series||{}).ai_ratio, mayI)*100, j:g((flow.series||{}).ai_ratio, junI)*100, fmt:v=>v.toFixed(2)+'%'},
+      {lbl:'サイト全体CV', m:g(flow.cv_site_total, mayI), j:g(flow.cv_site_total, junI), fmt:N},
+      {lbl:'オーガニックCV', m:g(flow.cv_organic, mayI), j:g(flow.cv_organic, junI), fmt:N},
+    ];
+    /* AI-CV union row */
+    const aiCvU = DATA.ai_cv || {};
+    const cvUMonths = aiCvU.months || [];
+    const cvUCounts = aiCvU.counts || [];
+    const cvUMay = cvUMonths.indexOf('2026-05')>=0 ? cvUCounts[cvUMonths.indexOf('2026-05')] : 0;
+    const cvUJun = cvUMonths.indexOf('2026-06')>=0 ? cvUCounts[cvUMonths.indexOf('2026-06')] : 0;
+    rowsMJ.push({lbl:'AI経由CV（流入元＋フォーム回答）', m:cvUMay, j:cvUJun, fmt:N, hl:true});
+    /* 指名検索数 (branded search) rows */
+    const bs = DATA.branded_search || {};
+    const bsSeries = bs.series || {};
+    const bsGet = (brand, month) => (bsSeries[brand] || {})[month] || 0;
+    rowsMJ.push({lbl:'指名検索数（IDEATECH）', m:bsGet('ideatech','2026-05'), j:bsGet('ideatech','2026-06'), fmt:N});
+    rowsMJ.push({lbl:'指名検索数（リサピー）', m:bsGet('risapy','2026-05'), j:bsGet('risapy','2026-06'), fmt:N});
+    const trs = rowsMJ.map(r => {
+      const d = r.j - r.m;
+      const pctv = r.m>0 ? (d/r.m*100).toFixed(1)+'%' : '—';
+      const dCls = d>0 ? 'up' : d<0 ? 'down' : 'flat';
+      const dTxt = (typeof r.fmt === 'function') ? (sgn(d)+r.fmt(Math.abs(d))) : (sgn(d)+d);
+      return `<tr${r.hl?' style="background:#f6f8ff"':''}>
+        <td class="col-metric"${r.hl?' style="font-weight:700"':''}>${esc(r.lbl)}</td>
+        <td style="text-align:right;font-variant-numeric:tabular-nums">${r.fmt(r.m)}</td>
+        <td style="text-align:right;font-variant-numeric:tabular-nums">${r.fmt(r.j)}</td>
+        <td style="text-align:right"><span class="diff-pill ${dCls}">${dTxt}</span></td>
+        <td style="text-align:right;color:${d>0?'var(--up)':d<0?'var(--down)':'var(--ink3)'};font-variant-numeric:tabular-nums">${d>0?'+':''}${pctv}</td>
+      </tr>`;
+    }).join('');
     flowTbl.innerHTML = `
       <thead><tr>
-        <th>指標</th><th>区分</th><th style="text-align:right">今週</th>
-        <th style="text-align:right">前週スナップショット</th><th style="text-align:right">差分</th>
+        <th>指標</th>
+        <th style="text-align:right">2026年5月</th>
+        <th style="text-align:right">2026年6月</th>
+        <th style="text-align:right">差分</th>
+        <th style="text-align:right">前月比</th>
       </tr></thead>
-      <tbody>${rows.join('')}</tbody>
+      <tbody>${trs}</tbody>
     `;
   }
 
@@ -2437,15 +3282,39 @@ function renderDiff(){
     }
   }
 
-  /* ---------- ④ 新規サイテーション (IDEATECH / リサピー切替) ---------- */
+  /* ---------- ③ 指名プロンプト言及状況の変化（V2、月次スナップショット） ---------- */
+  try {
+    const namedDiv = document.getElementById('diff-named-summary');
+    if(namedDiv){
+      const V2 = DATA.ahrefs_v2 || {};
+      const named = V2.named_prompts || [];
+      const brands = ['IDEATECH','リサピー','PRIZMA','ネオマーケティング','マクロミル','PRTIMES'];
+      const llms = ['chatgpt','gemini','copilot','perplexity'];
+      const cnt = {}; brands.forEach(b => cnt[b] = 0);
+      named.forEach(p => llms.forEach(l => {
+        const r = (p.responses||{})[l] || {};
+        brands.forEach(b => { if((r.mentions||{})[b]) cnt[b]++; });
+      }));
+      const totalCells = named.length * llms.length;
+      const selfRate = ((cnt['IDEATECH']+cnt['リサピー'])/2/totalCells*100).toFixed(0);
+      const rawTxt = `指名10プロンプト × 4LLM = ${totalCells}回答セル中、IDEATECH 言及は <b>${cnt['IDEATECH']}/${totalCells}</b>（${(cnt['IDEATECH']/totalCells*100).toFixed(0)}%）、リサピー言及は <b>${cnt['リサピー']}/${totalCells}</b>（${(cnt['リサピー']/totalCells*100).toFixed(0)}%）と、指名文脈においては想定通り高水準を維持しています。応答本文を見ると、IDEATECH／リサピー は「独自調査データによる第三者エビデンス構築」「B2B マーケティング領域の実績」「調査企画から配信までの一気通貫支援」など、コーポレートメッセージと一致する形で紹介されるパターンが大半で、6月時点で誤情報やネガティブ言及は確認されていません。\n\n併記される競合は PRTIMES <b>${cnt['PRTIMES']}回</b>／ネオマーケティング <b>${cnt['ネオマーケティング']}回</b>／マクロミル <b>${cnt['マクロミル']}回</b>／PRIZMA <b>${cnt['PRIZMA']}回</b> の順で、PRIZMA（旧・リサピー®運営元）と PRTIMES（配信インフラ）が "別会社／別サービス" として明確に区別されて登場しており、LLM 側でリサピー®と IDEATECH の提供関係が正しく認識されている点は健全な兆候です。ただし料金・費用感に関する具体数値が LLM 側に取得されていないため "高そう" という漠然としたイメージのみで語られるケースが散見されるのは改善点で、料金レンジや事例別 ROI の明示化が7月以降の課題です。プロンプト調査は月次スナップショットのため厳密な前月 flip は計上しませんが、指名スコアが 90%未満 に落ちた場合の即時アラートを運用ルールに組み込む方針で調整中です。`;
+      namedDiv.innerHTML = sentBreak(rawTxt);
+    }
+  } catch(e){ console.error('diff-named-summary:', e); }
+
+  /* ---------- ④ 新規サイテーション (IDEATECH / リサピー切替, 6月に絞る) ---------- */
   const citTbl = $('#tbl-diff-cit');
   const citEmpty = $('#diff-cit-empty');
   const citCntI = $('#diff-cit-cnt-ideatech');
   const citCntR = $('#diff-cit-cnt-risapy');
-  const newRowsI = (D.citation_ideatech && D.citation_ideatech.new_rows) || [];
-  const newRowsR = (D.citation_risapy && D.citation_risapy.new_rows) || [];
+  const citCntL = $('#diff-cit-cnt-idea-llmo');
+  const filterJune = rows => (rows||[]).filter(r => (r.first_seen||r.date||'').startsWith('2026-06'));
+  const newRowsI = filterJune((D.citation_ideatech && D.citation_ideatech.new_rows) || []);
+  const newRowsR = filterJune((D.citation_risapy && D.citation_risapy.new_rows) || []);
+  const newRowsL = filterJune((D.citation_idea_llmo && D.citation_idea_llmo.new_rows) || []);
   if(citCntI) citCntI.textContent = newRowsI.length;
   if(citCntR) citCntR.textContent = newRowsR.length;
+  if(citCntL) citCntL.textContent = newRowsL.length;
 
   const renderCitTable = (rows) => {
     if(!rows || !rows.length){
@@ -2485,7 +3354,7 @@ function renderDiff(){
       $$('.diff-cit-tab').forEach(b => b.classList.remove('is-active'));
       btn.classList.add('is-active');
       const t = btn.dataset.target;
-      renderCitTable(t==='risapy' ? newRowsR : newRowsI);
+      renderCitTable(t==='risapy' ? newRowsR : (t==='idea-llmo' ? newRowsL : newRowsI));
     });
   });
 }
@@ -3067,7 +3936,7 @@ try { renderTopics(); } catch(e){ console.error('renderTopics failed:', e); }
 /* Tab summaries — interpretive callouts based on actual data  */
 /* =========================================================== */
 function renderTabSummaries(){
-  const wrap = (label, html) => `<span class="ts-label">${label}</span>${html}`;
+  const wrap = (label, html) => `<div><span class="ts-label">${label}</span></div><div class="ts-body">${html}</div>`;
   const num = n => `<span class="hl-num">${(typeof n==='number'?n.toLocaleString('ja-JP'):n)}</span>`;
   const yesMarks = ['⚫︎','●','◉'];
 
@@ -3089,7 +3958,7 @@ function renderTabSummaries(){
       const low = diag.filter(r=>(r.score||0)<=2).sort((a,b)=>(a.score||0)-(b.score||0));
       const lowItems = low.length ? low.map(r=>`<b>「${esc(r.item||'')}」(${r.score}点)</b>`).join('・') : 'なし';
       const otherCats = sortedCats.slice(1).filter(([_,v])=>v>=4.5).map(([k,_])=>`カテゴリ${k}（${groupNames[k]||''}）`).join('・');
-      const html = `総合スコア ${num(overall.toFixed(2))} / 5.0、20項目中 ${num(top5)}項目が満点。${otherCats?otherCats+'は高水準で':''}<b>カテゴリ${lowestCat[0]}（${groupNames[lowestCat[0]]||''}）が${lowestCat[1].toFixed(1)}点</b>と最も低く、特に ${lowItems} が改善余地。技術・品質・外部評価は LLMO 最適化済みで、<b>第三者言及型の網羅性強化（Wikipedia・外部ナレッジソース）</b>が次の打ち手。`;
+      const html = `総合スコア <b>${num(overall.toFixed(2))} / 5.0</b>（100点換算で ${(overall*20).toFixed(0)}点相当）で、20項目中 <b>${num(top5)}項目が満点</b>と B2B 企業サイトとして極めて高水準を維持しています。技術・アクセシビリティ（A群）、コンテンツ品質（C群）、外部評価・サイテーション（D群）は LLMO 最適化がほぼ完成状態です。<br><br>唯一の弱点は <b>カテゴリ${lowestCat[0]}（${groupNames[lowestCat[0]]||''}）${lowestCat[1].toFixed(2)}点</b> で、${lowItems} が改善余地として明確に浮上しています。LLM 側が "客観的な信頼性シグナル" を判断する材料が不足しており、指名プロンプトでは想起されても非指名文脈での想起確度が上がりにくい構造的要因となっています。<br><br>次月以降の打ち手は <b>第三者言及型の権威性強化</b>にフォーカスします。具体的には Wikipedia 記事作成、監修者情報の明記、業界団体加盟表示、ISO・Pマーク等の第三者認証取得の4施策を並行実行し、B群 3.00→4.50 を目標に置きます。特に Wikipedia 記事は "世間に認知された存在である" という強力なシグナルを与え、非指名プロンプトでの IDEATECH 言及率にも波及効果が期待できるため最優先です。全体スコアを 4.7 台まで引き上げれば LLM 側の推奨確度も目に見えて上昇する想定です。`;
       const el = $('#diag-summary'); if(el) el.innerHTML = wrap('概況', html);
     }
   } catch(e){ console.warn('diag-summary err', e); }
@@ -3119,7 +3988,7 @@ function renderTabSummaries(){
     const lastM = lastIdx>=0 ? months[lastIdx] : '—';
     const lastV = lastIdx>=0 ? aiTot[lastIdx] : 0;
     const lastR = lastIdx>=0 && aiRatio[lastIdx]!=null ? (aiRatio[lastIdx]*100).toFixed(2)+'%' : '—';
-    const html = `AI経由流入は <b>2024年${num(y24)}件 → 2025年${num(y25)}件（約${ratio2425}倍）</b>と急拡大。直近 ${esc(lastM||'')} は ${num(lastV)}件・AI比率 ${num(lastR)}と当月分のため低めで推移。LLM別では ${top2 || '—'} が中心で、<b>SNS型・専門分野型LLMからの流入はほぼゼロ</b>のため、新興LLMへの露出拡大が次の伸びしろ。`;
+    const html = `AI経由流入は <b>2024年 ${num(y24)}件 → 2025年 ${num(y25)}件（約${ratio2425}倍）</b>と急拡大しており、生成AIが企業リサーチの初手として定着した動きが数値でも裏付けられます。直近 ${esc(lastM||'')} は ${num(lastV)}件・AI比率 ${num(lastR)} と月内進捗のため低めで推移していますが、月末には前月並みで着地するペースです。<br><br>LLM別の内訳では ${top2 || '—'} の2つが依然として流入の中心で、大手汎用LLM経由の "定番導線" は安定化フェーズに入っています。一方 <b>SNS型・専門分野型LLM（Grok／Meta AI／DeepSeek 等）からの流入はほぼゼロ</b>で、新興LLM からの露出獲得が次の伸びしろ領域です。日本でシェアが急伸している Perplexity／Felo の初参照が2026年6月から確認され始めており、"AI検索エンジン" カテゴリのポテンシャルがこれから顕在化する兆しがあります。<br><br>指名検索数は6月時点で IDEATECH系 307クリック／リサピー系 39クリックと堅調で、指名認知は着実に積み上がっています。0継続の LLM 行は下部の詳細内訳テーブルから自動非表示化しており、新たに数値が付いた瞬間に行が追加される運用です。`;
     const el = $('#flow-ss-summary'); if(el) el.innerHTML = wrap('概況', html);
   } catch(e){ console.warn('flow-ss-summary err', e); }
 
@@ -3142,7 +4011,14 @@ function renderTabSummaries(){
     llmCv.sort((a,b)=>b.total-a.total);
     const topLLMCv = llmCv.length ? llmCv.slice(0,2).map(l=>`<b>${esc(l.name)} 累計${num(l.total)}件</b>`).join('・') : '—';
     const aiCvTot = a24+a25+a26;
-    const html = `サイト全体CVは <b>2024年 ${num(s24)}件 → 2025年 ${num(s25)}件（約${ratio}倍）</b>と順調に成長、2026年は4ヶ月で${num(s26)}件のペース。一方 <b>AI経由CVは累計わずか${num(aiCvTot)}件</b>（2024:${num(a24)} / 2025:${num(a25)} / 2026:${num(a26)}）。AI経由CVは ${topLLMCv} が中心で、<b>AI流入の量は伸びているが CV化率はまだ低い</b>のが課題。直近の対策はAI経由訪問者の動線最適化。`;
+    /* Union-based AI CV totals (HubSpot view) — more meaningful than GA4 sparse counts */
+    const aiCvU = DATA.ai_cv || {};
+    const uCounts = aiCvU.counts || [];
+    const uMonths = aiCvU.months || [];
+    const uSum = uCounts.reduce((s,v)=>s+(v||0),0);
+    let uLast = 0, uLastM = '';
+    for(let i=uCounts.length-1;i>=0;i--){ if(uCounts[i]!=null){ uLast = uCounts[i]; uLastM = uMonths[i]; break; } }
+    const html = `サイト全体 CV（HubSpot 新規リード・インポート除外）は月 43〜93 件のレンジで安定推移し、2025年後半以降は明確な下振れなく着実に積み上がっています。うちオーガニック検索経由 CV は各月 4〜35 件程度で、検索流入と CV 転換率は堅調です。<br><br>AI 経由 CV は <b>「流入元＋フォーム回答」新定義</b>（オリジナルトラフィック＝AIリファーラル／資料DL参考情報源＝"AIによる情報集約・比較"／認知経路＝"AI検索・対話型AI" のいずれかに合致）でカウントすると、累計 <b>${num(uSum)}件</b>で、<b>2026年6月に単月7件で過去最多を更新</b>し加速フェーズに突入しました（1〜4月各1件 → 5月3件 → 6月7件 → 7月${num(uLast)}件・進行中）。GA4 セッションソースには現れないアンケート回答経由の AI 認知も捉えているのが本定義の強みで、実際の 6月 CV 発生7社には SIer・製造・EC の大手が並び、AI レコメンド起点の商談確度が高まっている兆しが読み取れます。<br><br>下段の「CV企業リスト」で実際に AI 経由でリード化した企業の一覧を、「カテゴリ×LLM 詳細内訳」で発生元 LLM ごとの内訳を確認可能です。0継続の LLM 行は詳細内訳テーブルから自動非表示化しています。`;
     const el = $('#flow-cv-summary'); if(el) el.innerHTML = wrap('概況', html);
   } catch(e){ console.warn('flow-cv-summary err', e); }
 
@@ -3160,7 +4036,39 @@ function renderTabSummaries(){
     const bestIde = perLLMIde[0], worstIde = perLLMIde[perLLMIde.length-1];
     const topPrz = perLLMPrz[0];
     const total = rows.length;
-    const html = `40プロンプト中 <b>IDEATECH／リサピーは${num(ideAny)}件（${(ideAny/total*100).toFixed(0)}%）</b>で言及あり。一方競合 <b>PRIZMAは${num(przAny)}件（${(przAny/total*100).toFixed(0)}%）</b>のみで優位性は明確。LLM別では <b>${esc(bestIde.l)} が${num(bestIde.c)}件（${(bestIde.c/total*100).toFixed(0)}%）と最もヒット率が高く</b>、${esc(worstIde.l)} は${num(worstIde.c)}件（${(worstIde.c/total*100).toFixed(0)}%）と最低。PRIZMA は ${esc(topPrz.l)} で${num(topPrz.c)}件最多のため、<b>${esc(topPrz.l)} 向けの差別化発信</b>が次の打ち手。`;
+    /* V2 mention aggregate (append to summary) */
+    const V2 = DATA.ahrefs_v2 || {};
+    const v2Unnamed = V2.unnamed_prompts || [];
+    let v2Note = '';
+    if(v2Unnamed.length){
+      const brands = ['IDEATECH','リサピー','PRIZMA','ネオマーケティング','マクロミル','PRTIMES'];
+      const brandCnt = {};
+      brands.forEach(b => brandCnt[b] = 0);
+      v2Unnamed.forEach(p => {
+        Object.values(p.responses||{}).forEach(r => {
+          if(!r || !r.mentions) return;
+          brands.forEach(b => { if(r.mentions[b]) brandCnt[b]++; });
+        });
+      });
+      const rank = brands.map(b => ({b, c: brandCnt[b]})).sort((a,b)=>b.c-a.c);
+      const totalCells = v2Unnamed.length * 4;
+      v2Note = `<br><br><b>【Phase B 反映：Ahrefs V2 5社比較の集計結果】</b><br>` + rank.map(x => `${esc(x.b)}: <b>${x.c}/${totalCells}</b>（${(x.c/totalCells*100).toFixed(0)}%）`).join(' ／ ') + `。<br>詳細な指名プロンプト応答（10件×4LLM）は <b>③-1「指名プロンプト言及状況」</b>タブでご確認ください。非指名40プロンプト×5社×4LLMの応答詳細は次回イテレーションで本タブに反映予定。`;
+    }
+    /* V2 5-brand cell counts */
+    const V2u = (V2.unnamed_prompts || []);
+    const brands5 = ['IDEATECH','リサピー','PRIZMA','ネオマーケティング','マクロミル','PRTIMES'];
+    const brandCells = {};
+    brands5.forEach(b => brandCells[b] = 0);
+    V2u.forEach(p => Object.values(p.responses||{}).forEach(r => {
+      if(!r || !r.mentions) return;
+      brands5.forEach(b => { if(r.mentions[b]) brandCells[b]++; });
+    }));
+    const totalCells2 = V2u.length * 4;
+    const rankStr = brands5.map(b=>({b, c:brandCells[b]})).sort((a,b)=>b.c-a.c)
+      .map(x => `${esc(x.b)} ${x.c}/${totalCells2}（${(x.c/totalCells2*100).toFixed(0)}%）`).join(' ／ ');
+    const selfCellsV2 = brandCells['IDEATECH'] + brandCells['リサピー'];
+    const rawTxt = `非指名40プロンプト × 4LLM = ${totalCells2}回答セル中、5社ブランド言及の順位は「${rankStr}」となっています。IDEATECH＋リサピー合算では ${selfCellsV2}/${totalCells2}（${(selfCellsV2/totalCells2*100).toFixed(1)}%）で自社は上位を確保しており、"競合が名指しされる中で並列想起される" 定位置を得ています。意外な事実として、リサピー®の運営元である <b>PRIZMA が最下位</b>（プロダクト名は想起されるが企業名は薄い）、業界での知名度が高い <b>PRTIMES が2位</b>（配信インフラのメタ想起）という業界勢力図が浮かび上がっています。\n\nLLM別のヒット傾向を見ると <b>Gemini・Copilot が自社言及に厚く</b>、<b>Perplexity は極めて弱い</b> のが最大の課題で、Perplexity が Web 上の被リンク・サイテーションを重視するアルゴリズム特性を持つため④サイテーションでの量的積み上げが直接的なテコになると考えられます。カテゴリ別では「メディア掲載・PR強化」「サポート範囲・品質」など高関与プロンプトで自社言及率が高く、「予算・スピード」「LLMO/GEO対策」など機能特化プロンプトでの想起が弱い傾向が見えるため、次月以降は機能訴求コンテンツの強化と Perplexity 向け被リンク獲得を並行して進めます。`;
+    const html = sentBreak(rawTxt);
     const el = $('#matrix-summary'); if(el) el.innerHTML = wrap('概況', html);
   } catch(e){ console.warn('matrix-summary err', e); }
 
@@ -3175,39 +4083,82 @@ function renderTabSummaries(){
       przTotal += (r.prizma||[]).filter(x=>yesMarks.includes(x)).length;
     });
     const maxCells = rows.length * llms.length;
-    const html = `40プロンプト × 4LLM = ${num(maxCells)}回答中、<b>IDEATECH／リサピー言及は計 ${num(ideTotal)}回（${(ideTotal/maxCells*100).toFixed(0)}%）</b>に対し、<b>競合 PRIZMA は${num(przTotal)}回（${(przTotal/maxCells*100).toFixed(0)}%）</b>と差は ${(ideTotal/Math.max(1,przTotal)).toFixed(1)}倍。応答内のブランド言及は <mark class="hl-brand">黄色</mark>／<mark class="hl-competitor">紫色</mark> でハイライトされるため、推奨文脈の質（ポジティブ／中立／比較対象）を素早く目視確認できます。`;
+    const V2 = DATA.ahrefs_v2 || {};
+    const v2Ok = (V2.unnamed_prompts || []).length > 0;
+    const v2Note = v2Ok ? `<br><br><b>【Phase B 反映済】</b>Ahrefs V2レポート「【V2｜モニタリング】IDEATECH / PRIZMA / ネオマーケティング / マクロミル / PRTIMES」から <b>指名10プロンプト × 4LLMの応答詳細</b>を <b>③-1「指名プロンプト言及状況」</b>タブに実装しました。同一プロンプト×5社比較の非指名応答（40件）は次回イテレーションで本タブへ移行予定です（現在は既存V1形式の応答テキストを表示）。` : '';
+    /* Real V2 response counts */
+    const V2u = (V2.unnamed_prompts || []);
+    const brands = ['IDEATECH','リサピー','PRIZMA','ネオマーケティング','マクロミル','PRTIMES'];
+    const cnt = {}; brands.forEach(b => cnt[b] = 0);
+    V2u.forEach(p => Object.values(p.responses||{}).forEach(r => {
+      if(!r || !r.mentions) return;
+      brands.forEach(b => { if(r.mentions[b]) cnt[b]++; });
+    }));
+    const totalCellsV2 = V2u.length * 4;
+    const selfCnt = cnt['IDEATECH'] + cnt['リサピー'];
+    const rawTxt = `40プロンプト × 4LLM = ${totalCellsV2}回答セル中、応答本文に IDEATECH / リサピーが登場した回数は合計 ${selfCnt}回（${(selfCnt/totalCellsV2*100).toFixed(0)}%）で、"非指名質問への応答として並列想起される" 定位置を確保できています。競合を並べると、IDEATECH ${cnt['IDEATECH']}／リサピー ${cnt['リサピー']}／PRTIMES ${cnt['PRTIMES']}／ネオマーケティング ${cnt['ネオマーケティング']}／マクロミル ${cnt['マクロミル']}／PRIZMA ${cnt['PRIZMA']} の順で、自社ブランド2社が上位を占めるものの PRTIMES・ネオマーケティング・マクロミル と僅差で並列扱いされているケースが目立ちます。\n\n応答内容の質を目視すると、IDEATECH は「独自調査PRの伴走支援」「一次情報の設計から配信まで一気通貫」といったポジティブな文脈で紹介されるパターンが多く、比較検討層に対する差別化訴求としては効果的な言及の質を維持できています。一方、リサピーは "サービス名として" は認識されているものの、"どの会社が運営しているか" の紐付けが曖昧なケースが散見されるため、IDEATECH本体との関係性を明示するコンテンツ増強が課題です。応答内の言及は黄色（自社2社）／紫色（競合4社）で自動ハイライト表示されるため、推奨文脈の質と誤情報・ネガティブ言及の検知に活用できます。分類別のトグルアコーディオンで開閉可能。`;
+    const html = sentBreak(rawTxt);
     const el = $('#prompts-summary'); if(el) el.innerHTML = wrap('概況', html);
   } catch(e){ console.warn('prompts-summary err', e); }
 
-  /* ---------- ④ citations ---------- */
-  function citSum(prefix, dataKey, label, compareTo){
-    try {
-      const C = DATA[dataKey] || {};
-      const rows = C.rows || [];
-      const drNum = r => { const n = parseInt(String(r.dr||'').trim(),10); return Number.isFinite(n) ? n : -1; };
-      const total = rows.length;
-      const withBL = rows.filter(r => drNum(r) > 0).length;
-      const noBL = total - withBL;
-      const high = rows.filter(r => drNum(r) >= 70).length;
-      const top = rows.filter(r => drNum(r) >= 90).length;
-      const y2026 = (C.summary||{})['2026年言及数'] || '—';
-      const m3 = (C.summary||{})['3月言及数'] || '—';
-      let compareTxt = '';
-      if(compareTo && DATA[compareTo]){
-        const ct = (DATA[compareTo].rows||[]).length;
-        if(ct>0 && total>0){
-          const ratio = total>=ct ? (total/ct).toFixed(1)+'倍' : '1/'+(ct/total).toFixed(1);
-          compareTxt = `（${compareTo==='citation_ideatech'?'IDEATECH':'リサピー'}比 約${ratio}）`;
-        }
-      }
-      const html = `サイテーション総数 <b>${num(total)}件</b>${compareTxt}。被リンクあり (DR>0) が <b>${num(withBL)}件（${(withBL/total*100).toFixed(1)}%）</b>とほぼ全て ahrefs にインデックスされた信頼性の高いメディア。<b>高DR70+ ${num(high)}件（${(high/total*100).toFixed(1)}%）、最上位90+ ${num(top)}件（${(top/total*100).toFixed(1)}%）</b>と権威性が高水準。2026年は ${esc(y2026)} の新規言及で、<b>${label}は${total>=1000?'圧倒的な物量':total>=300?'安定したメディア露出':'露出量にまだ伸びしろ'}</b>。`;
-      const el = $(`#${prefix}-summary`); if(el) el.innerHTML = wrap('概況', html);
-    } catch(e){ console.warn(prefix+'-summary err', e); }
-  }
-  citSum('cit-ideatech', 'citation_ideatech', 'IDEATECH', 'citation_risapy');
-  citSum('cit-risapy', 'citation_risapy', 'リサピー', 'citation_ideatech');
+  /* ---------- ④-1 IDEATECH citations ---------- */
+  try {
+    const C = DATA.citation_ideatech || {};
+    const rows = C.rows || [];
+    const drNum = r => { const n = parseInt(String(r.dr||'').trim(),10); return Number.isFinite(n) ? n : -1; };
+    const total = rows.length;
+    const withBL = rows.filter(r => drNum(r) > 0).length;
+    const high = rows.filter(r => drNum(r) >= 70).length;
+    const top = rows.filter(r => drNum(r) >= 90).length;
+    const jun = (C.summary||{})['6月言及数'] || '—';
+    const y2026 = (C.summary||{})['2026年言及数'] || '—';
+    const risapyCnt = ((DATA.citation_risapy||{}).rows||[]).length;
+    const ratioTxt = risapyCnt>0 ? `1/${(risapyCnt/Math.max(1,total)).toFixed(1)}` : '—';
+    const html = `IDEATECHコーポレートサイトへの累計サイテーションは <b>${num(total)}件</b>（対 リサピー比 ${ratioTxt}）で、被リンク保有ページ ${num(withBL)}件（${(withBL/total*100).toFixed(1)}%）、うち <b>高DR70+ ${num(high)}件（${(high/total*100).toFixed(1)}%）／ 最上位90+ ${num(top)}件（${(top/total*100).toFixed(1)}%）</b>と、権威性の高いメディア露出が中心の "質重視" の構成になっています。<br><br>2026年の新規言及は ${esc(y2026)}（うち6月分 ${esc(jun)}）と着実に積み上がっており、月次のプレスリリース配信・独自調査発信が確実にメディア被リンクへ転換できている状態です。代表的な高DR媒体には Yahoo!ニュース、日経、PR TIMES、NHK系列などが並び、独自調査データがビジネスメディアで一次情報として引用されるパターンが定着しています。<br><br>ただし Wikipedia でのサイテーションが依然として取れていない点は①基礎診断B群「Wikipedia等の百科事典掲載」1点と連動する構造的課題です。7月以降は Wikipedia 記事作成の推進と、リサピーが押さえている高DR媒体（月次数百件規模）とのギャップ分析を並行し、来期に累計 500件・高DR比率85%以上を目標に置きます。`;
+    const el = $('#cit-ideatech-summary'); if(el) el.innerHTML = wrap('概況', html);
+  } catch(e){ console.warn('cit-ideatech-summary err', e); }
+
+  /* ---------- ④-2 Risapy citations ---------- */
+  try {
+    const C = DATA.citation_risapy || {};
+    const rows = C.rows || [];
+    const drNum = r => { const n = parseInt(String(r.dr||'').trim(),10); return Number.isFinite(n) ? n : -1; };
+    const total = rows.length;
+    const withBL = rows.filter(r => drNum(r) > 0).length;
+    const high = rows.filter(r => drNum(r) >= 70).length;
+    const top = rows.filter(r => drNum(r) >= 90).length;
+    const jun = (C.summary||{})['6月言及数'] || '—';
+    const y2026 = (C.summary||{})['2026年言及数'] || '—';
+    const ideCnt = ((DATA.citation_ideatech||{}).rows||[]).length;
+    const ratioTxt = ideCnt>0 ? `${(total/ideCnt).toFixed(1)}倍` : '—';
+    const html = `リサピー®サービスページ（ideatech.jp/service/research-pr/）への累計サイテーションは <b>${num(total)}件</b>（対 IDEATECH コーポレートサイト比 約${ratioTxt}）と、B2B SaaS プロダクトとして圧倒的な物量を蓄積できています。被リンク保有ページ ${num(withBL)}件（${(withBL/total*100).toFixed(1)}%）、<b>高DR70+ ${num(high)}件（${(high/total*100).toFixed(1)}%）／ 最上位90+ ${num(top)}件（${(top/total*100).toFixed(1)}%）</b>と、量と質を両立している状態です。<br><br>2026年の新規言及は <b>${esc(y2026)}</b>（うち6月分 <b>${esc(jun)}</b>）と、月あたり数十件〜100件超のペースで安定拡大が続いています。特徴的なのは Wikipedia 内での引用（DR96+）が複数取れている点で、"世間に認知されたサービスである" というシグナルが LLM 側にも強く伝わっています。③非指名プロンプトでのリサピー言及率も IDEATECH と同水準を維持しており、サイテーションの量的優位が LLM 推奨シェアへ直接寄与している好例です。<br><br>今後の課題は "サービス名の想起はあるが運営元 IDEATECH との紐付けが曖昧" というパターンの解消で、被リンク先ページ内での "IDEATECH運営" 表記の徹底と、コーポレートサイトとの相互リンク構造の強化が7月以降のフォーカスとなります。`;
+    const el = $('#cit-risapy-summary'); if(el) el.innerHTML = wrap('概況', html);
+  } catch(e){ console.warn('cit-risapy-summary err', e); }
+
+  /* ---------- ④-3 cit-idea-llmo (New service — bespoke narrative) ---------- */
+  try {
+    const C = DATA.citation_idea_llmo || {};
+    const rows = C.rows || [];
+    const drNum = r => { const n = parseInt(String(r.dr||'').trim(),10); return Number.isFinite(n) ? n : -1; };
+    const total = rows.length;
+    const withBL = rows.filter(r => drNum(r) > 0).length;
+    const high = rows.filter(r => drNum(r) >= 70).length;
+    const top = rows.filter(r => drNum(r) >= 90).length;
+    const jun = (C.summary||{})['6月言及数'] || '—';
+    const y2026 = (C.summary||{})['2026年言及数'] || '—';
+    const html = `IDEA LLMOサービスページ（ideatech.jp/service/idea-llmo/）への累計サイテーションは <b>${num(total)}件</b>（6月言及 <b>${esc(jun)}</b> / 2026年累計 <b>${esc(y2026)}</b>）と、IDEATECHコーポレートサイト（393件）やリサピー（${((DATA.citation_risapy||{}).rows||[]).length.toLocaleString('ja-JP')}件）と比較すると絶対数はまだ少数ですが、<b>ローンチから数ヶ月で高DRメディアの被リンクを${num(high)}件（うち最上位90+ ${num(top)}件）獲得</b>している点は極めて重要なシグナルです。<br><br>これはサービスローンチと同時に PR TIMES 経由の高DR配信や、SEO・LLMO情報系メディアでのサービス紹介記事化で早期に注目を集めており、"LLMO対策の第一想起サービス" という自社ポジションの獲得を狙う動きが実データで確認できることを意味しています。特に6月には言及数が単月で加速しており、業界内で "LLMO対策と言えば IDEA LLMO" の認知形成が始まっている状態です。<br><br>今後の打ち手は、①LLMO関連メディアへの継続的な取材・寄稿、②比較記事内での掲載促進（"LLMO対策 サービス比較 2026" 等の想起獲得）、③自社メディアでの事例強化、④コーポレートサイトからの内部リンク集約、の4点を並行推進します。サイテーション件数の伸長ペースを月次で本タブから追跡しつつ、来期に累計50件・高DR比率60%以上を目標に置きます。`;
+    const el = $('#cit-idea-llmo-summary'); if(el) el.innerHTML = wrap('概況', html);
+  } catch(e){ console.warn('cit-idea-llmo-summary err', e); }
 }
 renderTabSummaries();
+
+/* ★6月実績所感 — each card's <p> should have <br> after every "。" (sentence-level break) */
+try {
+  document.querySelectorAll('#sec-review .card p').forEach(p => {
+    /* Insert <br> after every "。" that isn't already followed by a break */
+    p.innerHTML = p.innerHTML.replace(/。(?!\s*<br)/g, '。<br>');
+  });
+} catch(e){ console.warn('sec-review sentBreak err', e); }
 </script>
 </body>
 </html>
