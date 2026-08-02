@@ -284,8 +284,8 @@
         0.010712,
         0.013434,
         0.012958,
-        0.012131,
-        null,
+        0.012414897877452943,
+        0.0,
         null,
         null,
         null,
@@ -322,8 +322,8 @@
         3174.0,
         1861.0,
         3087.0,
-        1896,
-        null,
+        2497,
+        33,
         null,
         null,
         null,
@@ -360,8 +360,8 @@
         1540.0,
         838.0,
         1206.0,
-        839,
-        null,
+        1104,
+        7,
         null,
         null,
         null,
@@ -398,8 +398,8 @@
         34.0,
         25.0,
         40.0,
-        23,
-        null,
+        31,
+        0,
         null,
         null,
         null,
@@ -1264,8 +1264,8 @@
       93.0,
       53.0,
       86.0,
-      44,
-      null,
+      54,
+      0,
       null,
       null,
       null,
@@ -1302,8 +1302,8 @@
       35.0,
       7.0,
       4.0,
-      2,
-      null,
+      3,
+      0,
       null,
       null,
       null,
@@ -1340,8 +1340,8 @@
       1.0,
       3.0,
       7.0,
-      7,
-      null,
+      10,
+      0,
       null,
       null,
       null,
@@ -2212,7 +2212,7 @@
       null,
       null
     ],
-    "generated_at": "2026-07-26T12:00:00+09:00"
+    "generated_at": "2026-08-02T18:00:00+09:00"
   },
   "prompts": {
     "survey_date": "2026-04-04",
@@ -30713,7 +30713,7 @@
       "new_rows": []
     }
   },
-  "_generated_at": "2026-07-26T12:00:00+09:00",
+  "_generated_at": "2026-08-02T18:00:00+09:00",
   "ai_topics": {
     "generated_at": "2026-07-20T07:56:50+09:00",
     "model": "claude-sonnet-4-5",
@@ -35749,7 +35749,7 @@
     }
   },
   "ai_cv": {
-    "generated_at": "2026-07-26T12:00:00+09:00",
+    "generated_at": "2026-08-02T18:00:00+09:00",
     "definition": "HubSpot新規コンタクトのうち以下いずれか: (1) hs_analytics_source=AI_REFERRALS, (2) ishiketteikeiro=\"AIによる情報集約・比較（AIの推奨など）\", (3) ninchikeiro=\"AI検索・対話型AI（ChatGPT/Perplexity/Gemini/など）\"",
     "months": [
       "2026-01",
@@ -35758,7 +35758,8 @@
       "2026-04",
       "2026-05",
       "2026-06",
-      "2026-07"
+      "2026-07",
+      "2026-08"
     ],
     "counts": [
       1,
@@ -35767,7 +35768,8 @@
       1,
       3,
       7,
-      7
+      10,
+      0
     ],
     "companies_by_month": {
       "2026-01": [
@@ -35927,7 +35929,6 @@
           "company": "キヤノンITソリューションズ株式会社",
           "form": "調査｜日本のBtoB大型購買プロセスに関する実態調査",
           "date": "2026-07-01",
-          "partial": true,
           "flags": {
             "T": false,
             "I": false,
@@ -35938,7 +35939,6 @@
           "company": "株式会社VARIETAS",
           "form": "パーフェクトガイド｜ソートリーダーシップ戦略に有効な白書",
           "date": "2026-07-03",
-          "partial": true,
           "flags": {
             "T": false,
             "I": false,
@@ -35949,7 +35949,6 @@
           "company": "公益財団法人東京都教育支援機構",
           "form": "お問い合わせ",
           "date": "2026-07-09",
-          "partial": true,
           "flags": {
             "T": false,
             "I": true,
@@ -35960,7 +35959,6 @@
           "company": "GEOメーター",
           "form": "お問い合わせ",
           "date": "2026-07-10",
-          "partial": true,
           "flags": {
             "T": false,
             "I": false,
@@ -35971,7 +35969,6 @@
           "company": "株式会社アイスリーデザイン",
           "form": "お問い合わせ",
           "date": "2026-07-15",
-          "partial": true,
           "flags": {
             "T": false,
             "I": false,
@@ -35982,7 +35979,6 @@
           "company": "株式会社エクレクト",
           "form": "サービス資料｜リサピー®︎サービス資料",
           "date": "2026-07-16",
-          "partial": true,
           "flags": {
             "T": false,
             "I": true,
@@ -35993,19 +35989,49 @@
           "company": "株式会社i-plug",
           "form": "パーフェクトガイド｜検索しない時代のBtoBマーケティング",
           "date": "2026-07-21",
-          "partial": true,
+          "flags": {
+            "T": false,
+            "I": false,
+            "N": true
+          }
+        },
+        {
+          "company": "株式会社ベネッセ i-キャリア",
+          "form": "3点セット｜BtoB事業のLLMO対策に取り組む方向け",
+          "date": "2026-07-26",
+          "flags": {
+            "T": false,
+            "I": false,
+            "N": true
+          }
+        },
+        {
+          "company": "Meti Lux Partners",
+          "form": "お問い合わせ",
+          "date": "2026-07-28",
+          "flags": {
+            "T": false,
+            "I": true,
+            "N": true
+          }
+        },
+        {
+          "company": "株式会社Matchbox Technologies",
+          "form": "お問い合わせ｜リサーチPR『リサピー』",
+          "date": "2026-07-29",
           "flags": {
             "T": false,
             "I": false,
             "N": true
           }
         }
-      ]
+      ],
+      "2026-08": []
     },
     "condition_totals": {
       "T": 3,
-      "I": 5,
-      "N": 17
+      "I": 6,
+      "N": 20
     },
     "condition_labels": {
       "T": "トラフィック（AI_REFERRALS）",
@@ -44665,7 +44691,7 @@
     ]
   },
   "branded_search": {
-    "generated_at": "2026-07-26T12:00:00+09:00",
+    "generated_at": "2026-08-02T18:00:00+09:00",
     "source": "Google Search Console (ideatech.jp)",
     "series": {
       "risapy": {
@@ -44685,7 +44711,8 @@
         "2026-04": 40,
         "2026-05": 42,
         "2026-06": 39,
-        "2026-07": 28
+        "2026-07": 47,
+        "2026-08": 0
       },
       "ideatech": {
         "2025-03": 269,
@@ -44704,7 +44731,8 @@
         "2026-04": 266,
         "2026-05": 209,
         "2026-06": 307,
-        "2026-07": 191
+        "2026-07": 258,
+        "2026-08": 0
       }
     },
     "definitions": {
