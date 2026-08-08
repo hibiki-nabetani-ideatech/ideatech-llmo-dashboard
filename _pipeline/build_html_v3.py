@@ -109,6 +109,7 @@ main{flex:1;min-width:0;padding:0;background:var(--bg)}
 .mention-yes{color:var(--up);font-weight:700}
 .mention-no{color:#c0c0c0}
 .brand-badge{display:inline-block;padding:1px 8px;font-size:10.5px;font-weight:600;background:var(--blue-soft);color:var(--blue);border-radius:10px;margin-right:3px}
+.brand-badge.brand-badge-strong{background:#fff8d6;color:#8a6d00;box-shadow:inset 0 0 0 1.5px #f9a825}
 /* ③-1 accordion structure (reference-style) */
 details.brd-cat{border:1px solid var(--line);border-radius:4px;margin:0 0 10px;background:#fff}
 details.brd-cat>summary{cursor:pointer;padding:12px 16px;font-weight:700;font-size:13.5px;color:var(--ink);list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--cell-bg)}
@@ -493,8 +494,10 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 .matrix-wrap td.cell-mark, .matrix-wrap th.cell-mark{text-align:center;font-size:14px;line-height:1;width:64px;min-width:64px;font-weight:700;box-sizing:border-box}
 .matrix-wrap th.cell-mark{font-size:10.5px;font-weight:600;color:var(--ink2)}
 .matrix-wrap td.cell-mark.r2{color:var(--up);background:#f3faf6}
+.matrix-wrap td.cell-mark.r2.r2-strong{background:#fff8d6;box-shadow:inset 0 0 0 2px #f9a825}
 .matrix-wrap td.cell-mark.r1{color:var(--warn);background:#fff8ef}
 .matrix-wrap td.cell-mark.r0{color:var(--ink3);background:#fff}
+.matrix-wrap .hanamaru{font-size:16px;display:inline-block;filter:drop-shadow(0 0 2px rgba(249,168,37,.4))}
 .matrix-wrap td.col-divider, .matrix-wrap th.col-divider{border-left:2px solid var(--line)}
 .matrix-wrap tbody tr:hover td{background:#f6f7fb}
 .matrix-wrap tbody tr:hover td.col-no, .matrix-wrap tbody tr:hover td.col-cat, .matrix-wrap tbody tr:hover td.col-prompt{background:#f6f7fb}
@@ -1023,6 +1026,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         </div>
         <div class="matrix-legend">
           <span class="li"><span class="legend-mark r2">⚫︎</span>言及あり（LLM の応答内に言及が含まれる）</span>
+          <span class="li"><span class="legend-mark r2" style="background:#fff8d6;box-shadow:inset 0 0 0 2px #f9a825">🌸</span>強い推奨・お墨付き・贔屓を得ている（LLM が最有力／No.1／特に信頼など明確に推している）</span>
           <span class="li"><span class="legend-mark r1">▲</span>言及なし（LLM の応答内に言及が含まれない）</span>
           <span class="li" style="margin-left:auto">※ 左 36+110+280px は固定列。横スクロールで全LLM × 6社が確認できます</span>
         </div>
@@ -2604,7 +2608,10 @@ function renderPromptsNamed(){
         const linksHtml = (r.links && r.links.length)
           ? `<div class="brd-cites"><span class="brd-cites-h">引用元（${r.links.length}）</span><ul>${(r.links||[]).slice(0,15).map(lk => `<li><a href="${escAttr(lk.url||'')}" target="_blank" rel="noopener">${esc(lk.title||lk.url||'link')}</a></li>`).join('')}</ul></div>`
           : `<div class="brd-cites brd-cites-none">引用元：明示なし</div>`;
-        const brandBadges = brands.filter(b => (r.mentions||{})[b]).map(b => `<span class="brand-badge">${esc(b)}</span>`).join('');
+        const brandBadges = brands.filter(b => (r.mentions||{})[b]).map(b => {
+          const isStrong = (r.strong_mentions||{})[b];
+          return `<span class="brand-badge${isStrong?' brand-badge-strong':''}"${isStrong?' title="強い推奨・お墨付き"':''}>${isStrong?'🌸 ':''}${esc(b)}</span>`;
+        }).join('');
         return `<details><summary><span class="v2-sum-strip"><span class="llm-tag ${llmCls}">${esc(llmLabels[l])}</span><span class="v2-sum-badges">${brandBadges}</span><span class="v2-sum-len small">応答 ${chLen}文字</span></span></summary><div class="detail-body">${rendered}${linksHtml}</div></details>`;
       }).join('');
       return `<div class="brd-prompt" id="named-prompt-${p.no}">
@@ -2653,12 +2660,15 @@ function renderPromptsMatrixV2(){
     ];
     const allGroups = [selfGroup, ...compGroups];
 
-    /* mention aggregate per group */
-    function groupHit(prompt, brands, llm){
+    /* mention aggregate per group. Returns {hit, strong} where strong=true if any brand in the group has strong_mentions[brand]===true. */
+    function groupHitInfo(prompt, brands, llm){
       const r = (prompt.responses||{})[llm];
-      if(!r || !r.mentions) return false;
-      return brands.some(b => r.mentions[b]);
+      if(!r || !r.mentions) return {hit:false, strong:false};
+      const hit = brands.some(b => r.mentions[b]);
+      const strong = brands.some(b => r.mentions[b] && (r.strong_mentions||{})[b]);
+      return {hit, strong};
     }
+    function groupHit(prompt, brands, llm){ return groupHitInfo(prompt, brands, llm).hit; }
 
     const tbl = document.getElementById('tbl-matrix');
     if(!tbl) return;
@@ -2691,9 +2701,9 @@ function renderPromptsMatrixV2(){
       const isCatStart = idx>0 && p.category !== prevCat;
       const trCls = isCatStart ? ' class="cat-block-start"' : '';
       const cells = allGroups.map(g => llms.map((l,i) => {
-        const hit = groupHit(p, g.brands, l);
-        const cls = hit ? 'r2' : 'r1';
-        const sym = hit ? '⚫︎' : '▲';
+        const info = groupHitInfo(p, g.brands, l);
+        const cls = info.hit ? (info.strong ? 'r2 r2-strong' : 'r2') : 'r1';
+        const sym = info.hit ? (info.strong ? '<span class="hanamaru" title="LLMから強い推奨・お墨付き">🌸</span>' : '⚫︎') : '▲';
         return `<td class="cell-mark ${cls} grp-${g.cls}${i===0?' col-divider':''}">${sym}</td>`;
       }).join('')).join('');
       html += `<tr${trCls}>
@@ -2828,7 +2838,10 @@ function renderPromptsV2(){
         const linksHtml = (r.links && r.links.length)
           ? `<div class="brd-cites"><span class="brd-cites-h">引用元（${r.links.length}）</span><ul>${(r.links||[]).slice(0,15).map(lk => `<li><a href="${escAttr(lk.url||'')}" target="_blank" rel="noopener">${esc(lk.title||lk.url||'link')}</a></li>`).join('')}</ul></div>`
           : `<div class="brd-cites brd-cites-none">引用元：明示なし</div>`;
-        const brandBadges = brands.filter(b => (r.mentions||{})[b]).map(b => `<span class="brand-badge">${esc(b)}</span>`).join(' ');
+        const brandBadges = brands.filter(b => (r.mentions||{})[b]).map(b => {
+          const isStrong = (r.strong_mentions||{})[b];
+          return `<span class="brand-badge${isStrong?' brand-badge-strong':''}"${isStrong?' title="強い推奨・お墨付き"':''}>${isStrong?'🌸 ':''}${esc(b)}</span>`;
+        }).join(' ');
         const chLen = String(r.text||'').length.toLocaleString('ja-JP');
         return `<details><summary><span class="v2-sum-strip"><span class="llm-tag ${llmCls}">${esc(llmLabels[l])}</span><span class="v2-sum-badges">${brandBadges}</span><span class="v2-sum-len small">応答 ${chLen}文字</span></span></summary><div class="detail-body">${rendered}${linksHtml}</div></details>`;
       }).join('');
@@ -2898,44 +2911,60 @@ try { renderPromptsV2(); } catch(e){ console.error(e); }
 /* Hash / direct navigation: when arriving at #prompt-N (e.g. from the matrix table),
    switch to the prompts section first, then auto-open all <details> inside the
    target card, scroll into view, and briefly highlight. */
-function jumpToPrompt(no){
+function jumpToPrompt(no, isV2){
   if(!no) return;
-  /* 1) Activate prompts section */
+  const cardId = isV2 ? ('prompt-v2-'+no) : ('prompt-'+no);
+  const sectionId = isV2 ? 'sec-prompts' : 'sec-prompts';  /* both live in ③-3 */
+  /* 1) Activate ③-3 section */
   $$('.section').forEach(s=>s.classList.remove('active'));
-  const target = $('#sec-prompts');
+  const target = $('#'+sectionId);
   if(target) target.classList.add('active');
   navBtns.forEach(b=>b.classList.toggle('active', b.dataset.section==='prompts'));
   closeSidebar();
-  /* 2) Update hash to #prompt-N (without firing hashchange recursion) */
-  if(location.hash !== '#prompt-'+no){
-    history.replaceState(null,'','#prompt-'+no);
+  /* 2) Update hash */
+  const hash = '#' + cardId;
+  if(location.hash !== hash){
+    history.replaceState(null,'',hash);
   }
-  /* 3) Find card, open details, scroll, highlight */
-  const card = document.getElementById('prompt-'+no);
+  /* 3) Find card */
+  const card = document.getElementById(cardId);
   if(!card) return;
-  /* Make sure search/filter doesn't hide it */
   card.style.display = '';
+  /* Open parent <details class="brd-cat"> accordion so the card is visible */
+  let parent = card.parentElement;
+  while(parent && parent !== document.body){
+    if(parent.tagName === 'DETAILS'){
+      parent.open = true;
+    }
+    parent = parent.parentElement;
+  }
+  /* Open all LLM response <details> inside the target card */
   card.querySelectorAll('details').forEach(d => d.open = true);
+  /* Highlight briefly */
   card.style.transition = 'box-shadow .25s';
   card.style.boxShadow = '0 0 0 3px var(--blue-soft)';
-  setTimeout(()=>{ card.style.boxShadow = ''; }, 1600);
-  /* Wait a tick so the section becomes visible before scrolling */
-  setTimeout(()=>card.scrollIntoView({behavior:'smooth', block:'start'}), 80);
+  setTimeout(()=>{ card.style.boxShadow = ''; }, 1800);
+  /* Scroll (wait a tick for section switch + accordion open to lay out) */
+  setTimeout(()=>card.scrollIntoView({behavior:'smooth', block:'start'}), 120);
 }
 function openPromptByHash(){
-  const m = (window.location.hash||'').match(/^#prompt-(\d+)/);
-  if(!m) return;
-  jumpToPrompt(m[1]);
+  const hash = window.location.hash || '';
+  const mv2 = hash.match(/^#prompt-v2-(\d+)/);
+  if(mv2){ jumpToPrompt(mv2[1], true); return; }
+  const m = hash.match(/^#prompt-(\d+)/);
+  if(m) jumpToPrompt(m[1], false);
 }
-/* Intercept clicks on matrix prompt links to bypass hashchange races */
+/* Intercept clicks on matrix prompt links */
 document.addEventListener('click', (e)=>{
   const a = e.target.closest && e.target.closest('a.prompt-link');
   if(!a) return;
   const href = a.getAttribute('href')||'';
+  const mv2 = href.match(/^#prompt-v2-(\d+)/);
+  if(mv2){ e.preventDefault(); jumpToPrompt(mv2[1], true); return; }
   const m = href.match(/^#prompt-(\d+)/);
   if(!m) return;
   e.preventDefault();
-  jumpToPrompt(m[1]);
+  jumpToPrompt(m[1], false);
 });
 window.addEventListener('hashchange', openPromptByHash);
 if(/^#prompt-/.test(window.location.hash)) setTimeout(openPromptByHash, 250);
