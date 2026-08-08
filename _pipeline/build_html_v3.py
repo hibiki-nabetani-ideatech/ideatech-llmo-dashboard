@@ -429,10 +429,13 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 .detail-body table.md-table thead th{background:var(--cell-bg);color:var(--ink);font-weight:700;font-size:11px;white-space:nowrap}
 .detail-body table.md-table tbody tr:nth-child(even) td{background:#fafbff}
 .detail-body table.md-table td{color:var(--ink);word-break:break-word}
-.detail-body a{color:var(--blue);text-decoration:none}
-.detail-body a:hover{text-decoration:underline}
+.detail-body a{color:#5b6cff;text-decoration:none;font-size:.9em;padding:0 3px;background:#f4f5fb;border-radius:3px;border:1px solid #e4e7ef;word-break:break-word;line-height:1.55;display:inline-block;margin:1px 2px;max-width:100%;color:#4a5680}
+.detail-body a:hover{background:#e8ecfa;color:var(--blue);text-decoration:none;border-color:#c7cff0}
+.detail-body a::before{content:'↗';font-size:.85em;margin-right:2px;color:#8a92a8}
 .detail-body p{margin:6px 0}
 .detail-body strong{color:var(--ink);font-weight:700}
+.detail-body li{margin:4px 0}
+.detail-body li>strong:first-child{display:inline-block;margin-bottom:2px}
 
 /* ===== Prompt cards (③) — LLM brand colors only here ===== */
 .prompt-card{padding:14px 16px}
@@ -2219,6 +2222,17 @@ function renderMD(text){
   /* Strip image markdown: ![alt](url). These are usually low-quality Bing thumbnails; drop them entirely. */
   raw = raw.replace(/!\[[^\]\n]*\]\([^)\n]+\)/g, '');
 
+  /* Strip Copilot-style inline plain-text citations. Pattern: after end-of-sentence,
+     a domain name (letters + dots) followed by an article-title-like phrase. */
+  const CITE_DOMAIN = '(?:[a-z0-9-]+\\.){1,3}(?:com|jp|ai|net|io|dev|app|org|co)(?:\\.jp|\\.com)?';
+  /* Detect the citation prefix: domain + "." + captured title chunk until next newline / next block */
+  raw = raw.replace(new RegExp('([。！？.\\)])\\s*(' + CITE_DOMAIN + '\\.[^\\n]{5,200})(?=\\n|$)', 'gi'), '$1');
+  /* Detect: <english-word title fragment><domain> at end of a sentence — remove */
+  raw = raw.replace(new RegExp('(?:^|\\s)(' + CITE_DOMAIN + '\\.\\s*[^\\n]{5,120})(?=\\n|$)', 'gim'), '');
+  /* Insert newline before a numbered list "2. 株式会社..." when it appears mid-line (Copilot mash issue) */
+  raw = raw.replace(/([^\n])(?=\d+\.\s+株式会社)/g, '$1\n');
+  raw = raw.replace(/([^\n])(?=###?\s)/g, '$1\n');
+
   /* After image stripping, some lines are left as "bare bullet markers" (e.g. "*   " with no content).
      Drop those lines and empty numbered-list stubs. Keep blank lines (they matter for paragraph breaks). */
   raw = raw.split('\n').filter(ln => {
@@ -2255,35 +2269,51 @@ function renderMD(text){
   html = html.replace(/__([^_\n]+)__/g, '<strong>$1</strong>');
   html = html.replace(/\[([^\]\n]+)\]\(([^)\n]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
 
-  /* --- Tables: detect GFM pipe tables ---
-     A GFM table is a header row of "| col | col |" followed by a separator "|---|---|"
-     followed by 1+ body rows. */
+  /* --- Tables: detect GFM pipe tables + pseudo-tables (Gemini often omits the separator row) --- */
   {
     const lines = html.split('\n');
     const out = [];
+    const isPipeRow = ln => (ln.match(/\|/g) || []).length >= 2; /* 2+ pipes → likely a row */
+    const sepPattern = /^\s*\|?\s*:?-{2,}:?\s*(?:\|\s*:?-{2,}:?\s*)+\|?\s*$/;
+    const splitRow = ln => ln.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(s=>s.trim());
     let i = 0;
     while(i < lines.length){
       const ln = lines[i];
-      /* Header row heuristic: contains at least one unescaped pipe and next line looks like separator */
-      const isPipeRow = /^\s*\|?\s*[^|]*\|/.test(ln);
-      const sepPattern = /^\s*\|?\s*:?-{2,}:?\s*(?:\|\s*:?-{2,}:?\s*)+\|?\s*$/;
-      if(isPipeRow && i+1 < lines.length && sepPattern.test(lines[i+1])){
-        const header = ln.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(s=>s.trim());
+      /* GFM strict: header + separator + rows */
+      if(isPipeRow(ln) && i+1 < lines.length && sepPattern.test(lines[i+1])){
+        const header = splitRow(ln);
         const bodyRows = [];
         i += 2;
-        while(i < lines.length){
-          const bl = lines[i];
-          if(!/^\s*\|?[^|]*\|/.test(bl)) break;
-          bodyRows.push(bl.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(s=>s.trim()));
+        while(i < lines.length && isPipeRow(lines[i])){
+          bodyRows.push(splitRow(lines[i]));
           i++;
         }
         let tblHtml = '<table class="md-table"><thead><tr>' + header.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>';
-        bodyRows.forEach(r => {
-          tblHtml += '<tr>' + r.map(c=>`<td>${c}</td>`).join('') + '</tr>';
-        });
+        bodyRows.forEach(r => { tblHtml += '<tr>' + r.map(c=>`<td>${c}</td>`).join('') + '</tr>'; });
         tblHtml += '</tbody></table>';
         out.push(tblHtml);
         continue;
+      }
+      /* Pseudo-table: 2+ consecutive pipe-rows w/ same column count, treat as headerless table */
+      if(isPipeRow(ln)){
+        const collected = [ln];
+        let j = i + 1;
+        while(j < lines.length && isPipeRow(lines[j])){
+          collected.push(lines[j]);
+          j++;
+        }
+        if(collected.length >= 2){
+          const rows = collected.map(splitRow);
+          const cols = Math.max(...rows.map(r => r.length));
+          const header = rows[0].concat(new Array(Math.max(0, cols - rows[0].length)).fill(''));
+          const body = rows.slice(1).map(r => r.concat(new Array(Math.max(0, cols - r.length)).fill('')));
+          let tblHtml = '<table class="md-table"><thead><tr>' + header.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>';
+          body.forEach(r => { tblHtml += '<tr>' + r.map(c=>`<td>${c}</td>`).join('') + '</tr>'; });
+          tblHtml += '</tbody></table>';
+          out.push(tblHtml);
+          i = j;
+          continue;
+        }
       }
       out.push(ln);
       i++;
@@ -2330,6 +2360,10 @@ function renderMD(text){
   }
   closeToDepth(0);
   let s = out.join('\n');
+  /* Break line after <strong>heading</strong> in list items when body text follows (heading + description pattern) */
+  s = s.replace(/<li>(\s*)<strong>([^<]{2,})<\/strong>\s*([^<\n][^<]{4,})/g, '<li>$1<strong>$2</strong><br>$3');
+  /* Same pattern at start of a line (numbered heading followed by body) */
+  s = s.replace(/(^|\n)(\s*)<strong>([^<\n]{3,})<\/strong>([^<\n\s][^<\n]{4,})/g, '$1$2<strong>$3</strong><br>$4');
   /* Strip newlines hugging block-level tags (incl tables) */
   s = s.replace(/\n*(<\/?(?:h[1-6]|ul|ol|li|hr|blockquote|table|thead|tbody|tr|th|td)[^>]*>)\n*/g, '$1');
   /* Collapse paragraph breaks to <br><br>, then single newlines to <br> */
@@ -2340,6 +2374,14 @@ function renderMD(text){
   /* Remove <br> immediately before/after block-level tags */
   s = s.replace(/(<br\s*\/?>\s*)+(<(?:h[1-6]|ul|ol|li|hr|blockquote|table|thead|tbody|tr|th|td|\/ul|\/ol|\/table|\/thead|\/tbody|\/tr)[^>]*>)/g, '$2');
   s = s.replace(/(<\/(?:h[1-6]|ul|ol|li|blockquote|table|thead|tbody|tr|th|td)[^>]*>)(<br\s*\/?>\s*)+/g, '$1');
+  /* Collapse consecutive <hr> tags to a single one */
+  s = s.replace(/(<hr>\s*){2,}/g, '<hr>');
+  /* Remove empty headings (h1-h6) that result from stray "#" markers */
+  s = s.replace(/<(h[1-6])>\s*<\/\1>/g, '');
+  /* Remove empty list items */
+  s = s.replace(/<li>\s*<\/li>/g, '');
+  /* Remove empty lists */
+  s = s.replace(/<(ul|ol)>\s*<\/\1>/g, '');
   s = s.replace(/(<\/(?:h[1-6]|ul|ol|li|blockquote)[^>]*>)(<br\s*\/?>\s*)+/g, '$1');
   /* Trim stray <br> at start/end */
   s = s.replace(/^(\s*<br\s*\/?>\s*)+/i, '').replace(/(\s*<br\s*\/?>\s*)+$/i, '');
@@ -2934,7 +2976,8 @@ function renderPromptsV2(){
     const catHtml = catOrder.map((cat, idx) => {
       const cRows = sorted.filter(p => (p.category||'') === cat);
       if(!cRows.length) return '';
-      const openAttr = idx === 0 ? ' open' : '';
+      /* All A-H categories default open; individual LLM response toggles default closed */
+      const openAttr = ' open';
       const catLetter = String.fromCharCode(65 + idx); // A, B, C, ...
       return `<details class="brd-cat" data-cat="${esc(cat)}"${openAttr}>
         <summary><span class="brd-cat-title"><span class="brd-cat-tag">${catLetter}</span> ${esc(cat)}</span><span class="brd-cat-count">${cRows.length}プロンプト</span></summary>
