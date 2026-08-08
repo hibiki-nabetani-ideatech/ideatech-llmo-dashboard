@@ -269,6 +269,10 @@ input[type="text"].search:focus,select.search:focus{outline:none;border-color:va
 
 /* ===== Diff tab (week-over-week) ===== */
 .nav-btn-diff{background:linear-gradient(90deg,#fff7e0 0%,#fff 100%)}
+.nav-btn-archived{background:transparent !important;color:var(--ink3) !important;opacity:.55;font-style:italic}
+.nav-btn-archived .nav-num{opacity:.6}
+.nav-btn-archived:hover{opacity:.85;background:#f5f5f5 !important}
+.nav-btn-archived.active{background:#e5e7eb !important;color:var(--ink) !important;opacity:.85;font-style:normal}
 .nav-btn-diff .nav-num{background:#ffb300;color:#5a3c00}
 .nav-btn-diff.active{background:#f57c00;color:#fff}
 .nav-btn-diff.active .nav-num{background:rgba(255,255,255,.3);color:#fff}
@@ -605,6 +609,45 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 </style>
 </head>
 <body>
+<!-- Password gate -->
+<div id="pw-gate" style="position:fixed;inset:0;background:#0f172a;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:'Hiragino Kaku Gothic ProN','Yu Gothic','Meiryo',sans-serif">
+  <div style="background:#fff;padding:36px 40px;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,.35);max-width:400px;width:90%;text-align:center">
+    <div style="font-size:11px;letter-spacing:.14em;color:#64748b;margin-bottom:6px">IDEATECH LLMO MONITOR</div>
+    <h1 style="font-size:20px;margin:0 0 22px;color:#0f172a;font-weight:700">リサピー® Dashboard / Monitoring</h1>
+    <p style="font-size:12.5px;color:#475569;margin-bottom:20px;line-height:1.7">アクセスにはパスワードが必要です。<br>チームから共有されたパスワードを入力してください。</p>
+    <input type="password" id="pw-input" placeholder="パスワード" autocomplete="current-password"
+      style="width:100%;padding:10px 12px;font-size:14px;border:1px solid #cbd5e1;border-radius:4px;margin-bottom:12px;box-sizing:border-box">
+    <div id="pw-error" style="color:#dc2626;font-size:12px;min-height:16px;margin-bottom:8px"></div>
+    <button id="pw-submit" style="width:100%;padding:11px;background:#0017c1;color:#fff;border:0;border-radius:4px;font-size:13.5px;font-weight:600;cursor:pointer">ダッシュボードを開く</button>
+    <div style="font-size:10.5px;color:#94a3b8;margin-top:22px">© IDEATECH LLMO Project</div>
+  </div>
+</div>
+<script>
+(function(){
+  var KEY = 'idea-llmo-auth';
+  var PW = 'research2023';
+  if(sessionStorage.getItem(KEY) === '1'){
+    document.getElementById('pw-gate').style.display = 'none';
+    return;
+  }
+  var gate = document.getElementById('pw-gate');
+  var input = document.getElementById('pw-input');
+  var submit = document.getElementById('pw-submit');
+  var err = document.getElementById('pw-error');
+  function check(){
+    if(input.value === PW){
+      try { sessionStorage.setItem(KEY, '1'); } catch(_){}
+      gate.style.display = 'none';
+    } else {
+      err.textContent = 'パスワードが違います';
+      input.select();
+    }
+  }
+  submit.addEventListener('click', check);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') check(); });
+  setTimeout(function(){ input.focus(); }, 100);
+})();
+</script>
 <button class="hamburger" id="hamburger" aria-label="メニューを開く"><span></span></button>
 <div class="scrim" id="scrim"></div>
 <div class="app">
@@ -616,8 +659,10 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 
     <div class="nav-group">
       <div class="nav-group-title">★ 更新サマリ</div>
-      <button class="nav-btn nav-btn-diff" data-section="diff"><span class="nav-num">★</span>前月との差分</button>
-      <button class="nav-btn nav-btn-diff" data-section="review"><span class="nav-num">★</span>6月実績所感</button>
+      <button class="nav-btn nav-btn-diff" data-section="diff"><span class="nav-num">★</span>前月との差分（最新）</button>
+      <button class="nav-btn nav-btn-diff nav-btn-archived" data-section="diff-jun"><span class="nav-num">★</span>前月との差分（6月分）</button>
+      <button class="nav-btn nav-btn-diff" data-section="review-jul"><span class="nav-num">★</span>7月実績所感</button>
+      <button class="nav-btn nav-btn-diff nav-btn-archived" data-section="review"><span class="nav-num">★</span>6月実績所感</button>
     </div>
     <div class="nav-group">
       <div class="nav-group-title">① 基礎診断</div>
@@ -666,7 +711,7 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 
       <div class="card">
         <h3>① 流入 / CV の前月比</h3>
-        <div class="h3-sub">5月と6月を並列比較。CV（AI経由）は「AI経由CV：流入元＋フォーム回答」（HubSpotビュー準拠）の定義を採用</div>
+        <div class="h3-sub">6月と7月を並列比較。CV（AI経由）は「AI経由CV：流入元＋フォーム回答」（HubSpotビュー準拠）の定義を採用</div>
         <div class="table-wrap"><table id="tbl-diff-flow"></table></div>
       </div>
 
@@ -694,6 +739,63 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         </div>
         <div class="table-wrap"><table id="tbl-diff-cit"></table></div>
         <div id="diff-cit-empty" class="empty-note" style="display:none">新規サイテーションはありませんでした。</div>
+      </div>
+    </section>
+
+    <!-- ★ 前月との差分（6月分・アーカイブ） -->
+    <section id="sec-diff-jun" class="section archived-section">
+      <div class="sec-hero diff-hero" style="background:linear-gradient(90deg,#f1f5f9 0%,#f8fafc 100%)">
+        <div class="crumb">★ 更新サマリ（アーカイブ）｜<b>前月との差分（6月分）</b></div>
+        <h2>前月との主要指標差分（2026年5月→6月）<span class="sub-h">— アーカイブ版・過去スナップショット</span></h2>
+        <p class="lead">2026年6月時点で集計した、5月→6月の月次差分スナップショット。数値は当月末時点で固定されており、後から変わることはありません。最新月の差分は「★前月との差分（最新）」タブをご覧ください。</p>
+      </div>
+      <div class="tab-summary">
+        <div><span class="ts-label">概況</span></div>
+        <div class="ts-body">サイト全体流入は 5月 1,861件 → 6月 3,087件（前月比 +1,226件・+66%）と大きく回復し、5月の一時的な落ち込みから Q1 平均に近い水準まで戻りました。<br>うち AI 経由流入は 5月 25件 → 6月 40件（+15件）と継続的な増加基調にあり、6月は felo.ai・perplexity.ai の日本国内サイト初参照が確認されるなど "AI 検索エンジン" 領域からの入口が広がった月でもあります。<br>指名検索数（GSC クリック）は IDEATECH系 209 → 307（+98）、リサピー系 42 → 39（-3）と、IDEATECH は明確に増加、リサピーは横ばいで着地しています。<br><br>コンバージョン面では、サイト全体 CV（HubSpot 新規リード・インポート除外）は 5月 53件 → 6月 86件（+33件）と月あたり数十件レンジでの推移が続いています。<br>一方 AI 経由 CV（流入元＋フォーム回答 新定義）は 5月 <b>3件</b> → 6月 <b>7件</b>（+4件・+133%）と<b>過去最多を大幅更新</b>し、AI 経由の "認知だけ" フェーズから "実際に CV 化する" フェーズへの移行が数値上明確になった月です。<br>推奨状況（プロンプト調査）は月次スナップショットのため単純比較は難しいですが、Ahrefs V2 レポート指名10プロ×4LLM は6月時点でほぼ想定通りの言及率を維持しており、新規サイテーションは 6月の検出分を④カードに列挙しています。</div>
+      </div>
+      <div class="card">
+        <h3>① 流入 / CV の前月比（5月→6月）</h3>
+        <div class="h3-sub">2026年5月と6月を並列比較。CV（AI経由）は「AI経由CV：流入元＋フォーム回答」（HubSpotビュー準拠）の定義</div>
+        <div class="table-wrap"><table id="tbl-diff-flow-jun"></table></div>
+      </div>
+      <div class="card">
+        <h3>④ 新規サイテーション一覧（6月）</h3>
+        <div class="h3-sub">2026年6月中に新規で検出された ahrefs 被引用ページ。DR順で並べ、高DRはハイライト</div>
+        <div class="diff-tabs">
+          <button class="diff-cit-tab is-active" data-target-jun="ideatech">IDEATECH <span class="cnt" id="diff-cit-cnt-ideatech-jun">18</span></button>
+          <button class="diff-cit-tab" data-target-jun="risapy">リサピー <span class="cnt" id="diff-cit-cnt-risapy-jun">69</span></button>
+          <button class="diff-cit-tab" data-target-jun="idea-llmo">IDEA LLMO <span class="cnt" id="diff-cit-cnt-idea-llmo-jun">11</span></button>
+        </div>
+        <div class="table-wrap"><table id="tbl-diff-cit-jun"></table></div>
+      </div>
+    </section>
+
+    <!-- ★ 7月実績所感タブ（最新） -->
+    <section id="sec-review-jul" class="section">
+      <div class="sec-hero diff-hero">
+        <div class="crumb">★ 更新サマリ｜<b>2026年7月 実績所感</b></div>
+        <h2>2026年7月の月次所感<span class="sub-h">— 各指標軸の要点整理</span></h2>
+        <p class="lead">基礎診断・流入指標(SS/CV)・推奨状況・サイテーションの4軸を指標ごとに整理した7月の実績所感。各タブの数値は自動集計、所感は指標単位で更新しています。</p>
+      </div>
+      <div class="card">
+        <h3>① 基礎診断</h3>
+        <div class="h3-sub">LLMO対応度 20項目 総合スコア推移</div>
+        <p style="line-height:1.95;font-size:13px">7月時点の総合スコアは <b>4.40 / 5.0</b>（20項目平均、100点満点換算で 88 点相当）と 6月から変動なく、B2B 企業サイトとして極めて高い水準を維持しています。C群「コンテンツ適合性」5.00 と D群「外部評価・サイテーション」5.00 は依然として満点で、LLMO 中核指標は完全に押さえた状態です。技術基盤（A群 4.60）も安定しており、月次で崩れる要素はありません。<br><br>B群「権威性・信頼性（E-E-A-T）」3.00 は依然として弱点のまま。Wikipedia 登録・監修者情報の明記・第三者認証取得の3施策は、いずれも 7月中に着手できず月末を迎えました。<br><br>8月以降は Wikipedia 記事の下書き着手を最優先タスクとし、9月末の B群 3.50 到達を通過点として置きます。技術面では Core Web Vitals（LCP/INP）の最適化を並行推進します。</p>
+      </div>
+      <div class="card">
+        <h3>② 流入指標 (SS) / コンバージョン (CV)</h3>
+        <div class="h3-sub">サイト全体・オーガニック・AI経由の月次動向</div>
+        <p style="line-height:1.95;font-size:13px">7月のサイト全体流入は <b>2,497 セッション</b>と、6月（3,087）から前月比 <b>-19%</b> の反落。うち <b>オーガニック検索は 1,104（44%）</b>と 6月比では減少ながら、Q1 平均比では堅調です。AI 経由流入は <b>31件（前月比 -9件、-22%）</b>と減速しましたが、"AI Assistant" チャネル自体は稼働継続しており、季節要因や配信タイミングの影響と判断しています。<br><br>CV 面では <b>HubSpot 新規コンタクト（インポート除外）57件</b>で 6月（86件）から -29件。ただし <b>AI 経由 CV（流入元＋フォーム回答）は 10件と過去最多を更新</b>し、6月の 7件からさらに +3件（+43%）。1〜4月 各1件 → 5月 3件 → 6月 7件 → 7月 <b>10件</b> と加速フェーズが続いており、AI 経由の "認知だけ" フェーズから "商談前段階" フェーズへの移行が定着しつつあります。<br><br>7月の CV 発生10社の内訳は、キヤノン ITソリューションズ／東京都教育支援機構／ベネッセ i-キャリア／Meti Lux Partners／Matchbox Technologies／i-plug／エクレクト／アイスリーデザイン／VARIETAS／GEOメーターと、大手・中堅ともに AI レコメンド起点での接触が入り交じっており、"認知パス" として AI 経由が確実に業界横断で機能し始めていることを示しています。<br><br>8月以降のフォーカスは、①AI 経由訪問者向け着地ページの CTA 最適化、②GA4「AI Assistant」チャネル単独モニタリングの週次運用化、③7月に大幅低下した Perplexity 流入の要因分析、の3点です。</p>
+      </div>
+      <div class="card">
+        <h3>③ 推奨状況（LLM推奨シェア）</h3>
+        <div class="h3-sub">Ahrefs Brand Radar「V2｜モニタリング」レポート・7月調査時点</div>
+        <p style="line-height:1.95;font-size:13px">Ahrefs Brand Radar V2 レポートで <b>指名10プロンプト＋非指名40プロンプト × 4LLM</b>を毎月モニタリングする体制は 7月も継続稼働。指名プロンプトでは、<b>IDEATECH 言及・リサピー言及</b>ともに 80% 前後の高水準を維持しており、"守りの地盤" は 7月時点も安泰です。<br><br>非指名プロンプト（40件）では 5社比較の順位（IDEATECH / PRTIMES / リサピー / ネオマーケティング / マクロミル / PRIZMA）に大きな変動はなく、業界勢力図は安定しています。ただし <b>LLM 別で見ると Perplexity での IDEATECH 言及率が 7月にわずかに悪化</b>しており、被リンク・サイテーション不足の構造的課題が改めて浮き彫りになりました。<br><br>7月には Wikipedia 記事作成に向けた叩き台の準備を進めましたが、実登録には至らず。8月以降は 「調査PR」業界用語の Wikipedia 化 → IDEATECH社の Wikipedia 化 → リサピー®の Wikipedia 化 の順で3方向並行で推進し、Perplexity 対策としてのサイテーション基盤を強化していきます。</p>
+      </div>
+      <div class="card">
+        <h3>④ サイテーション</h3>
+        <div class="h3-sub">Ahrefs 被引用データ・取得日ベース月内件数</div>
+        <p style="line-height:1.95;font-size:13px"><b>7月時点の累計サイテーション: IDEATECH 647件（7月 +254件）／ リサピー 3,454件（7月 +87件）／ IDEA LLMO 13件（7月 +1件）</b>となり、IDEATECH の 7月増加分は過去最大の 254件を記録しました。これは 6月末に配信した独自調査プレスリリースが 7月上旬から中旬にかけて複数のメディアで再配信されたことによる波及効果と分析しています。<br><br>質面でも <b>高DR70+ 比率は IDEATECH 82%・リサピー 69%・IDEA LLMO 15%</b>と、量・質ともに堅調に推移しています。DR90+ の代表媒体には Yahoo!ニュース、日経、PR TIMES、NHK 系列など上位メディアが並び、独自調査データの一次情報引用パターンが 7月も継続的に発生している状況です。<br><br>ただし Wikipedia でのサイテーションが依然として取れていない構造的課題は残ります。8月以降は Wikipedia 記事作成の推進と、リサピーが押さえている高DR媒体（月次数百件規模）からのバックポート施策を並行し、来期に IDEATECH 累計 800件・高DR比率 85% 以上を目標に置きます。</p>
       </div>
     </section>
 
@@ -868,6 +970,11 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
         <h3>AI経由CV：カテゴリ × LLM 詳細内訳</h3>
         <div class="h3-sub">過去から現在に至るまで0継続のLLM行は非表示（新規発生時に自動で行が追加されます）</div>
         <div class="table-wrap"><table id="tbl-cv-groups"></table></div>
+      </div>
+      <div class="card">
+        <h3>AI経由CV：プロンプト（質問内容）一覧</h3>
+        <div class="h3-sub">HubSpotプロパティ「【AIを利用された方へ】どのようなプロンプト（質問内容）で検索されましたか」に記入された内容の一覧。実際にLLMでどのような質問経由で自社に辿り着いたかを可視化</div>
+        <div class="table-wrap"><table id="tbl-ai-cv-prompts"></table></div>
       </div>
     </section>
 
@@ -1900,7 +2007,20 @@ function renderAiCv(){
       return total>0 ? +(ai/total*100).toFixed(2) : null;
     });
 
-    /* Chart with bars + ratio line overlay */
+    /* Build per-month priority-based T/I/N breakdown (avoid double-counting).
+       Priority: T (AI_REFERRALS) > I (情報集約) > N (AI検索・対話型AI). */
+    const tCounts = [], iCounts = [], nCounts = [];
+    months.forEach(m => {
+      let t=0, i=0, n=0;
+      (companiesByMonth[m] || []).forEach(c => {
+        if(c.T) t++;
+        else if(c.I) i++;
+        else if(c.N) n++;
+      });
+      tCounts.push(t); iCounts.push(i); nCounts.push(n);
+    });
+
+    /* Stacked bar chart: T > I > N priority + ratio line overlay */
     const cvCanvas = document.getElementById('chart-ai-cv-source');
     if(cvCanvas && months.length){
       const cfg = {
@@ -1909,28 +2029,42 @@ function renderAiCv(){
           labels: months,
           datasets: [
             {
-              type: 'bar',
-              label: 'AI経由CV件数',
-              data: counts,
-              backgroundColor: months.map((m,i) => i === months.length-1 ? '#7986cb' : '#0017c1'),
-              borderRadius: 3,
-              yAxisID: 'y',
-              order: 2,
+              type:'bar',
+              label:'T: AI_REFERRALS（流入元）',
+              data: tCounts,
+              backgroundColor: '#0017c1',
+              borderRadius: 0,
+              stack: 'aicv',
+              yAxisID: 'y', order: 3,
             },
             {
-              type: 'line',
-              label: 'AI経由CV比率（右軸）',
+              type:'bar',
+              label:'I: AIによる情報集約・比較（DL回答）',
+              data: iCounts,
+              backgroundColor: '#5b6cff',
+              borderRadius: 0,
+              stack: 'aicv',
+              yAxisID: 'y', order: 3,
+            },
+            {
+              type:'bar',
+              label:'N: AI検索・対話型AI（認知経路）',
+              data: nCounts,
+              backgroundColor: '#93a3ff',
+              borderRadius: 3,
+              stack: 'aicv',
+              yAxisID: 'y', order: 3,
+            },
+            {
+              type:'line',
+              label:'AI経由CV比率（右軸）',
               data: ratioPct,
               borderColor: '#e65100',
               backgroundColor: '#e65100',
               borderWidth: 2,
-              pointRadius: 3.5,
-              pointHoverRadius: 5,
-              fill: false,
-              tension: 0.25,
-              spanGaps: true,
-              yAxisID: 'y1',
-              order: 1,
+              pointRadius: 3.5, pointHoverRadius: 5,
+              fill: false, tension: 0.25, spanGaps: true,
+              yAxisID: 'y1', order: 1,
             }
           ]
         },
@@ -1941,11 +2075,18 @@ function renderAiCv(){
             legend:{display:true,position:'top',labels:{boxWidth:14,font:{size:11}}},
             tooltip:{callbacks:{label:(c)=>{
               if(c.dataset.type==='line') return ` AI経由CV比率: ${c.raw!=null?c.raw+'%':'—'}`;
-              return ` AI経由CV件数: ${c.raw}件`;
+              return ` ${c.dataset.label}: ${c.raw}件`;
+            },
+            footer:(items)=>{
+              if(!items.length) return '';
+              const bar = items.filter(x => x.dataset.type==='bar');
+              const sum = bar.reduce((a,b)=>a+(b.raw||0),0);
+              return `合計: ${sum}件`;
             }}}
           },
           scales:{
-            y:{beginAtZero:true,position:'left',ticks:{stepSize:1},title:{display:true,text:'AI経由CV件数',font:{size:10}}},
+            x:{stacked:true},
+            y:{beginAtZero:true,position:'left',stacked:true,ticks:{stepSize:1},title:{display:true,text:'AI経由CV件数',font:{size:10}}},
             y1:{beginAtZero:true,position:'right',grid:{display:false},ticks:{callback:v=>v+'%'},title:{display:true,text:'AI経由CV比率（%）',font:{size:10}}}
           }
         }
@@ -1993,6 +2134,21 @@ function renderAiCv(){
         });
       });
       coTbl.innerHTML = head + '<tbody>' + (rows.join('') || '<tr><td colspan="5" style="text-align:center;color:var(--ink3);padding:20px">データなし</td></tr>') + '</tbody>';
+    }
+
+    /* Prompt list (AI検索プロンプト aikensakupuronputononaiyou) */
+    const promptTbl = document.getElementById('tbl-ai-cv-prompts');
+    if(promptTbl){
+      const prompts = (A.prompts || []).slice().sort((a,b) => (b.date||'').localeCompare(a.date||''));
+      const head = `<thead><tr><th style="width:100px">日付</th><th style="width:180px">企業</th><th>プロンプト（質問内容）</th></tr></thead>`;
+      const body = prompts.length
+        ? prompts.map(p => `<tr>
+            <td style="color:var(--ink2);white-space:nowrap">${esc(p.date||'')}</td>
+            <td>${esc(p.company||'—')}</td>
+            <td style="line-height:1.7;white-space:pre-wrap">${esc(p.prompt||'')}</td>
+          </tr>`).join('')
+        : '<tr><td colspan="3" style="text-align:center;color:var(--ink3);padding:20px">記入データなし</td></tr>';
+      promptTbl.innerHTML = head + '<tbody>' + body + '</tbody>';
     }
   } catch(e){ console.error('renderAiCv failed:', e); }
 }
@@ -3357,6 +3513,85 @@ function renderDiff(){
   });
 }
 renderDiff();
+
+/* Archived diff (5月→6月 snapshot) */
+function renderDiffJun(){
+  const flowTbl = document.getElementById('tbl-diff-flow-jun');
+  if(!flowTbl) return;
+  const N = n => (n==null||Number.isNaN(n)) ? '—' : Number(n).toLocaleString('ja-JP');
+  const sgn = d => d>0?'+':(d<0?'':'');
+  /* Hardcoded May→June snapshot values (as of end-June 2026) */
+  const rows = [
+    {lbl:'サイト全体流入', m:1861, j:3087, fmt:N},
+    {lbl:'オーガニック流入', m:838, j:1206, fmt:N},
+    {lbl:'AI経由流入', m:25, j:40, fmt:N},
+    {lbl:'AI経由比率', m:1.34, j:1.30, fmt:v=>v.toFixed(2)+'%'},
+    {lbl:'サイト全体CV', m:53, j:86, fmt:N},
+    {lbl:'オーガニックCV', m:7, j:4, fmt:N},
+    {lbl:'AI経由CV（流入元＋フォーム回答）', m:3, j:7, fmt:N, hl:true},
+    {lbl:'指名検索数（IDEATECH）', m:209, j:307, fmt:N},
+    {lbl:'指名検索数（リサピー）', m:42, j:39, fmt:N},
+  ];
+  const trs = rows.map(r => {
+    const d = r.j - r.m;
+    const pctv = r.m>0 ? (d/r.m*100).toFixed(1)+'%' : '—';
+    const dCls = d>0 ? 'up' : d<0 ? 'down' : 'flat';
+    const dTxt = (typeof r.fmt === 'function') ? (sgn(d)+r.fmt(Math.abs(d))) : (sgn(d)+d);
+    return `<tr${r.hl?' style="background:#f6f8ff"':''}>
+      <td class="col-metric"${r.hl?' style="font-weight:700"':''}>${r.lbl}</td>
+      <td style="text-align:right;font-variant-numeric:tabular-nums">${r.fmt(r.m)}</td>
+      <td style="text-align:right;font-variant-numeric:tabular-nums">${r.fmt(r.j)}</td>
+      <td style="text-align:right"><span class="diff-pill ${dCls}">${dTxt}</span></td>
+      <td style="text-align:right;color:${d>0?'var(--up)':d<0?'var(--down)':'var(--ink3)'};font-variant-numeric:tabular-nums">${d>0?'+':''}${pctv}</td>
+    </tr>`;
+  }).join('');
+  flowTbl.innerHTML = `
+    <thead><tr>
+      <th>指標</th>
+      <th style="text-align:right">2026年5月</th>
+      <th style="text-align:right">2026年6月</th>
+      <th style="text-align:right">差分</th>
+      <th style="text-align:right">前月比</th>
+    </tr></thead>
+    <tbody>${trs}</tbody>
+  `;
+
+  /* June new citations table (filter from current data) */
+  const citTbl = document.getElementById('tbl-diff-cit-jun');
+  if(!citTbl) return;
+  const filterJune = rows => (rows||[]).filter(r => (r.first_seen||r.date||'').startsWith('2026-06'));
+  const junI = filterJune((DATA.citation_ideatech || {}).rows || []);
+  const junR = filterJune((DATA.citation_risapy || {}).rows || []);
+  const junL = filterJune((DATA.citation_idea_llmo || {}).rows || []);
+  const cnt = (id, n) => { const e = document.getElementById(id); if(e) e.textContent = n; };
+  cnt('diff-cit-cnt-ideatech-jun', junI.length);
+  cnt('diff-cit-cnt-risapy-jun', junR.length);
+  cnt('diff-cit-cnt-idea-llmo-jun', junL.length);
+
+  const drNum = r => { const n = parseInt(String(r.dr||'').trim(),10); return Number.isFinite(n) ? n : -1; };
+  const drSort = arr => arr.slice().sort((a,b) => (drNum(b)-drNum(a)) || ((b.date||'').localeCompare(a.date||'')));
+  const drBadge = v => v>=90?`<span class="diff-pill gain">DR ${v}</span>`:v>=70?`<span class="diff-pill up">DR ${v}</span>`:v>=0?`<span class="diff-pill flat">DR ${v}</span>`:`<span class="diff-pill flat">DR —</span>`;
+  const renderTable = data => {
+    if(!data.length){ citTbl.innerHTML = '<tbody><tr><td style="color:var(--ink3);padding:14px;text-align:center">新規サイテーションはありませんでした。</td></tr></tbody>'; return; }
+    const body = drSort(data).map(r => `<tr>
+      <td>${drBadge(drNum(r))}</td>
+      <td>${esc(r.title || r.url || '')}</td>
+      <td>${r.url?`<a href="${escAttr(r.url)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">${esc((r.url||'').replace(/^https?:\/\//,'').slice(0,60))}${(r.url||'').length>60?'…':''}</a>`:''}</td>
+      <td style="color:var(--ink2)">${esc(r.date || r.first_seen || '')}</td>
+    </tr>`).join('');
+    citTbl.innerHTML = `<thead><tr><th style="width:90px">DR</th><th>タイトル / メディア</th><th>URL</th><th>取得日</th></tr></thead><tbody>${body}</tbody>`;
+  };
+  renderTable(junI);
+  document.querySelectorAll('#sec-diff-jun .diff-cit-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#sec-diff-jun .diff-cit-tab').forEach(b => b.classList.remove('is-active'));
+      btn.classList.add('is-active');
+      const t = btn.dataset.targetJun;
+      renderTable(t==='risapy'?junR:t==='idea-llmo'?junL:junI);
+    });
+  });
+}
+try { renderDiffJun(); } catch(e){ console.error('renderDiffJun failed:', e); }
 
 /* =========================================================== */
 /* ⑤ 主要AIツール — 利用者推移＋機能タイムライン            */
