@@ -405,6 +405,15 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
 .detail-body li{margin:2px 0}
 .detail-body hr{border:0;border-top:1px dashed var(--line);margin:10px 0}
 .detail-body code{background:var(--cell-bg);padding:1px 5px;border-radius:3px;font-size:11.5px;border:1px solid var(--line-soft)}
+.detail-body table.md-table{border-collapse:collapse;margin:10px 0;font-size:11.5px;line-height:1.55;width:auto;max-width:100%}
+.detail-body table.md-table th,.detail-body table.md-table td{border:1px solid var(--line);padding:6px 10px;vertical-align:top;text-align:left}
+.detail-body table.md-table thead th{background:var(--cell-bg);color:var(--ink);font-weight:700;font-size:11px;white-space:nowrap}
+.detail-body table.md-table tbody tr:nth-child(even) td{background:#fafbff}
+.detail-body table.md-table td{color:var(--ink);word-break:break-word}
+.detail-body a{color:var(--blue);text-decoration:none}
+.detail-body a:hover{text-decoration:underline}
+.detail-body p{margin:6px 0}
+.detail-body strong{color:var(--ink);font-weight:700}
 
 /* ===== Prompt cards (③) — LLM brand colors only here ===== */
 .prompt-card{padding:14px 16px}
@@ -2175,52 +2184,117 @@ function groupTableHTMLFiltered(groups, lbl, pick){
 /* =========================================================== */
 function renderMD(text){
   if(!text) return '';
-  /* Pre-clean: collapse 3+ blank lines to 2 (paragraph break); normalize CRLF; strip trailing spaces */
+  /* --- Pre-clean --- */
   let raw = String(text).replace(/\r\n?/g,'\n').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+
+  /* Unescape common markdown backslash-escapes BEFORE HTML-escaping.
+     LLM responses often ship with backslashed pipes/dashes/exclamations/periods from JSON safety. */
+  raw = raw.replace(/\\([|!\-_*`\[\]()#>.\/])/g, '$1');
+  /* Also unescape stray "&#96;" (backtick), "*", etc. that got double-encoded */
+  raw = raw.replace(/\\{2,}/g, '\\');
+
+  /* Strip inline citation reference markers used by ChatGPT/Copilot:
+     "[title](#tl0)" or "[](#cp1)" — these are noisy in-line footnote anchors. */
+  raw = raw.replace(/\[[^\]\n]*\]\(#[a-z0-9]+\)/gi, '');
+
+  /* Strip image markdown: ![alt](url). These are usually low-quality Bing thumbnails; drop them entirely. */
+  raw = raw.replace(/!\[[^\]\n]*\]\([^)\n]+\)/g, '');
+
+  /* After image stripping, some lines are left as "bare bullet markers" (e.g. "*   " with no content).
+     Drop those lines and empty numbered-list stubs. Keep blank lines (they matter for paragraph breaks). */
+  raw = raw.split('\n').filter(ln => {
+    if(ln.trim() === '') return true; /* keep blank lines */
+    /* Remove lines that are ONLY a bullet/number marker with no content */
+    if(/^\s*[\*\-・•]\s*$/.test(ln)) return false;
+    if(/^\s*\d+[\.\)]\s*$/.test(ln)) return false;
+    return true;
+  }).join('\n');
+
+  /* Normalize whitespace lines after removals */
+  raw = raw.replace(/[ \t]+$/gm,'').replace(/\n{3,}/g,'\n\n');
+
+  /* --- Now HTML-escape, then re-inject block/inline markdown --- */
   let html = esc(raw);
-  /* Block-level: hr / headings must be first pass */
-  html = html.replace(/^\*\s*\*\s*\*\s*$/gm, '<hr>');
-  html = html.replace(/^\-\s*\-\s*\-\s*$/gm, '<hr>');
+
+  /* HRs */
+  html = html.replace(/^\s*\*\s*\*\s*\*\s*$/gm, '<hr>');
+  html = html.replace(/^\s*\-\s*\-\s*\-\s*$/gm, '<hr>');
   html = html.replace(/^---+$/gm, '<hr>');
   html = html.replace(/^={3,}$/gm, '<hr>');
+
+  /* Headings h1-h6 (map ###### → h4) */
   html = html.replace(/^#{6}\s+(.+)$/gm, '<h4>$1</h4>');
   html = html.replace(/^#{5}\s+(.+)$/gm, '<h4>$1</h4>');
   html = html.replace(/^#{4}\s+(.+)$/gm, '<h4>$1</h4>');
   html = html.replace(/^#{3}\s+(.+)$/gm, '<h3>$1</h3>');
   html = html.replace(/^#{2}\s+(.+)$/gm, '<h2>$1</h2>');
   html = html.replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
-  /* Inline: bold, italic (but not intra-word), links */
+
+  /* Inline: bold / italic / code / links (must run BEFORE table so pipes aren't touched inside code) */
+  html = html.replace(/`([^`\n]+)`/g, '<code>$1</code>');
   html = html.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/__([^_\n]+)__/g, '<strong>$1</strong>');
   html = html.replace(/\[([^\]\n]+)\]\(([^)\n]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
-  /* Convert lines: recognize UL (* / - / ・), OL (1. 2. …), and nested indent */
+
+  /* --- Tables: detect GFM pipe tables ---
+     A GFM table is a header row of "| col | col |" followed by a separator "|---|---|"
+     followed by 1+ body rows. */
+  {
+    const lines = html.split('\n');
+    const out = [];
+    let i = 0;
+    while(i < lines.length){
+      const ln = lines[i];
+      /* Header row heuristic: contains at least one unescaped pipe and next line looks like separator */
+      const isPipeRow = /^\s*\|?\s*[^|]*\|/.test(ln);
+      const sepPattern = /^\s*\|?\s*:?-{2,}:?\s*(?:\|\s*:?-{2,}:?\s*)+\|?\s*$/;
+      if(isPipeRow && i+1 < lines.length && sepPattern.test(lines[i+1])){
+        const header = ln.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(s=>s.trim());
+        const bodyRows = [];
+        i += 2;
+        while(i < lines.length){
+          const bl = lines[i];
+          if(!/^\s*\|?[^|]*\|/.test(bl)) break;
+          bodyRows.push(bl.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(s=>s.trim()));
+          i++;
+        }
+        let tblHtml = '<table class="md-table"><thead><tr>' + header.map(h=>`<th>${h}</th>`).join('') + '</tr></thead><tbody>';
+        bodyRows.forEach(r => {
+          tblHtml += '<tr>' + r.map(c=>`<td>${c}</td>`).join('') + '</tr>';
+        });
+        tblHtml += '</tbody></table>';
+        out.push(tblHtml);
+        continue;
+      }
+      out.push(ln);
+      i++;
+    }
+    html = out.join('\n');
+  }
+
+  /* --- Lists (UL / OL, nested via indent) --- */
   const lines = html.split('\n');
   const out = [];
-  let listStack = []; /* stack of {type: 'ul'|'ol', indent} */
-  const closeToDepth = (depth) => {
-    while(listStack.length > depth) out.push('</'+listStack.pop().type+'>');
-  };
+  let listStack = []; /* stack of {type, indent} */
+  const closeToDepth = (depth) => { while(listStack.length > depth) out.push('</'+listStack.pop().type+'>'); };
   for(const rawLn of lines){
-    if(rawLn.match(/^\s*<(hr|h[1-6])/)){
+    if(rawLn.match(/^\s*<(hr|h[1-6]|table|thead|tbody|tr|th|td)/)){
       closeToDepth(0);
       out.push(rawLn);
       continue;
     }
-    /* Detect list marker (leading spaces or full-width space count as indent) */
     const ulM = rawLn.match(/^(\s*)(?:[\*\-・•])\s+(.*)$/);
     const olM = rawLn.match(/^(\s*)(\d+)[\.\)]\s+(.*)$/);
     if(ulM || olM){
       const m = ulM || olM;
-      const indent = m[1].replace(/\t/g,'  ').length;
+      /* Every 4 spaces (or 1 tab) = one level of nesting; treat 2-3 spaces as level 1 too */
+      const indent = m[1].replace(/\t/g,'    ').length;
       const type = ulM ? 'ul' : 'ol';
-      const depth = Math.min(3, Math.floor(indent/2)) + 1;
-      /* Pop until stack depth matches this item */
+      const depth = Math.min(3, Math.floor(indent/4)) + 1;
       while(listStack.length > depth) out.push('</'+listStack.pop().type+'>');
-      /* If current depth is same but type differs, close and reopen */
       if(listStack.length === depth && listStack[listStack.length-1].type !== type){
         out.push('</'+listStack.pop().type+'>');
       }
-      /* Open new list level(s) */
       while(listStack.length < depth){
         out.push('<'+type+'>');
         listStack.push({type, indent});
@@ -2228,26 +2302,25 @@ function renderMD(text){
       const content = ulM ? m[2] : m[3];
       out.push('<li>'+content+'</li>');
     } else if(rawLn.trim() === '') {
-      /* Blank line — close all open lists so paragraph break separates them */
       closeToDepth(0);
       out.push('');
     } else {
-      /* Non-list text line — close all open lists */
       closeToDepth(0);
       out.push(rawLn);
     }
   }
   closeToDepth(0);
   let s = out.join('\n');
-  /* Strip newlines hugging block-level tags */
-  s = s.replace(/\n*(<\/?(?:h[1-6]|ul|ol|li|hr|blockquote)[^>]*>)\n*/g, '$1');
+  /* Strip newlines hugging block-level tags (incl tables) */
+  s = s.replace(/\n*(<\/?(?:h[1-6]|ul|ol|li|hr|blockquote|table|thead|tbody|tr|th|td)[^>]*>)\n*/g, '$1');
   /* Collapse paragraph breaks to <br><br>, then single newlines to <br> */
   s = s.replace(/\n{2,}/g, '<br><br>');
   s = s.replace(/\n/g, '<br>');
   /* Never more than two <br> in a row */
   s = s.replace(/(<br\s*\/?>\s*){3,}/g, '<br><br>');
   /* Remove <br> immediately before/after block-level tags */
-  s = s.replace(/(<br\s*\/?>\s*)+(<(?:h[1-6]|ul|ol|li|hr|blockquote|\/ul|\/ol)[^>]*>)/g, '$2');
+  s = s.replace(/(<br\s*\/?>\s*)+(<(?:h[1-6]|ul|ol|li|hr|blockquote|table|thead|tbody|tr|th|td|\/ul|\/ol|\/table|\/thead|\/tbody|\/tr)[^>]*>)/g, '$2');
+  s = s.replace(/(<\/(?:h[1-6]|ul|ol|li|blockquote|table|thead|tbody|tr|th|td)[^>]*>)(<br\s*\/?>\s*)+/g, '$1');
   s = s.replace(/(<\/(?:h[1-6]|ul|ol|li|blockquote)[^>]*>)(<br\s*\/?>\s*)+/g, '$1');
   /* Trim stray <br> at start/end */
   s = s.replace(/^(\s*<br\s*\/?>\s*)+/i, '').replace(/(\s*<br\s*\/?>\s*)+$/i, '');
