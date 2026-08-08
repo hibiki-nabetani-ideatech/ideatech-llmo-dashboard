@@ -1989,14 +1989,16 @@ function renderAiCv(){
     });
 
     /* Build per-month priority-based T/I/N breakdown (avoid double-counting).
-       Priority: T (AI_REFERRALS) > I (情報集約) > N (AI検索・対話型AI). */
+       Priority: T (AI_REFERRALS) > I (情報集約) > N (AI検索・対話型AI).
+       Flags live under c.flags for new schema; fall back to top-level for legacy. */
     const tCounts = [], iCounts = [], nCounts = [];
     months.forEach(m => {
       let t=0, i=0, n=0;
       (companiesByMonth[m] || []).forEach(c => {
-        if(c.T) t++;
-        else if(c.I) i++;
-        else if(c.N) n++;
+        const f = c.flags || c;
+        if(f.T) t++;
+        else if(f.I) i++;
+        else if(f.N) n++;
       });
       tCounts.push(t); iCounts.push(i); nCounts.push(n);
     });
