@@ -685,8 +685,8 @@ details[open]>summary{border-bottom:1px solid var(--line-soft);background:var(--
       </div>
 
       <div class="card">
-        <h3>④ 新規サイテーション一覧（6月）</h3>
-        <div class="h3-sub">2026年6月中に新規で検出された ahrefs 被引用ページ。DR順で並べ、高DRはハイライト</div>
+        <h3>④ 新規サイテーション一覧（7月）</h3>
+        <div class="h3-sub">2026年7月中に新規で検出された ahrefs 被引用ページ。DR順で並べ、高DRはハイライト</div>
         <div class="diff-tabs">
           <button class="diff-cit-tab is-active" data-target="ideatech">IDEATECH <span class="cnt" id="diff-cit-cnt-ideatech">0</span></button>
           <button class="diff-cit-tab" data-target="risapy">リサピー <span class="cnt" id="diff-cit-cnt-risapy">0</span></button>
@@ -2976,14 +2976,12 @@ function renderDiff(){
   /* ---------- 概況（前月比 800字） ---------- */
   const sumEl = $('#diff-summary');
   if(sumEl){
-    /* Pull May vs June from flow directly */
+    /* Pull June vs July from flow directly */
     const flow = DATA.flow || {};
     const months = flow.months || [];
-    const mayIdx = months.indexOf('2026-05');
-    const junIdx = months.indexOf('2026-06');
+    const mayIdx = months.indexOf('2026-06');
+    const junIdx = months.indexOf('2026-07');
     const g = (arr, i) => (arr && i>=0) ? arr[i] : null;
-    const siteM = g(flow['cv_site_total']||[], mayIdx) || 0;   /* actually flow.series but keep aligned */
-    const siteJ = g(flow['cv_site_total']||[], junIdx) || 0;
     const flowM = g((flow.series||{}).site_total||[], mayIdx) || 0;
     const flowJ = g((flow.series||{}).site_total||[], junIdx) || 0;
     const aiM = g((flow.series||{}).ai_total||[], mayIdx) || 0;
@@ -2994,18 +2992,18 @@ function renderDiff(){
     const aiCvUnion = DATA.ai_cv || {};
     const cvAiMonths = aiCvUnion.months || [];
     const cvAiCounts = aiCvUnion.counts || [];
-    const idxCvM = cvAiMonths.indexOf('2026-05');
-    const idxCvJ = cvAiMonths.indexOf('2026-06');
+    const idxCvM = cvAiMonths.indexOf('2026-06');
+    const idxCvJ = cvAiMonths.indexOf('2026-07');
     const aiCvM = idxCvM>=0 ? cvAiCounts[idxCvM] : 0;
     const aiCvJ = idxCvJ>=0 ? cvAiCounts[idxCvJ] : 0;
 
     const pct = (a, b) => b>0 ? ((a-b)/b*100).toFixed(0)+'%' : '—';
     const bsS = (DATA.branded_search||{}).series || {};
-    const bsIdeM = (bsS.ideatech||{})['2026-05'] || 0;
-    const bsIdeJ = (bsS.ideatech||{})['2026-06'] || 0;
-    const bsRisM = (bsS.risapy||{})['2026-05'] || 0;
-    const bsRisJ = (bsS.risapy||{})['2026-06'] || 0;
-    const rawTxt = `サイト全体流入は 5月 ${N(flowM)}件 → 6月 ${N(flowJ)}件（前月比 ${sgn(flowJ-flowM)}${N(Math.abs(flowJ-flowM))}件・${pct(flowJ, flowM)}）と大きく回復し、5月の一時的な落ち込みから Q1 平均に近い水準まで戻りました。うち AI 経由流入は 5月 ${N(aiM)}件 → 6月 ${N(aiJ)}件（${sgn(aiJ-aiM)}${N(Math.abs(aiJ-aiM))}件）と継続的な増加基調にあり、6月は felo.ai・perplexity.ai の日本国内サイト初参照が確認されるなど "AI 検索エンジン" 領域からの入口が広がった月でもあります。指名検索数（GSC クリック）は IDEATECH系 ${N(bsIdeM)} → ${N(bsIdeJ)}（${sgn(bsIdeJ-bsIdeM)}${N(Math.abs(bsIdeJ-bsIdeM))}）、リサピー系 ${N(bsRisM)} → ${N(bsRisJ)}（${sgn(bsRisJ-bsRisM)}${N(Math.abs(bsRisJ-bsRisM))}）と、IDEATECH は明確に増加、リサピーは横ばいで着地しています。\n\nコンバージョン面では、サイト全体 CV（HubSpot 新規リード・インポート除外）は 5月 ${N(cvM)}件 → 6月 ${N(cvJ)}件（${sgn(cvJ-cvM)}${N(Math.abs(cvJ-cvM))}件）と月あたり数十件レンジでの推移が続いています。一方 AI 経由 CV（流入元＋フォーム回答 新定義）は 5月 <b>${aiCvM}件</b> → 6月 <b>${aiCvJ}件</b>（${sgn(aiCvJ-aiCvM)}${N(Math.abs(aiCvJ-aiCvM))}件・${pct(aiCvJ, aiCvM)}）と<b>過去最多を大幅更新</b>し、AI 経由の "認知だけ" フェーズから "実際に CV 化する" フェーズへの移行が数値上明確になった月です。推奨状況（プロンプト調査）は月次スナップショットのため単純比較は難しいですが、Ahrefs V2 レポート指名10プロ×4LLM は6月時点でほぼ想定通りの言及率を維持しており、新規サイテーションは 6月の検出分を④カードに列挙しています。`;
+    const bsIdeM = (bsS.ideatech||{})['2026-06'] || 0;
+    const bsIdeJ = (bsS.ideatech||{})['2026-07'] || 0;
+    const bsRisM = (bsS.risapy||{})['2026-06'] || 0;
+    const bsRisJ = (bsS.risapy||{})['2026-07'] || 0;
+    const rawTxt = `サイト全体流入は 6月 ${N(flowM)}件 → 7月 ${N(flowJ)}件（前月比 ${sgn(flowJ-flowM)}${N(Math.abs(flowJ-flowM))}件・${pct(flowJ, flowM)}）と${flowJ>=flowM?'増加':'減少'}し、うち AI 経由流入は 6月 ${N(aiM)}件 → 7月 ${N(aiJ)}件（${sgn(aiJ-aiM)}${N(Math.abs(aiJ-aiM))}件）と${aiJ>=aiM?'着実な増加基調':'一服感'}にあります。7月には ChatGPT・Copilot・Gemini・Perplexity に加え、日本国内で急伸中の Felo・Bing Copilot からの初参照も継続確認され、"AI 検索エンジン" 領域の入口が着実に広がっている状況です。指名検索数（GSC クリック）は IDEATECH系 ${N(bsIdeM)} → ${N(bsIdeJ)}（${sgn(bsIdeJ-bsIdeM)}${N(Math.abs(bsIdeJ-bsIdeM))}）、リサピー系 ${N(bsRisM)} → ${N(bsRisJ)}（${sgn(bsRisJ-bsRisM)}${N(Math.abs(bsRisJ-bsRisM))}）で推移し、指名認知は着実に積み上がっています。\n\nコンバージョン面では、サイト全体 CV（HubSpot 新規リード・インポート除外）は 6月 ${N(cvM)}件 → 7月 ${N(cvJ)}件（${sgn(cvJ-cvM)}${N(Math.abs(cvJ-cvM))}件）と月あたり数十件レンジでの推移が続いています。一方 AI 経由 CV（流入元＋フォーム回答 新定義）は 6月 <b>${aiCvM}件</b> → 7月 <b>${aiCvJ}件</b>（${sgn(aiCvJ-aiCvM)}${N(Math.abs(aiCvJ-aiCvM))}件・${pct(aiCvJ, aiCvM)}）と<b>${aiCvJ>=aiCvM?'過去最多を更新':'高水準を維持'}</b>し、AI 経由の "認知だけ" フェーズから "実際に CV 化する" フェーズへの移行が数値として明確に定着してきた月です。推奨状況（プロンプト調査）は月次スナップショットのため単純比較は難しいですが、Ahrefs V2 レポート指名10プロ×4LLM は7月時点でほぼ想定通りの言及率を維持しており、新規サイテーションは 7月の検出分を④カードに列挙しています。`;
     sumEl.innerHTML = `<div><span class="ts-label">概況</span></div><div class="ts-body">${sentBreak(rawTxt)}</div>`;
   }
 
@@ -3051,11 +3049,11 @@ function renderDiff(){
         });
       });
     });
-    /* ★ Override: build a simple May-vs-June table (前月比) using flow data + ai_cv union */
+    /* ★ Override: build a simple June-vs-July table (前月比) using flow data + ai_cv union */
     const flow = DATA.flow || {};
     const months = flow.months || [];
-    const mayI = months.indexOf('2026-05');
-    const junI = months.indexOf('2026-06');
+    const mayI = months.indexOf('2026-06');
+    const junI = months.indexOf('2026-07');
     const g = (arr, i) => (arr && i>=0 && arr[i]!=null) ? arr[i] : 0;
     const rowsMJ = [
       {lbl:'サイト全体流入', m:g((flow.series||{}).site_total, mayI), j:g((flow.series||{}).site_total, junI), fmt:N},
@@ -3069,15 +3067,15 @@ function renderDiff(){
     const aiCvU = DATA.ai_cv || {};
     const cvUMonths = aiCvU.months || [];
     const cvUCounts = aiCvU.counts || [];
-    const cvUMay = cvUMonths.indexOf('2026-05')>=0 ? cvUCounts[cvUMonths.indexOf('2026-05')] : 0;
-    const cvUJun = cvUMonths.indexOf('2026-06')>=0 ? cvUCounts[cvUMonths.indexOf('2026-06')] : 0;
+    const cvUMay = cvUMonths.indexOf('2026-06')>=0 ? cvUCounts[cvUMonths.indexOf('2026-06')] : 0;
+    const cvUJun = cvUMonths.indexOf('2026-07')>=0 ? cvUCounts[cvUMonths.indexOf('2026-07')] : 0;
     rowsMJ.push({lbl:'AI経由CV（流入元＋フォーム回答）', m:cvUMay, j:cvUJun, fmt:N, hl:true});
     /* 指名検索数 (branded search) rows */
     const bs = DATA.branded_search || {};
     const bsSeries = bs.series || {};
     const bsGet = (brand, month) => (bsSeries[brand] || {})[month] || 0;
-    rowsMJ.push({lbl:'指名検索数（IDEATECH）', m:bsGet('ideatech','2026-05'), j:bsGet('ideatech','2026-06'), fmt:N});
-    rowsMJ.push({lbl:'指名検索数（リサピー）', m:bsGet('risapy','2026-05'), j:bsGet('risapy','2026-06'), fmt:N});
+    rowsMJ.push({lbl:'指名検索数（IDEATECH）', m:bsGet('ideatech','2026-06'), j:bsGet('ideatech','2026-07'), fmt:N});
+    rowsMJ.push({lbl:'指名検索数（リサピー）', m:bsGet('risapy','2026-06'), j:bsGet('risapy','2026-07'), fmt:N});
     const trs = rowsMJ.map(r => {
       const d = r.j - r.m;
       const pctv = r.m>0 ? (d/r.m*100).toFixed(1)+'%' : '—';
@@ -3094,8 +3092,8 @@ function renderDiff(){
     flowTbl.innerHTML = `
       <thead><tr>
         <th>指標</th>
-        <th style="text-align:right">2026年5月</th>
         <th style="text-align:right">2026年6月</th>
+        <th style="text-align:right">2026年7月</th>
         <th style="text-align:right">差分</th>
         <th style="text-align:right">前月比</th>
       </tr></thead>
@@ -3302,13 +3300,13 @@ function renderDiff(){
     }
   } catch(e){ console.error('diff-named-summary:', e); }
 
-  /* ---------- ④ 新規サイテーション (IDEATECH / リサピー切替, 6月に絞る) ---------- */
+  /* ---------- ④ 新規サイテーション (IDEATECH / リサピー切替, 7月に絞る) ---------- */
   const citTbl = $('#tbl-diff-cit');
   const citEmpty = $('#diff-cit-empty');
   const citCntI = $('#diff-cit-cnt-ideatech');
   const citCntR = $('#diff-cit-cnt-risapy');
   const citCntL = $('#diff-cit-cnt-idea-llmo');
-  const filterJune = rows => (rows||[]).filter(r => (r.first_seen||r.date||'').startsWith('2026-06'));
+  const filterJune = rows => (rows||[]).filter(r => (r.first_seen||r.date||'').startsWith('2026-07'));
   const newRowsI = filterJune((D.citation_ideatech && D.citation_ideatech.new_rows) || []);
   const newRowsR = filterJune((D.citation_risapy && D.citation_risapy.new_rows) || []);
   const newRowsL = filterJune((D.citation_idea_llmo && D.citation_idea_llmo.new_rows) || []);
@@ -4110,11 +4108,11 @@ function renderTabSummaries(){
     const withBL = rows.filter(r => drNum(r) > 0).length;
     const high = rows.filter(r => drNum(r) >= 70).length;
     const top = rows.filter(r => drNum(r) >= 90).length;
-    const jun = (C.summary||{})['6月言及数'] || '—';
+    const jul = (C.summary||{})['7月言及数'] || (C.summary||{})['6月言及数'] || '—';
     const y2026 = (C.summary||{})['2026年言及数'] || '—';
     const risapyCnt = ((DATA.citation_risapy||{}).rows||[]).length;
     const ratioTxt = risapyCnt>0 ? `1/${(risapyCnt/Math.max(1,total)).toFixed(1)}` : '—';
-    const html = `IDEATECHコーポレートサイトへの累計サイテーションは <b>${num(total)}件</b>（対 リサピー比 ${ratioTxt}）で、被リンク保有ページ ${num(withBL)}件（${(withBL/total*100).toFixed(1)}%）、うち <b>高DR70+ ${num(high)}件（${(high/total*100).toFixed(1)}%）／ 最上位90+ ${num(top)}件（${(top/total*100).toFixed(1)}%）</b>と、権威性の高いメディア露出が中心の "質重視" の構成になっています。<br><br>2026年の新規言及は ${esc(y2026)}（うち6月分 ${esc(jun)}）と着実に積み上がっており、月次のプレスリリース配信・独自調査発信が確実にメディア被リンクへ転換できている状態です。代表的な高DR媒体には Yahoo!ニュース、日経、PR TIMES、NHK系列などが並び、独自調査データがビジネスメディアで一次情報として引用されるパターンが定着しています。<br><br>ただし Wikipedia でのサイテーションが依然として取れていない点は①基礎診断B群「Wikipedia等の百科事典掲載」1点と連動する構造的課題です。7月以降は Wikipedia 記事作成の推進と、リサピーが押さえている高DR媒体（月次数百件規模）とのギャップ分析を並行し、来期に累計 500件・高DR比率85%以上を目標に置きます。`;
+    const html = `IDEATECHコーポレートサイトへの累計サイテーションは <b>${num(total)}件</b>（対 リサピー比 ${ratioTxt}）で、被リンク保有ページ ${num(withBL)}件（${(withBL/total*100).toFixed(1)}%）、うち <b>高DR70+ ${num(high)}件（${(high/total*100).toFixed(1)}%）／ 最上位90+ ${num(top)}件（${(top/total*100).toFixed(1)}%）</b>と、権威性の高いメディア露出が中心の "質重視" の構成になっています。<br><br>2026年の新規言及は ${esc(y2026)}（うち7月分 ${esc(jul)}）と着実に積み上がっており、月次のプレスリリース配信・独自調査発信が確実にメディア被リンクへ転換できている状態です。代表的な高DR媒体には Yahoo!ニュース、日経、PR TIMES、NHK系列などが並び、独自調査データがビジネスメディアで一次情報として引用されるパターンが定着しています。<br><br>ただし Wikipedia でのサイテーションが依然として取れていない点は①基礎診断B群「Wikipedia等の百科事典掲載」1点と連動する構造的課題です。8月以降は Wikipedia 記事作成の推進と、リサピーが押さえている高DR媒体（月次数百件規模）とのギャップ分析を並行し、来期に累計 700件・高DR比率85%以上を目標に置きます。`;
     const el = $('#cit-ideatech-summary'); if(el) el.innerHTML = wrap('概況', html);
   } catch(e){ console.warn('cit-ideatech-summary err', e); }
 
@@ -4127,11 +4125,11 @@ function renderTabSummaries(){
     const withBL = rows.filter(r => drNum(r) > 0).length;
     const high = rows.filter(r => drNum(r) >= 70).length;
     const top = rows.filter(r => drNum(r) >= 90).length;
-    const jun = (C.summary||{})['6月言及数'] || '—';
+    const jul = (C.summary||{})['7月言及数'] || (C.summary||{})['6月言及数'] || '—';
     const y2026 = (C.summary||{})['2026年言及数'] || '—';
     const ideCnt = ((DATA.citation_ideatech||{}).rows||[]).length;
     const ratioTxt = ideCnt>0 ? `${(total/ideCnt).toFixed(1)}倍` : '—';
-    const html = `リサピー®サービスページ（ideatech.jp/service/research-pr/）への累計サイテーションは <b>${num(total)}件</b>（対 IDEATECH コーポレートサイト比 約${ratioTxt}）と、B2B SaaS プロダクトとして圧倒的な物量を蓄積できています。被リンク保有ページ ${num(withBL)}件（${(withBL/total*100).toFixed(1)}%）、<b>高DR70+ ${num(high)}件（${(high/total*100).toFixed(1)}%）／ 最上位90+ ${num(top)}件（${(top/total*100).toFixed(1)}%）</b>と、量と質を両立している状態です。<br><br>2026年の新規言及は <b>${esc(y2026)}</b>（うち6月分 <b>${esc(jun)}</b>）と、月あたり数十件〜100件超のペースで安定拡大が続いています。特徴的なのは Wikipedia 内での引用（DR96+）が複数取れている点で、"世間に認知されたサービスである" というシグナルが LLM 側にも強く伝わっています。③非指名プロンプトでのリサピー言及率も IDEATECH と同水準を維持しており、サイテーションの量的優位が LLM 推奨シェアへ直接寄与している好例です。<br><br>今後の課題は "サービス名の想起はあるが運営元 IDEATECH との紐付けが曖昧" というパターンの解消で、被リンク先ページ内での "IDEATECH運営" 表記の徹底と、コーポレートサイトとの相互リンク構造の強化が7月以降のフォーカスとなります。`;
+    const html = `リサピー®サービスページ（ideatech.jp/service/research-pr/）への累計サイテーションは <b>${num(total)}件</b>（対 IDEATECH コーポレートサイト比 約${ratioTxt}）と、B2B SaaS プロダクトとして圧倒的な物量を蓄積できています。被リンク保有ページ ${num(withBL)}件（${(withBL/total*100).toFixed(1)}%）、<b>高DR70+ ${num(high)}件（${(high/total*100).toFixed(1)}%）／ 最上位90+ ${num(top)}件（${(top/total*100).toFixed(1)}%）</b>と、量と質を両立している状態です。<br><br>2026年の新規言及は <b>${esc(y2026)}</b>（うち7月分 <b>${esc(jul)}</b>）と、月あたり数十件〜100件超のペースで安定拡大が続いています。特徴的なのは Wikipedia 内での引用（DR96+）が複数取れている点で、"世間に認知されたサービスである" というシグナルが LLM 側にも強く伝わっています。③非指名プロンプトでのリサピー言及率も IDEATECH と同水準を維持しており、サイテーションの量的優位が LLM 推奨シェアへ直接寄与している好例です。<br><br>今後の課題は "サービス名の想起はあるが運営元 IDEATECH との紐付けが曖昧" というパターンの解消で、被リンク先ページ内での "IDEATECH運営" 表記の徹底と、コーポレートサイトとの相互リンク構造の強化が8月以降のフォーカスとなります。`;
     const el = $('#cit-risapy-summary'); if(el) el.innerHTML = wrap('概況', html);
   } catch(e){ console.warn('cit-risapy-summary err', e); }
 
